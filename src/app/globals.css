@@ -1,26 +1,107 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
+@layer base {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #ffffff;
+    --foreground: #081022;
+
+    /* Transact International Brand Palette */
+    --color-navy-primary: #081022;
+    --color-navy-deep: #05163F;
+    --color-navy-mid: #0D3969;
+    --color-navy-slate: #1A2D47;
+    --color-orange-primary: #F6851F;
+    --color-orange-hover: #E07314;
+    --color-orange-light: #FFF4EB;
+    --color-bg-light: #FAFAFC;
+    --color-bg-warm: #F5F4F3;
+    --color-bg-alt: #F9FAFB;
+    --color-bg-blue-tint: #EDF2F9;
+    --color-text-slate: #4B5D71;
+    --color-text-muted: #707070;
+    --color-border-subtle: #E5E7EB;
+  }
+
+  body {
+    background-color: var(--background);
+    color: var(--foreground);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* Custom Utilities for Transact */
+.bg-transact-navy {
+  background-color: #081022;
+}
+.bg-transact-navy-deep {
+  background-color: #05163F;
+}
+.bg-transact-navy-mid {
+  background-color: #0D3969;
+}
+.bg-transact-orange {
+  background-color: #F6851F;
+}
+.hover\:bg-transact-orange-hover:hover {
+  background-color: #E07314;
+}
+.bg-transact-orange-light {
+  background-color: #FFF4EB;
+}
+.bg-transact-light {
+  background-color: #FAFAFC;
+}
+.bg-transact-warm {
+  background-color: #F5F4F3;
+}
+.bg-transact-alt {
+  background-color: #F9FAFB;
+}
+.bg-transact-blue-tint {
+  background-color: #EDF2F9;
+}
+.text-transact-navy {
+  color: #081022;
+}
+.text-transact-navy-deep {
+  color: #05163F;
+}
+.text-transact-orange {
+  color: #F6851F;
+}
+.text-transact-slate {
+  color: #4B5D71;
+}
+.border-transact-orange {
+  border-color: #F6851F;
+}
+.border-transact-subtle {
+  border-color: #E5E7EB;
+}
+
+/* Smooth Transitions & Card Hovers */
+.transact-card {
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.transact-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 28px -6px rgba(8, 16, 34, 0.08), 0 8px 12px -4px rgba(8, 16, 34, 0.04);
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #F5F4F3;
+}
+::-webkit-scrollbar-thumb {
+  background: #CBD5E1;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94A3B8;
 }

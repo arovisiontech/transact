@@ -1,0 +1,58 @@
+[
+  {
+    "id": "6c015404-cd0c-40ad-8cbb-1546f6f5eced",
+    "title": "Precision Crafted Surgical & Medical Instruments",
+    "subtitle": "Engineering hospital-grade German stainless steel surgical solutions with micrometer tolerance, cryogenic heat treatment, and direct global export to 50+ countries.",
+    "badge": "ISO 13485:2016 & CE MARK CERTIFIED",
+    "image": "/image 333.svg",
+    "video_url": "https://hhcehcdthzdssbperccd.supabase.co/storage/v1/object/public/hero-slides/hero-videos/1790866403370-web.mp4",
+    "primaryCtaText": "Request Institutional RFQ",
+    "primaryCtaLink": "/contact",
+    "secondaryCtaText": "Download Catalogues",
+    "secondaryCtaLink": "/catalogues",
+    "sort_order": 1,
+    "is_active": true
+  },
+  {
+    "id": "255fc77a-014a-41ff-8e75-b0fac6a544bb",
+    "title": "Advanced Tungsten Carbide & Titanium Instruments",
+    "subtitle": "Gold-handled TC needle holders, super-cut micro scissors, and atraumatic hemostatic forceps built for extreme endurance in cardiothoracic and neurosurgery.",
+    "badge": "GERMAN STAINLESS STEEL AISI 420 / 440",
+    "image": "/image 351 (1).svg",
+    "video_url": "https://hhcehcdthzdssbperccd.supabase.co/storage/v1/object/public/hero-slides/hero-videos/1790866403370-web.mp4",
+    "primaryCtaText": "Explore Surgical Catalog",
+    "primaryCtaLink": "/products",
+    "secondaryCtaText": "Technical Specs",
+    "secondaryCtaLink": "/production",
+    "sort_order": 2,
+    "is_active": true
+  },
+  {
+    "id": "0fe15778-31bd-43d6-b945-1fd73175faa7",
+    "title": "Hospital-Ready Surgical Sets & Diagnostic Arrays",
+    "subtitle": "Complete general surgery sets, orthopedic retractors, and anesthesia laryngoscopes delivered with individual laser-etched UDI serialization and validation certificates.",
+    "badge": "CLEANROOM PASSIVATION & PACKAGING",
+    "image": "/image 352.svg",
+    "video_url": "",
+    "primaryCtaText": "Download PDF Catalogues",
+    "primaryCtaLink": "/catalogues",
+    "secondaryCtaText": "View Collections",
+    "secondaryCtaLink": "/categories",
+    "sort_order": 3,
+    "is_active": true
+  },
+  {
+    "id": "211253d8-1e9a-48f5-9fcb-5cfc711a8dc1",
+    "title": "Custom Instrument Engineering & Fast Global Delivery",
+    "subtitle": "Customized prototyping, CNC 5-axis drop forging, and dedicated private labeling for healthcare conglomerates and specialized surgical distributors worldwide.",
+    "badge": "DIRECT OEM & PRIVATE LABEL MANUFACTURING",
+    "image": "/image 353.svg",
+    "video_url": "",
+    "primaryCtaText": "Visit Factory & Production",
+    "primaryCtaLink": "/production",
+    "secondaryCtaText": "Contact Export Team",
+    "secondaryCtaLink": "/contact",
+    "sort_order": 4,
+    "is_active": true
+  }
+]

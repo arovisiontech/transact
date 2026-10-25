@@ -1,0 +1,24 @@
+[
+  {
+    "id": "prod-1792934676585",
+    "category_id": "cat-reusable-laryngoscopes",
+    "category_name": "Reusable Laryngoscopes",
+    "title": "tez",
+    "slug": "tez",
+    "sku": "TI-RL-372",
+    "price": 125,
+    "stock_quantity": 100,
+    "badge": "REUSABLE SURGICAL GRADE",
+    "is_featured": true,
+    "is_published": true,
+    "short_description": null,
+    "full_description": null,
+    "specifications_markdown": "• Completely Sealed One Piece BLADE CONSTRUCTION\n• Distal Lip Of All Integrated Blades\n• Crafted From Finest Stainless Steel AISI 303 / 304\n• Fiber Optic Core With High Transmission Rate\n• Fully Autoclavable And Sterilization Compatible\n•  **Bold Text**",
+    "product_type": "Miller Blades",
+    "material": "Fiber Optic",
+    "featured_image": "/images/products/integrated-macintosh-fiber-optic-blade.png",
+    "sort_order": 1,
+    "updated_at": "2026-10-25T13:25:47.321Z",
+    "created_at": "2026-10-25T13:25:47.321Z"
+  }
+]

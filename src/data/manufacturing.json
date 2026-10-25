@@ -1,0 +1,183 @@
+{
+  "hero": {
+    "badge": "OUR MANUFACTURING CAPABILITIES",
+    "title": "Precision Manufacturing Process",
+    "subtitle": "From raw medical-grade materials to precision-engineered surgical instruments, discover our state-of-the-art facility.",
+    "breadcrumbs": [
+      { "label": "Home", "href": "/" },
+      { "label": "Quality", "href": "/about" },
+      { "label": "Manufacturing Process", "href": "/production" }
+    ],
+    "hero_image": "/image 333.svg"
+  },
+  "intro": {
+    "tagline": "HIGH-QUALITY SOLUTIONS",
+    "heading": "Built For Accuracy, Reliability And Long-Term Performance.",
+    "description": "Our Production Halls Bring Together Experienced Professionals, Carefully Selected Manufacturing Materials And Controlled Processes To Create Surgical Instruments For Demanding Clinical Environments. Every Order Is Handled With Attention To Craftsmanship, Functional Performance And Secure Delivery Preparation.",
+    "pillars": [
+      {
+        "id": "p1",
+        "title": "Quality-Focused Production",
+        "subtitle": "Consistent Standards",
+        "icon": "/quality-icon 1 (1).svg"
+      },
+      {
+        "id": "p2",
+        "title": "Skilled Manufacturing Teams",
+        "subtitle": "Experienced Professionals",
+        "icon": "/Worker-icon 2 (1).svg"
+      },
+      {
+        "id": "p3",
+        "title": "Precision Finishing",
+        "subtitle": "Superior Detail",
+        "icon": "/Finishing-Polishing-icon 1 (1).svg"
+      },
+      {
+        "id": "p4",
+        "title": "Worldwide Export Support",
+        "subtitle": "Global Reach",
+        "icon": "/Global Presence-icon 2.svg"
+      }
+    ]
+  },
+  "workflow": {
+    "tagline": "FROM MATERIAL TO INSTRUMENT",
+    "heading": "A Production Process Designed Around Precision.",
+    "subheading": "Each Stage Is Planned To Help Us Deliver Dependable Surgical Instruments With Consistent Fit, Finish And Function.",
+    "cards": [
+      {
+        "id": "wf-1",
+        "step": "01",
+        "title": "Requirement Review",
+        "description": "We Review Product Specifications, Quantities And Requirements Before Production Begins.",
+        "icon": "/Inspection Process-icon 1.svg"
+      },
+      {
+        "id": "wf-2",
+        "step": "02",
+        "title": "Material Selection",
+        "description": "High-Grade Stainless Steel And Titanium Are Selected For The Appropriate Instrument Application.",
+        "icon": "/Material-icon 1 (1).svg"
+      },
+      {
+        "id": "wf-3",
+        "step": "03",
+        "title": "Forging & Shaping",
+        "description": "Components Are Formed And Shaped To Create A Strong Foundation For Each Instrument.",
+        "icon": "/Forging & Machining-icon 1 (1).svg"
+      },
+      {
+        "id": "wf-4",
+        "step": "04",
+        "title": "CNC & Hand Finishing",
+        "description": "Guided Machining Is Paired With Detailed Grinding, Buffing And Polishing Work.",
+        "icon": "/Finishing-Polishing-icon 1 (1).svg"
+      },
+      {
+        "id": "wf-5",
+        "step": "05",
+        "title": "Assembly & Calibration",
+        "description": "Hinges, Joints And Ratchets Are Set And Adjusted For Smooth, Dependable Operation.",
+        "icon": "/Skilled Craftsmanship-icon 1.svg"
+      },
+      {
+        "id": "wf-6",
+        "step": "06",
+        "title": "Inspection & Export",
+        "description": "Instruments Are Checked, Prepared For Packaging And Readied For Shipment Worldwide.",
+        "icon": "/Quality Control-icon 1.svg"
+      }
+    ]
+  },
+  "production_steps": {
+    "tagline": "OUR PRODUCTION PROCESS",
+    "heading": "From Raw Materials To Precision-Crafted Instruments.",
+    "description": "Every Step Is Carefully Managed By Our Skilled Team, Using Advanced Technology And Strict Quality Control To Deliver Reliable Surgical Instruments Worldwide.",
+    "counter": "01 — 06",
+    "steps": [
+      {
+        "id": "step-1",
+        "step": "01",
+        "title": "CNC Machining",
+        "description": "Precision machining of high-grade materials for consistent quality and accuracy.",
+        "image": "/images/manufacturing/step-1-cnc.png"
+      },
+      {
+        "id": "step-2",
+        "step": "02",
+        "title": "Forging",
+        "description": "Shaping raw materials with advanced forging techniques for superior strength and durability.",
+        "image": "/images/manufacturing/step-2-forging.png"
+      },
+      {
+        "id": "step-3",
+        "step": "03",
+        "title": "Turning & Grinding",
+        "description": "Detailed grinding and finishing for smooth and precise surfaces.",
+        "image": "/images/manufacturing/step-3-turning.png"
+      },
+      {
+        "id": "step-4",
+        "step": "04",
+        "title": "QC Inspection",
+        "description": "Every instrument is carefully checked for accuracy, function and quality.",
+        "image": "/images/manufacturing/step-4-qc.png"
+      },
+      {
+        "id": "step-5",
+        "step": "05",
+        "title": "Laser Marking",
+        "description": "Permanent and precise branding for traceability and authenticity.",
+        "image": "/images/manufacturing/step-5-laser.png"
+      },
+      {
+        "id": "step-6",
+        "step": "06",
+        "title": "Packaging",
+        "description": "Secure and professional packaging for safe global delivery.",
+        "image": "/images/manufacturing/step-6-packaging.png"
+      }
+    ]
+  },
+  "standards": {
+    "tagline": "THE TRANSACT MEDICAL STANDARD",
+    "heading": "Care At Every Stage Of The Manufacturing Journey.",
+    "cards": [
+      {
+        "id": "std-1",
+        "step": "01",
+        "title": "FUNCTIONAL ACCURACY",
+        "description": "Fine Finishing Is Focused On Clean Surfaces, Balanced Handling And Practical Instrument Performance."
+      },
+      {
+        "id": "std-2",
+        "step": "02",
+        "title": "MECHANICAL ALIGNMENT",
+        "description": "Moving Components Are Set And Checked To Support Smooth Opening, Closing And Controlled Tension."
+      },
+      {
+        "id": "std-3",
+        "step": "03",
+        "title": "FINAL QUALITY CHECKS",
+        "description": "Each Instrument Is Reviewed Before Packing To Support A Consistent Finished Result."
+      },
+      {
+        "id": "std-4",
+        "step": "04",
+        "title": "EXPORT-READY PACKING",
+        "description": "Orders Are Prepared For International Delivery With Attention To Documentation And Packaging Needs."
+      }
+    ]
+  },
+  "cta": {
+    "tagline": "LET'S START A CONVERSATION",
+    "heading": "Need Help Finding The",
+    "highlight": "Right Instruments?",
+    "description": "Tell Us Your Product Requirements, Quantity And Destination. Our Team Will Guide You To The Right Next Step.",
+    "email_text": "Email Sale",
+    "email_link": "mailto:info@transactintl.com",
+    "whatsapp_text": "WhatsApp",
+    "whatsapp_link": "https://wa.me/923452626832"
+  }
+}

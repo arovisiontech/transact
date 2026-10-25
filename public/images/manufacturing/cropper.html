@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+  window.onload = function() {
+    const img = new Image();
+    img.src = "file:///C:/Users/Hp/transact/public/extracted_manufacturing/img416_img_1.png";
+    img.onload = () => {
+      // Photo-only crops (without the beige text bar below)
+      const crops = [
+        { id: "step-1-cnc", sx: 104, sy: 275, sw: 918, sh: 170 },
+        { id: "step-2-forging", sx: 1041, sy: 275, sw: 601, sh: 170 },
+        { id: "step-3-turning", sx: 104, sy: 628, sw: 378, sh: 135 },
+        { id: "step-4-qc", sx: 501, sy: 628, sw: 362, sh: 135 },
+        { id: "step-5-laser", sx: 881, sy: 628, sw: 360, sh: 135 },
+        { id: "step-6-packaging", sx: 1261, sy: 628, sw: 376, sh: 135 }
+      ];
+
+      const results = {};
+      crops.forEach(crop => {
+        const cvs = document.createElement("canvas");
+        cvs.width = crop.sw;
+        cvs.height = crop.sh;
+        const ctx = cvs.getContext("2d");
+        ctx.drawImage(img, crop.sx, crop.sy, crop.sw, crop.sh, 0, 0, crop.sw, crop.sh);
+        results[crop.id] = cvs.toDataURL("image/png");
+      });
+
+      const pre = document.createElement("pre");
+      pre.id = "output";
+      pre.textContent = JSON.stringify(results);
+      document.body.appendChild(pre);
+    };
+  };
+</script>
+</body>
+</html>

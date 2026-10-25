@@ -1,0 +1,118 @@
+{
+  "hero": {
+    "tagline": "We Love Laryngoscope & Diagnostic",
+    "title_line1": "Since 1990",
+    "title_line2": "Inspired By Life",
+    "image_url": "/images/about/hero-operating-room.png"
+  },
+  "story": {
+    "image_url": "/images/about/founder-cnc-engineer.png",
+    "badge": "BRIDGING THE GAP BETWEEN TECHNOLOGY & COMPASSIONATE CARE",
+    "left_p1": "At Transact International, Our Mission Is To Merge Innovation With Empathy — Ensuring Every Instrument We Produce Meets The Highest Standards Of Technology While Serving The Ultimate Purpose Of Improving And Saving Lives.",
+    "left_p2": "Our Core Values — Integrity, Precision, Innovation, And Care — Guide Us In Everything We Do. We Believe True Progress In Healthcare Comes From Understanding The Needs Of Medical Professionals And Patients Alike, And Then Creating Solutions That Combine Cutting-Edge Performance With Human-Centered Design.",
+    "right_p1": "Through Continuous Research, Stringent Quality Control, And A Commitment To Excellence,",
+    "right_p2": "Transact International Stands As A Trusted Partner To Healthcare Providers Around The World. Together, We Are Shaping A Future Where Technology And Compassionate Care Work Hand In Hand — Making Every Procedure Safer, Every Outcome Better, And Every Life Healthier.",
+    "cleanroom_image": "/image 421.svg",
+    "mission_icon": "/image 422.png",
+    "engineering_icon": "/image 425.png"
+  },
+  "timeline": {
+    "statement": "With Innovation, Technical Expertise, And Inspiration For Life, We Keep Improving To Offer Solutions That Support Healthcare Professionals And Make A Difference In Patients' Lives.",
+    "heading": "Where It All Began",
+    "milestones": [
+      {
+        "year": "1990",
+        "title": "Founding Vision",
+        "description": "Established In 1990, We Began As Pioneers In Traditional Medical Devices With A Core Focus On Laryngoscopes And ENT Diagnostics. Our Commitment To Precision, Reliability, And Ergonomic Design Laid The Foundation For Enduring Trust Among Healthcare Professionals."
+      },
+      {
+        "year": "1995",
+        "title": "Product Expansion",
+        "description": "In Response To Growing Global Demand, We Expanded Our Product Line To Include Advanced Otoscopes, Diagnostic Sets, And Fiber-Optic Laryngoscopes—Strengthening Our Position As A Comprehensive ENT Solutions Provider."
+      },
+      {
+        "year": "2005",
+        "title": "Global Standards",
+        "description": "Attained Formal ISO 13485 And CE Mark Certifications, Establishing Direct Distribution Supply Chains Across North America, Europe, And The Middle East."
+      },
+      {
+        "year": "2015",
+        "title": "High-Precision CNC",
+        "description": "Invested In Advanced 5-Axis Multi-Spindle Robotic Machining, Laser Micro-Welding, And ISO Class 10,000 Cleanroom Sterile Packaging."
+      },
+      {
+        "year": "2024",
+        "title": "Worldwide OEM Leadership",
+        "description": "Operating Across 50+ Countries Delivering Fully Customized OEM, Private Label, And Hospital-Direct Surgical Instrument Solutions."
+      }
+    ]
+  },
+  "manufacturing": {
+    "badge": "MANUFACTURING EXCELLENCE. DELIVERED WORLDWIDE.",
+    "title": "GLOBAL MANUFACTURING",
+    "description": "From Our Manufacturing Facilities To Customers Across The Globe, We Produce High-Quality Surgical Instruments With Precision, Consistency, And Strict Quality Control. Our Global Manufacturing And Export Capabilities Enable Us To Serve Healthcare Markets Worldwide With Reliable Products And Dependable Supply.",
+    "map_image": "/image 424.svg"
+  },
+  "standards": {
+    "title_line1": "Commitment To Excellence,",
+    "title_line2": "Validated By The Highest Global Standards",
+    "description": "Compliance With Strict Global Requirements Is Proof That We Follow And Meet The Rigorous Demands Of Specific Healthcare Product Legislation, Such As That Of The European Union, The United Kingdom, And The United States.",
+    "items": [
+      {
+        "code": "EU-MDR",
+        "title": "EU-MDR",
+        "description": "Certification That Ensures Standardization Of Production Processes, With Strict Quality Control And Traceability At Each Stage."
+      },
+      {
+        "code": "GMP",
+        "title": "GMP",
+        "description": "Good Manufacturing Practice Ensuring Strict Quality Control, Hygiene, And Batch Traceability At Each Stage."
+      },
+      {
+        "code": "ISO",
+        "title": "ISO 13485",
+        "description": "Quality Management System Focused On Medical Devices, Ensuring Consistency In Development, Manufacturing, And Technical Control."
+      },
+      {
+        "code": "FDA",
+        "title": "FDA",
+        "description": "US Food & Drug Administration Registered Facility Meeting Comprehensive Quality System Regulations (QSR)."
+      },
+      {
+        "code": "CE",
+        "title": "CE Mark",
+        "description": "Label Of Compliance With European Community Requirements, Validating Safety, Performance, And Quality For Clinical Use In EU Countries."
+      }
+    ]
+  },
+  "productLine": {
+    "title": "Discover Our Product Line",
+    "subtitle": "Advanced Laryngoscopes Designed For Safe, Reliable, And Controlled Airway Management. Images Are For Illustrative Purposes Only.",
+    "categories": [
+      {
+        "id": "reusable-laryngoscope",
+        "name": "Reusable Laryngoscope",
+        "image": "/Rectangle 819 (1).svg",
+        "link": "/products?category=reusable-laryngoscopes"
+      },
+      {
+        "id": "mccoy-reusable",
+        "name": "Mccoy Reusable Laryngoscope",
+        "image": "/Rectangle 819 (1).svg",
+        "link": "/products?category=mccoy-reusable"
+      },
+      {
+        "id": "mccoy-disposable",
+        "name": "Mccoy Disposable Laryngoscope",
+        "image": "/Rectangle 819 (1).svg",
+        "link": "/products?category=mccoy-disposable"
+      },
+      {
+        "id": "disposable-laryngoscope",
+        "name": "Disposable Laryngoscope",
+        "image": "/Rectangle 819 (1).svg",
+        "link": "/products?category=disposable-laryngoscopes"
+      }
+    ]
+  }
+}

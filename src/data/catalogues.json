@@ -1,0 +1,50 @@
+[
+  {
+    "id": "alpha-cat-laryngoscope",
+    "catalog_number": "CATALOG 01",
+    "title": "LARYNGOSCOPE",
+    "category": "LARYNGOSCOPE",
+    "category_id": "cat-laryngoscope",
+    "description": "Our Laryngoscope Range Is Engineered To Support Safe, Efficient, And Dependable Airway Management. Manufactured With Precision-Grade Materials And Advanced Optical Technology, Each Instrument Delivers Excellent Illumination, Smooth Handling, And Consistent Performance For Healthcare Professionals.",
+    "pdf_url": "/catalogues/Artery-Forceps-Section4.pdf",
+    "cover_image": "/images/catalogues/laryngoscope-cover.webp",
+    "pages": 64,
+    "file_size": "4.2 MB",
+    "is_published": true,
+    "sort_order": 1,
+    "created_at": "2026-01-15T08:00:00.000Z",
+    "updated_at": "2026-01-15T08:00:00.000Z"
+  },
+  {
+    "id": "alpha-cat-diagnostics",
+    "catalog_number": "CATALOG 01",
+    "title": "DIAGNOSTICS",
+    "category": "DIAGNOSTICS",
+    "category_id": "cat-diagnostics",
+    "description": "Our Laryngoscope Range Is Engineered To Support Safe, Efficient, And Dependable Airway Management. Manufactured With Precision-Grade Materials And Advanced Optical Technology, Each Instrument Delivers Excellent Illumination, Smooth Handling, And Consistent Performance For Healthcare Professionals.",
+    "pdf_url": "/catalogues/Artery-Forceps-Section4.pdf",
+    "cover_image": "/images/catalogues/diagnostics-cover.webp",
+    "pages": 48,
+    "file_size": "3.5 MB",
+    "is_published": true,
+    "sort_order": 2,
+    "created_at": "2026-01-15T08:00:00.000Z",
+    "updated_at": "2026-01-15T08:00:00.000Z"
+  },
+  {
+    "id": "alpha-cat-company-profile",
+    "catalog_number": "CATALOG 01",
+    "title": "COMPANY PROFILE",
+    "category": "COMPANY PROFILE",
+    "category_id": "cat-company-profile",
+    "description": "Our Laryngoscope Range Is Engineered To Support Safe, Efficient, And Dependable Airway Management. Manufactured With Precision-Grade Materials And Advanced Optical Technology, Each Instrument Delivers Excellent Illumination, Smooth Handling, And Consistent Performance For Healthcare Professionals.",
+    "pdf_url": "/catalogues/Artery-Forceps-Section4.pdf",
+    "cover_image": "/images/catalogues/company-profile-cover.webp",
+    "pages": 32,
+    "file_size": "2.1 MB",
+    "is_published": true,
+    "sort_order": 3,
+    "created_at": "2026-01-15T08:00:00.000Z",
+    "updated_at": "2026-01-15T08:00:00.000Z"
+  }
+]

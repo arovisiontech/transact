@@ -36,6 +36,10 @@ yarn-error.log*
 # vercel
 .vercel
 
-# typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Large raw Figma design exports (assets already extracted in public/images)
+public/Transact*.svg
+public/Rectangle 1097.svg
+public/Rectangle 1098.svg

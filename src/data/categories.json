@@ -1,0 +1,34 @@
+[
+  {
+    "id": "cat-reusable-laryngoscopes",
+    "parent_id": null,
+    "name": "Reusable Laryngoscopes",
+    "slug": "reusable-laryngoscopes",
+    "description": "Precision engineered reusable stainless steel laryngoscope blades and handles with integrated fiber optic illumination.",
+    "card_image": "/images/products/integrated-macintosh-fiber-optic-blade.png",
+    "image_url": "/images/products/integrated-macintosh-fiber-optic-blade.png",
+    "icon": "🔬",
+    "sort_order": 1,
+    "is_published": true,
+    "created_at": "2026-10-25T12:00:00.000Z",
+    "updated_at": "2026-10-25T12:00:00.000Z",
+    "product_count": 1,
+    "level": 0
+  },
+  {
+    "id": "cat-single-use-laryngoscopes",
+    "parent_id": null,
+    "name": "Single Use Laryngoscopes",
+    "slug": "single-use-laryngoscopes",
+    "description": "Hygienic, single-patient use sterile laryngoscope blades designed to prevent cross-contamination in critical airway management.",
+    "card_image": "/images/products/integrated-macintosh-fiber-optic-blade.png",
+    "image_url": "/images/products/integrated-macintosh-fiber-optic-blade.png",
+    "icon": "🛡️",
+    "sort_order": 2,
+    "is_published": true,
+    "created_at": "2026-10-25T12:00:00.000Z",
+    "updated_at": "2026-10-25T12:00:00.000Z",
+    "product_count": 0,
+    "level": 0
+  }
+]
