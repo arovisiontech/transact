@@ -843,10 +843,15 @@ const defaultProductLine: ProductLineShowcase = {
   button_text: 'Meet The Laryngoscope',
   button_link: '/products?category=laryngoscopes',
   image_url: '/Rectangle 819 (1).svg',
+  video_url: '/xC3Hykji4pvl53V3bFrZhUuFXfs (1).mp4',
 }
 
 export function getStoredProductLine(): ProductLineShowcase {
-  return getFromStorage<ProductLineShowcase>(STORAGE_KEYS.PRODUCT_LINE, defaultProductLine)
+  const data = getFromStorage<ProductLineShowcase>(STORAGE_KEYS.PRODUCT_LINE, defaultProductLine)
+  if (!data.video_url) {
+    data.video_url = defaultProductLine.video_url
+  }
+  return data
 }
 
 export function saveProductLine(data: ProductLineShowcase): ProductLineShowcase {
