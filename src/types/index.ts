@@ -200,7 +200,6 @@ export interface ProductLineShowcase {
   button_text: string
   button_link: string
   image_url: string
-  video_url?: string
 }
 
 export interface ProjectDevelopmentFeature {

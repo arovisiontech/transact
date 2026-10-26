@@ -72,7 +72,6 @@ export default function AdminProductLinePage() {
       button_text: 'Meet The Laryngoscope',
       button_link: '/products?category=laryngoscopes',
       image_url: '/Rectangle 819 (1).svg',
-      video_url: '/xC3Hykji4pvl53V3bFrZhUuFXfs (1).mp4',
     }
     setProductLine(defaults)
     saveProductLine(defaults)
@@ -303,7 +302,7 @@ export default function AdminProductLinePage() {
               </div>
 
               <div className="space-y-1">
-                <label className="text-xs font-bold text-[#081022]">Card Image Path (Poster / Fallback)</label>
+                <label className="text-xs font-bold text-[#081022]">Card Image Path</label>
                 <input
                   type="text"
                   value={productLine.image_url}
@@ -312,19 +311,6 @@ export default function AdminProductLinePage() {
                   }
                   className="w-full px-3.5 py-2 text-xs border border-zinc-300 rounded-xl focus:border-[#F6851F] focus:outline-none font-mono"
                   placeholder="/Rectangle 819 (1).svg"
-                />
-              </div>
-
-              <div className="space-y-1">
-                <label className="text-xs font-bold text-[#081022]">Card Video Path / URL</label>
-                <input
-                  type="text"
-                  value={productLine.video_url || ''}
-                  onChange={(e) =>
-                    setProductLine({ ...productLine, video_url: e.target.value })
-                  }
-                  className="w-full px-3.5 py-2 text-xs border border-zinc-300 rounded-xl focus:border-[#F6851F] focus:outline-none font-mono"
-                  placeholder="/xC3Hykji4pvl53V3bFrZhUuFXfs (1).mp4"
                 />
               </div>
 
@@ -361,28 +347,14 @@ export default function AdminProductLinePage() {
                   </p>
                 </div>
 
-                <div className="relative rounded-2xl overflow-hidden aspect-[16/9] bg-black p-5 flex flex-col justify-between border border-zinc-300">
-                  {productLine.video_url ? (
-                    <video
-                      key={productLine.video_url}
-                      src={productLine.video_url}
-                      poster={productLine.image_url || '/Rectangle 819 (1).svg'}
-                      autoPlay
-                      loop
-                      muted
-                      playsInline
-                      className="absolute inset-0 w-full h-full object-cover"
-                    />
-                  ) : (
-                    <Image
-                      src={productLine.image_url || '/Rectangle 819 (1).svg'}
-                      alt="Preview"
-                      fill
-                      unoptimized
-                      className="object-cover"
-                    />
-                  )}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-black/20 pointer-events-none" />
+                <div className="relative rounded-2xl overflow-hidden aspect-[16/9] bg-zinc-200 p-5 flex flex-col justify-between border border-zinc-300">
+                  <Image
+                    src={productLine.image_url || '/Rectangle 819 (1).svg'}
+                    alt="Preview"
+                    fill
+                    unoptimized
+                    className="object-cover"
+                  />
                   <div className="relative z-10 w-8 h-8 rounded-full bg-white flex items-center justify-center p-1.5 shadow">
                     <Image
                       src="/laryngoscope 2.svg"

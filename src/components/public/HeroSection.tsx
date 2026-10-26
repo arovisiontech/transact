@@ -1,9 +1,9 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { Play, X } from 'lucide-react'
+import { Play, Pause, Volume2, VolumeX, X } from 'lucide-react'
 import { getStoredHeroSlides } from '@/src/lib/dataStore'
 import { HeroSlideItem } from '@/src/types'
 
@@ -18,6 +18,13 @@ export default function HeroSection({ onOpenSearch, onOpenQuote }: HeroSectionPr
   const [isVideoModalOpen, setIsVideoModalOpen] = useState(false)
   const [activeVideoUrl, setActiveVideoUrl] = useState<string>('')
   const [isPaused, setIsPaused] = useState(false)
+
+  // Autoplay video controls
+  const videoRef = useRef<HTMLVideoElement | null>(null)
+  const [isPlaying, setIsPlaying] = useState(true)
+  const [isMuted, setIsMuted] = useState(true)
+
+  const defaultVideo = '/xC3Hykji4pvl53V3bFrZhUuFXfs (1).mp4'
 
   const loadData = () => {
     const list = getStoredHeroSlides().filter((s) => s.is_active)
@@ -48,15 +55,49 @@ export default function HeroSection({ onOpenSearch, onOpenQuote }: HeroSectionPr
     subtitle:
       'For Over 35+ Years, We Have Been Developing High-Performance Laryngoscopy Solutions Designed To Support ENT Professionals With Precision, Control And Reliability —',
     image: '/image 333.svg',
-    video_url:
-      'https://hhcehcdthzdssbperccd.supabase.co/storage/v1/object/public/hero-slides/hero-videos/1790866403370-web.mp4',
+    video_url: defaultVideo,
     is_active: true,
     sort_order: 1,
   }
 
-  const defaultVideo =
-    'https://hhcehcdthzdssbperccd.supabase.co/storage/v1/object/public/hero-slides/hero-videos/1790866403370-web.mp4'
   const currentVideo = active.video_url || defaultVideo
+
+  // Autoplay execution handling
+  useEffect(() => {
+    if (videoRef.current) {
+      videoRef.current.defaultMuted = true
+      videoRef.current.muted = isMuted
+      const playPromise = videoRef.current.play()
+      if (playPromise !== undefined) {
+        playPromise
+          .then(() => setIsPlaying(true))
+          .catch((err) => {
+            console.log('Video autoplay prevented or awaiting interaction:', err)
+            setIsPlaying(false)
+          })
+      }
+    }
+  }, [isMuted])
+
+  const toggleMute = () => {
+    if (videoRef.current) {
+      const nextMuted = !isMuted
+      videoRef.current.muted = nextMuted
+      setIsMuted(nextMuted)
+    }
+  }
+
+  const togglePlayPause = () => {
+    if (videoRef.current) {
+      if (isPlaying) {
+        videoRef.current.pause()
+        setIsPlaying(false)
+      } else {
+        videoRef.current.play()
+        setIsPlaying(true)
+      }
+    }
+  }
 
   const handleOpenVideo = (url?: string) => {
     setActiveVideoUrl(url || currentVideo)
@@ -69,22 +110,78 @@ export default function HeroSection({ onOpenSearch, onOpenQuote }: HeroSectionPr
         aria-label="Transact Hero Banner"
         onMouseEnter={() => setIsPaused(true)}
         onMouseLeave={() => setIsPaused(false)}
-        className="relative w-full overflow-hidden bg-[#050811] flex items-center justify-center"
-        style={{ minHeight: 'clamp(520px, 75vh, 840px)' }}
+        className="relative w-full overflow-hidden bg-[#050811] flex items-center justify-center min-h-[580px] sm:min-h-[640px] md:min-h-[720px]"
+        style={{ minHeight: 'clamp(560px, 80vh, 900px)' }}
       >
-        {/* ── Background Image with Smooth Transitions ── */}
-        <div className="absolute inset-0 z-0">
-          <Image
-            key={active.id}
-            src={active.image || '/image 333.svg'}
-            alt={active.title || 'Precision For Life'}
-            fill
-            priority
-            unoptimized
-            className="object-cover object-center transition-opacity duration-1000"
-          />
-          {/* Subtle dark gradient overlay to guarantee text legibility */}
-          <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/80 z-10" />
+        {/* ── Background Video Playing Full Hero Section ── */}
+        <div className="absolute inset-0 z-0 overflow-hidden">
+          <video
+            ref={videoRef}
+            autoPlay
+            loop
+            muted={isMuted}
+            playsInline
+            preload="auto"
+            poster={active.image || '/image 333.svg'}
+            className="w-full h-full object-cover object-center scale-[1.01]"
+          >
+            <source src={encodeURI('/xC3Hykji4pvl53V3bFrZhUuFXfs (1).mp4')} type="video/mp4" />
+            <source src="/xC3Hykji4pvl53V3bFrZhUuFXfs (1).mp4" type="video/mp4" />
+            <source src="/hero-video.mp4" type="video/mp4" />
+            Your browser does not support HTML5 video.
+          </video>
+
+          {/* Fallback image if video cannot load */}
+          <noscript>
+            <Image
+              src={active.image || '/image 333.svg'}
+              alt={active.title || 'Precision For Life'}
+              fill
+              priority
+              unoptimized
+              className="object-cover object-center"
+            />
+          </noscript>
+
+          {/* Cinematic dark gradient overlay for text readability & sleek look */}
+          <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/45 to-black/80 pointer-events-none z-10" />
+        </div>
+
+        {/* ── Corner Floating Controls (Sound & Play/Pause) ── */}
+        <div className="absolute bottom-5 right-5 sm:bottom-8 sm:right-8 z-30 flex items-center gap-2">
+          <button
+            type="button"
+            onClick={togglePlayPause}
+            className="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-black/60 hover:bg-[#F6851F] border border-white/20 text-white backdrop-blur-md flex items-center justify-center transition-all duration-200 shadow-xl cursor-pointer"
+            title={isPlaying ? 'Pause Background Video' : 'Play Background Video'}
+            aria-label={isPlaying ? 'Pause Background Video' : 'Play Background Video'}
+          >
+            {isPlaying ? (
+              <Pause className="w-4 h-4 fill-white" />
+            ) : (
+              <Play className="w-4 h-4 fill-white translate-x-0.5" />
+            )}
+          </button>
+
+          <button
+            type="button"
+            onClick={toggleMute}
+            className="px-3.5 h-10 sm:h-11 rounded-full bg-black/60 hover:bg-[#F6851F] border border-white/20 text-white backdrop-blur-md flex items-center gap-2 text-xs font-semibold transition-all duration-200 shadow-xl cursor-pointer"
+            title={isMuted ? 'Unmute Audio' : 'Mute Audio'}
+            aria-label={isMuted ? 'Unmute Audio' : 'Mute Audio'}
+          >
+            {isMuted ? (
+              <>
+                <VolumeX className="w-4 h-4 text-zinc-300" />
+                <span className="hidden sm:inline">Unmute</span>
+              </>
+            ) : (
+              <>
+                <Volume2 className="w-4 h-4 text-emerald-400" />
+                <span className="hidden sm:inline">Mute</span>
+              </>
+            )}
+          </button>
         </div>
 
         {/* ── Center Content Area Matching ss 1 & ss 2 ── */}
@@ -92,10 +189,10 @@ export default function HeroSection({ onOpenSearch, onOpenQuote }: HeroSectionPr
           {/* Play Video Button at top */}
           <button
             type="button"
-            onClick={() => handleOpenVideo(active.video_url)}
-            className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-white/10 hover:bg-[#F6851F]/90 border border-white/30 hover:border-[#F6851F] backdrop-blur-md flex items-center justify-center text-white transition-all duration-300 transform hover:scale-110 shadow-2xl cursor-pointer group mb-6"
-            title="Play Facility & Production Tour"
-            aria-label="Play Facility Tour Video"
+            onClick={() => handleOpenVideo(currentVideo)}
+            className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-white/15 hover:bg-[#F6851F] border border-white/30 hover:border-[#F6851F] backdrop-blur-md flex items-center justify-center text-white transition-all duration-300 transform hover:scale-110 shadow-2xl cursor-pointer group mb-6"
+            title="Watch Full Video Tour"
+            aria-label="Watch Full Video Tour"
           >
             <Play className="w-6 h-6 sm:w-7 sm:h-7 fill-white translate-x-0.5 group-hover:scale-105 transition-transform" />
           </button>
