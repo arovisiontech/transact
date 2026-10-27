@@ -185,25 +185,14 @@ export default function HeroSection({ onOpenSearch, onOpenQuote }: HeroSectionPr
         </div>
 
         {/* ── Center Content Area Matching ss 1 & ss 2 ── */}
-        <div className="relative z-20 max-w-4xl mx-auto px-4 sm:px-6 py-20 text-center flex flex-col items-center justify-center">
-          {/* Play Video Button at top */}
-          <button
-            type="button"
-            onClick={() => handleOpenVideo(currentVideo)}
-            className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-white/15 hover:bg-[#F6851F] border border-white/30 hover:border-[#F6851F] backdrop-blur-md flex items-center justify-center text-white transition-all duration-300 transform hover:scale-110 shadow-2xl cursor-pointer group mb-6"
-            title="Watch Full Video Tour"
-            aria-label="Watch Full Video Tour"
-          >
-            <Play className="w-6 h-6 sm:w-7 sm:h-7 fill-white translate-x-0.5 group-hover:scale-105 transition-transform" />
-          </button>
-
-          {/* Heading */}
-          <h1 className="text-3xl sm:text-5xl md:text-6xl font-black text-white tracking-tight leading-tight drop-shadow-md">
+        <div className="relative z-20 max-w-3xl mx-auto px-4 sm:px-6 py-16 text-center flex flex-col items-center justify-center">
+          {/* Heading - Refined, compact size that doesn't overpower the background video */}
+          <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-[34px] font-extrabold text-white tracking-tight leading-snug drop-shadow-md max-w-2xl">
             {active.title || 'Precision For Life'}
           </h1>
 
           {/* Subheading */}
-          <p className="mt-4 mb-8 text-xs sm:text-sm md:text-base text-zinc-300 font-normal max-w-2xl leading-relaxed drop-shadow-sm">
+          <p className="mt-2.5 mb-6 text-xs sm:text-[13px] md:text-sm text-zinc-300 font-normal max-w-lg leading-relaxed drop-shadow-sm">
             {active.subtitle ||
               'For Over 35+ Years, We Have Been Developing High-Performance Laryngoscopy Solutions Designed To Support ENT Professionals With Precision, Control And Reliability —'}
           </p>

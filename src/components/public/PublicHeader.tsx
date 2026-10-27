@@ -29,6 +29,7 @@ export default function PublicHeader({ onOpenSearch, onOpenQuote }: PublicHeader
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null)
   const [quoteCount, setQuoteCount] = useState(0)
+  const [isOverProductLine, setIsOverProductLine] = useState(false)
 
   useEffect(() => {
     const updateQuote = () => {
@@ -39,6 +40,25 @@ export default function PublicHeader({ onOpenSearch, onOpenQuote }: PublicHeader
 
     window.addEventListener('transact_data_updated', updateQuote)
     return () => window.removeEventListener('transact_data_updated', updateQuote)
+  }, [])
+
+  // Detect when navbar is scrolling over "Our Complete Product Line" section (ss 3)
+  useEffect(() => {
+    const checkScroll = () => {
+      const el = document.getElementById('product-line-section')
+      if (!el) {
+        setIsOverProductLine(false)
+        return
+      }
+      const rect = el.getBoundingClientRect()
+      // Navbar height is 72px
+      const isOver = rect.top <= 72 && rect.bottom >= 72
+      setIsOverProductLine(isOver)
+    }
+
+    window.addEventListener('scroll', checkScroll, { passive: true })
+    checkScroll()
+    return () => window.removeEventListener('scroll', checkScroll)
   }, [])
 
   // Links exactly matching SS 2:
@@ -79,13 +99,23 @@ export default function PublicHeader({ onOpenSearch, onOpenQuote }: PublicHeader
   return (
     <header
       className="sticky top-0 z-50 w-full transition-all duration-300"
-      style={{
-        backgroundColor: 'rgba(8, 16, 34, 0.90)', // 10% transparent (90% opacity)
-        backdropFilter: 'blur(12px)',
-        WebkitBackdropFilter: 'blur(12px)',
-        boxShadow: '0 4px 24px 0 rgba(0, 0, 0, 0.35)',
-        borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
-      }}
+      style={
+        isOverProductLine
+          ? {
+              backgroundColor: 'rgba(255, 255, 255, 0.85)',
+              backdropFilter: 'blur(16px)',
+              WebkitBackdropFilter: 'blur(16px)',
+              boxShadow: '0 4px 20px 0 rgba(0, 0, 0, 0.05)',
+              borderBottom: '1px solid rgba(8, 16, 34, 0.08)',
+            }
+          : {
+              backgroundColor: 'rgba(8, 16, 34, 0.90)', // 10% transparent (90% opacity)
+              backdropFilter: 'blur(12px)',
+              WebkitBackdropFilter: 'blur(12px)',
+              boxShadow: '0 4px 24px 0 rgba(0, 0, 0, 0.35)',
+              borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+            }
+      }
     >
       {/* ── Main Nav Container ── */}
       <div className="max-w-[1600px] 3xl:max-w-[1800px] mx-auto px-4 sm:px-8 lg:px-12 flex items-center justify-between h-[72px]">
@@ -98,7 +128,12 @@ export default function PublicHeader({ onOpenSearch, onOpenQuote }: PublicHeader
             height={46}
             unoptimized
             priority
-            className="object-contain"
+            className="object-contain transition-all duration-300"
+            style={{
+              filter: isOverProductLine
+                ? 'brightness(0) saturate(100%) invert(8%) sepia(20%) saturate(2500%) hue-rotate(185deg)'
+                : 'none',
+            }}
           />
         </Link>
 
@@ -120,14 +155,18 @@ export default function PublicHeader({ onOpenSearch, onOpenQuote }: PublicHeader
                   <Link
                     href={link.href}
                     className={`flex items-center gap-1.5 px-3.5 py-2 text-[15px] font-semibold transition-colors rounded-lg ${
-                      isActive ? 'text-[#F6851F]' : 'text-white hover:text-[#F6851F]'
+                      isActive
+                        ? 'text-[#F6851F]'
+                        : isOverProductLine
+                        ? 'text-[#081022] hover:text-[#F6851F]'
+                        : 'text-white hover:text-[#F6851F]'
                     }`}
                   >
                     <span>{link.name}</span>
                     <ChevronDown
-                      className={`w-3.5 h-3.5 text-[#F6851F] transition-transform duration-200 ${
-                        isOpen ? 'rotate-180' : ''
-                      }`}
+                      className={`w-3.5 h-3.5 transition-transform duration-200 ${
+                        isOverProductLine ? 'text-[#081022]' : 'text-[#F6851F]'
+                      } ${isOpen ? 'rotate-180' : ''}`}
                     />
                   </Link>
 
@@ -155,7 +194,11 @@ export default function PublicHeader({ onOpenSearch, onOpenQuote }: PublicHeader
                 key={link.name}
                 href={link.href}
                 className={`px-3.5 py-2 text-[15px] font-semibold transition-colors rounded-lg ${
-                  isActive ? 'text-[#F6851F]' : 'text-white hover:text-[#F6851F]'
+                  isActive
+                    ? 'text-[#F6851F]'
+                    : isOverProductLine
+                    ? 'text-[#081022] hover:text-[#F6851F]'
+                    : 'text-white hover:text-[#F6851F]'
                 }`}
               >
                 {link.name}
@@ -171,6 +214,9 @@ export default function PublicHeader({ onOpenSearch, onOpenQuote }: PublicHeader
             onClick={onOpenSearch}
             aria-label="Search instruments"
             className="relative p-1 hover:opacity-85 transition transform hover:scale-105"
+            style={{
+              filter: isOverProductLine ? 'brightness(0)' : 'none',
+            }}
           >
             <Image
               src="/search-icon 1.svg"
@@ -187,6 +233,9 @@ export default function PublicHeader({ onOpenSearch, onOpenQuote }: PublicHeader
             onClick={onOpenQuote}
             aria-label="View quotation cart"
             className="relative p-1 hover:opacity-85 transition transform hover:scale-105"
+            style={{
+              filter: isOverProductLine ? 'brightness(0)' : 'none',
+            }}
           >
             <Image
               src="/basket-icon 1.svg"
@@ -216,7 +265,11 @@ export default function PublicHeader({ onOpenSearch, onOpenQuote }: PublicHeader
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             aria-label="Toggle navigation"
-            className="lg:hidden p-2 rounded-xl bg-white/5 text-white hover:bg-white/10 transition"
+            className={`lg:hidden p-2 rounded-xl transition ${
+              isOverProductLine
+                ? 'bg-black/5 text-[#081022] hover:bg-black/10'
+                : 'bg-white/5 text-white hover:bg-white/10'
+            }`}
           >
             {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
