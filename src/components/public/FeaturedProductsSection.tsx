@@ -122,7 +122,8 @@ export default function FeaturedProductsSection({ onOpenQuote }: FeaturedProduct
             return (
               <div
                 key={prod.id}
-                className="group relative flex flex-col bg-white rounded-2xl overflow-hidden border border-zinc-200/80 shadow-sm transact-card"
+                className="group relative flex flex-col bg-white rounded-none rounded-bl-[10px] overflow-hidden border border-zinc-200/80 shadow-sm transact-card"
+                style={{ borderRadius: '0px 0px 0px 10px' }}
               >
                 {/* Image Container */}
                 <div className="relative aspect-square bg-[#FAFAFC] overflow-hidden p-6 flex items-center justify-center">

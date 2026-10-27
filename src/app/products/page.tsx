@@ -489,12 +489,14 @@ export default function ProductsPage() {
                   {filteredProducts.map((prod) => (
                     <div
                       key={prod.id}
-                      className="group flex flex-col bg-white rounded-2xl transition hover:shadow-lg duration-300"
+                      className="group flex flex-col bg-white rounded-none rounded-bl-[10px] transition hover:shadow-lg duration-300"
+                      style={{ borderRadius: '0px 0px 0px 10px' }}
                     >
                       {/* Product Card Image Container (Cool gray background #EEF2F6 matching design) */}
                       <Link
                         href={`/products/${prod.slug}`}
-                        className="relative w-full aspect-[4/3] bg-[#EEF2F6] rounded-2xl overflow-hidden flex items-center justify-center p-6 border border-slate-200/60 cursor-pointer"
+                        className="relative w-full aspect-[4/3] bg-[#EEF2F6] rounded-none rounded-bl-[10px] overflow-hidden flex items-center justify-center p-6 border border-slate-200/60 cursor-pointer"
+                        style={{ borderRadius: '0px 0px 0px 10px' }}
                       >
                         <Image
                           src={prod.featured_image || '/images/products/integrated-macintosh-fiber-optic-blade.png'}
@@ -503,21 +505,6 @@ export default function ProductsPage() {
                           unoptimized
                           className="object-contain p-4 group-hover:scale-105 transition-transform duration-300"
                         />
-
-                        {/* Hover Quick RFQ Button */}
-                        <div className="absolute inset-0 bg-slate-900/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                          <button
-                            onClick={(e) => {
-                              e.preventDefault()
-                              e.stopPropagation()
-                              setInquiryProduct(prod)
-                              setIsInquiryOpen(true)
-                            }}
-                            className="px-4 py-2 bg-[#F36C21] hover:bg-[#E05B13] text-white text-xs font-bold rounded-xl shadow-lg transform translate-y-2 group-hover:translate-y-0 transition-transform duration-200"
-                          >
-                            Quick RFQ
-                          </button>
-                        </div>
                       </Link>
 
                       {/* Product Meta */}
@@ -541,11 +528,13 @@ export default function ProductsPage() {
                   {filteredProducts.map((prod) => (
                     <div
                       key={prod.id}
-                      className="flex flex-col sm:flex-row items-center gap-6 p-4 sm:p-5 bg-white border border-slate-200 rounded-2xl hover:shadow-md transition"
+                      className="flex flex-col sm:flex-row items-center gap-6 p-4 sm:p-5 bg-white border border-slate-200 rounded-none rounded-bl-[10px] hover:shadow-md transition"
+                      style={{ borderRadius: '0px 0px 0px 10px' }}
                     >
                       <Link
                         href={`/products/${prod.slug}`}
-                        className="relative w-full sm:w-48 aspect-[4/3] bg-[#EEF2F6] rounded-xl overflow-hidden shrink-0 flex items-center justify-center p-3 cursor-pointer"
+                        className="relative w-full sm:w-48 aspect-[4/3] bg-[#EEF2F6] rounded-none rounded-bl-[10px] overflow-hidden shrink-0 flex items-center justify-center p-3 cursor-pointer"
+                        style={{ borderRadius: '0px 0px 0px 10px' }}
                       >
                         <Image
                           src={prod.featured_image || '/images/products/integrated-macintosh-fiber-optic-blade.png'}

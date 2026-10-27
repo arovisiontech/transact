@@ -328,7 +328,10 @@ function ProductDetailContent() {
 
             {/* Right Column: Large Product Image in Cool Gray Container */}
             <div className="lg:col-span-6 flex flex-col items-center">
-              <div className="relative w-full aspect-[4/3] bg-[#EEF2F6] rounded-3xl overflow-hidden flex items-center justify-center p-8 border border-slate-200 shadow-sm">
+              <div 
+                className="relative w-full aspect-[4/3] bg-[#EEF2F6] rounded-none rounded-bl-[10px] overflow-hidden flex items-center justify-center p-8 border border-slate-200 shadow-sm"
+                style={{ borderRadius: '0px 0px 0px 10px' }}
+              >
                 <Image
                   src={selectedImage}
                   alt={product.title}
@@ -420,9 +423,10 @@ function ProductDetailContent() {
             <div className="lg:col-span-4 grid grid-cols-2 gap-4">
               <button
                 onClick={() => setSelectedImage(galleryList[0])}
-                className={`relative aspect-[4/3] rounded-2xl overflow-hidden bg-[#EEF2F6] border-2 transition p-4 flex items-center justify-center ${
+                className={`relative aspect-[4/3] rounded-none rounded-bl-[10px] overflow-hidden bg-[#EEF2F6] border-2 transition p-4 flex items-center justify-center ${
                   selectedImage === galleryList[0] ? 'border-[#F36C21] shadow-md' : 'border-slate-200 hover:border-slate-300'
                 }`}
+                style={{ borderRadius: '0px 0px 0px 10px' }}
               >
                 <Image
                   src={galleryList[0]}
@@ -435,9 +439,10 @@ function ProductDetailContent() {
 
               <button
                 onClick={() => setSelectedImage(galleryList[1])}
-                className={`relative aspect-[4/3] rounded-2xl overflow-hidden bg-[#EEF2F6] border-2 transition p-4 flex items-center justify-center ${
+                className={`relative aspect-[4/3] rounded-none rounded-bl-[10px] overflow-hidden bg-[#EEF2F6] border-2 transition p-4 flex items-center justify-center ${
                   selectedImage === galleryList[1] ? 'border-[#F36C21] shadow-md' : 'border-slate-200 hover:border-slate-300'
                 }`}
+                style={{ borderRadius: '0px 0px 0px 10px' }}
               >
                 <Image
                   src={galleryList[1]}
@@ -450,9 +455,10 @@ function ProductDetailContent() {
 
               <button
                 onClick={() => setSelectedImage(galleryList[2])}
-                className={`relative col-span-2 aspect-[16/9] rounded-2xl overflow-hidden bg-[#EEF2F6] border-2 transition p-4 flex items-center justify-center ${
+                className={`relative col-span-2 aspect-[16/9] rounded-none rounded-bl-[10px] overflow-hidden bg-[#EEF2F6] border-2 transition p-4 flex items-center justify-center ${
                   selectedImage === galleryList[2] ? 'border-[#F36C21] shadow-md' : 'border-slate-200 hover:border-slate-300'
                 }`}
+                style={{ borderRadius: '0px 0px 0px 10px' }}
               >
                 <Image
                   src={galleryList[2]}
@@ -580,10 +586,15 @@ function ProductDetailContent() {
                     '/images/products/integrated-macintosh-fiber-optic-blade.png'
 
                   return (
-                    <div key={idx} className="group flex flex-col bg-white rounded-2xl transition hover:shadow-lg">
+                    <div 
+                      key={idx} 
+                      className="group flex flex-col bg-white rounded-none rounded-bl-[10px] transition hover:shadow-lg"
+                      style={{ borderRadius: '0px 0px 0px 10px' }}
+                    >
                       <Link
                         href={href}
-                        className="relative w-full aspect-[4/3] bg-[#EEF2F6] rounded-2xl overflow-hidden flex items-center justify-center p-6 border border-slate-200/60"
+                        className="relative w-full aspect-[4/3] bg-[#EEF2F6] rounded-none rounded-bl-[10px] overflow-hidden flex items-center justify-center p-6 border border-slate-200/60"
+                        style={{ borderRadius: '0px 0px 0px 10px' }}
                       >
                         <Image
                           src={imageSrc}
