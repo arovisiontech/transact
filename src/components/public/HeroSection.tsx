@@ -110,7 +110,7 @@ export default function HeroSection({ onOpenSearch, onOpenQuote }: HeroSectionPr
         aria-label="Transact Hero Banner"
         onMouseEnter={() => setIsPaused(true)}
         onMouseLeave={() => setIsPaused(false)}
-        className="relative w-full overflow-hidden bg-[#050811] flex items-center justify-center min-h-[580px] sm:min-h-[640px] md:min-h-[720px]"
+        className="relative w-full overflow-hidden bg-[#050811] flex flex-col justify-end items-center min-h-[580px] sm:min-h-[640px] md:min-h-[720px] pb-10 sm:pb-14 pt-28"
         style={{ minHeight: 'clamp(560px, 80vh, 900px)' }}
       >
         {/* ── Background Video Playing Full Hero Section ── */}
@@ -143,12 +143,12 @@ export default function HeroSection({ onOpenSearch, onOpenQuote }: HeroSectionPr
             />
           </noscript>
 
-          {/* Cinematic dark gradient overlay for text readability & sleek look */}
-          <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/45 to-black/80 pointer-events-none z-10" />
+          {/* Cinematic gradient: clear in the middle, dark at bottom for text legibility */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-black/30 pointer-events-none z-10" />
         </div>
 
-        {/* ── Corner Floating Controls (Sound & Play/Pause) ── */}
-        <div className="absolute bottom-5 right-5 sm:bottom-8 sm:right-8 z-30 flex items-center gap-2">
+        {/* ── Top-Right Floating Controls (Sound & Play/Pause) ── */}
+        <div className="absolute top-5 right-5 sm:top-8 sm:right-8 z-30 flex items-center gap-2">
           <button
             type="button"
             onClick={togglePlayPause}
@@ -184,15 +184,15 @@ export default function HeroSection({ onOpenSearch, onOpenQuote }: HeroSectionPr
           </button>
         </div>
 
-        {/* ── Center Content Area Matching ss 1 & ss 2 ── */}
-        <div className="relative z-20 max-w-3xl mx-auto px-4 sm:px-6 py-16 text-center flex flex-col items-center justify-center">
-          {/* Heading - Refined, compact size that doesn't overpower the background video */}
-          <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-[34px] font-extrabold text-white tracking-tight leading-snug drop-shadow-md max-w-2xl">
+        {/* ── Bottom Content Area: moved from center to bottom so video is completely unobstructed ── */}
+        <div className="relative z-20 max-w-3xl mx-auto px-4 sm:px-6 text-center flex flex-col items-center justify-end w-full">
+          {/* Heading - Refined, compact size aligned at bottom */}
+          <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-[34px] font-extrabold text-white tracking-tight leading-snug drop-shadow-lg max-w-2xl">
             {active.title || 'Precision For Life'}
           </h1>
 
           {/* Subheading */}
-          <p className="mt-2.5 mb-6 text-xs sm:text-[13px] md:text-sm text-zinc-300 font-normal max-w-lg leading-relaxed drop-shadow-sm">
+          <p className="mt-2 mb-5 text-xs sm:text-[13px] md:text-sm text-zinc-300 font-normal max-w-lg leading-relaxed drop-shadow-md">
             {active.subtitle ||
               'For Over 35+ Years, We Have Been Developing High-Performance Laryngoscopy Solutions Designed To Support ENT Professionals With Precision, Control And Reliability —'}
           </p>

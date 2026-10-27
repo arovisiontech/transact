@@ -42,18 +42,19 @@ export default function PublicHeader({ onOpenSearch, onOpenQuote }: PublicHeader
     return () => window.removeEventListener('transact_data_updated', updateQuote)
   }, [])
 
-  // Detect when navbar is scrolling over "Our Complete Product Line" section (ss 3)
+  // Detect when navbar is scrolling over "Our Complete Product Line" section (ss 1, 2, 3)
   useEffect(() => {
     const checkScroll = () => {
-      const el = document.getElementById('product-line-section')
-      if (!el) {
-        setIsOverProductLine(false)
-        return
+      const el1 = document.getElementById('complete-product-line-showcase')
+      const el2 = document.getElementById('product-line-section')
+
+      const isOver = (el: HTMLElement | null) => {
+        if (!el) return false
+        const rect = el.getBoundingClientRect()
+        return rect.top <= 72 && rect.bottom >= 72
       }
-      const rect = el.getBoundingClientRect()
-      // Navbar height is 72px
-      const isOver = rect.top <= 72 && rect.bottom >= 72
-      setIsOverProductLine(isOver)
+
+      setIsOverProductLine(isOver(el1) || isOver(el2))
     }
 
     window.addEventListener('scroll', checkScroll, { passive: true })
