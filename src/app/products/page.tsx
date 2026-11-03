@@ -98,7 +98,7 @@ function ProductsCatalogContent() {
           setProducts(liveProds)
           if (typeof window !== 'undefined') {
             try {
-              localStorage.setItem('transact_products_v3', JSON.stringify(liveProds))
+              localStorage.setItem('transact_products_v4', JSON.stringify(liveProds))
             } catch (e) {}
           }
           setLoading(false)

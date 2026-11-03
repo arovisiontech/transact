@@ -24,7 +24,7 @@ import initialSubcategories from '@/src/data/subcategories.json'
 import { createClient } from './supabase/client'
 
 const STORAGE_KEYS = {
-  PRODUCTS: 'transact_products_v3',
+  PRODUCTS: 'transact_products_v4',
   CATEGORIES: 'transact_categories_v3',
   SUBCATEGORIES: 'transact_subcategories_v3',
   CATALOGUES: 'transact_catalogues_v3',
