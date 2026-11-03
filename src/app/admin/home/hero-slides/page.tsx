@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import Image from 'next/image'
 import {
   Sliders,
@@ -13,6 +13,12 @@ import {
   XCircle,
   ExternalLink,
   Sparkles,
+  UploadCloud,
+  Image as ImageIcon,
+  Video,
+  Loader2,
+  Link2,
+  X,
 } from 'lucide-react'
 import { toast } from 'sonner'
 import { HeroSlideItem } from '@/src/types'
@@ -27,6 +33,16 @@ export default function AdminHeroSlidesPage() {
   const [slides, setSlides] = useState<HeroSlideItem[]>([])
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [editingSlide, setEditingSlide] = useState<HeroSlideItem | null>(null)
+
+  // Upload & Placeholder states
+  const imageInputRef = useRef<HTMLInputElement>(null)
+  const videoInputRef = useRef<HTMLInputElement>(null)
+  const [isImageUploading, setIsImageUploading] = useState(false)
+  const [isVideoUploading, setIsVideoUploading] = useState(false)
+  const [isImageDragOver, setIsImageDragOver] = useState(false)
+  const [isVideoDragOver, setIsVideoDragOver] = useState(false)
+  const [showImageManualUrl, setShowImageManualUrl] = useState(false)
+  const [showVideoManualUrl, setShowVideoManualUrl] = useState(false)
 
   // Form state
   const [formData, setFormData] = useState<HeroSlideItem>({
@@ -57,6 +73,8 @@ export default function AdminHeroSlidesPage() {
 
   const handleOpenAdd = () => {
     setEditingSlide(null)
+    setShowImageManualUrl(false)
+    setShowVideoManualUrl(false)
     setFormData({
       id: `slide-${Date.now()}`,
       title: '',
@@ -75,8 +93,72 @@ export default function AdminHeroSlidesPage() {
 
   const handleOpenEdit = (slide: HeroSlideItem) => {
     setEditingSlide(slide)
+    setShowImageManualUrl(false)
+    setShowVideoManualUrl(false)
     setFormData({ ...slide })
     setIsModalOpen(true)
+  }
+
+  const handleImageFile = async (file: File) => {
+    if (!file) return
+    setIsImageUploading(true)
+    try {
+      const fd = new FormData()
+      fd.append('file', file)
+      fd.append('folder', 'images/uploads')
+      const res = await fetch('/api/upload', {
+        method: 'POST',
+        body: fd,
+      })
+      if (res.ok) {
+        const data = await res.json()
+        if (data.url) {
+          setFormData((prev) => ({ ...prev, image: data.url }))
+          toast.success('Slide image uploaded successfully!')
+          setIsImageUploading(false)
+          return
+        }
+      }
+      // fallback base64
+      const reader = new FileReader()
+      reader.onload = (e) => {
+        const b64 = e.target?.result as string
+        setFormData((prev) => ({ ...prev, image: b64 }))
+        setIsImageUploading(false)
+      }
+      reader.readAsDataURL(file)
+    } catch {
+      toast.error('Image upload failed')
+      setIsImageUploading(false)
+    }
+  }
+
+  const handleVideoFile = async (file: File) => {
+    if (!file) return
+    setIsVideoUploading(true)
+    try {
+      const fd = new FormData()
+      fd.append('file', file)
+      fd.append('folder', 'videos')
+      const res = await fetch('/api/upload', {
+        method: 'POST',
+        body: fd,
+      })
+      if (res.ok) {
+        const data = await res.json()
+        if (data.url) {
+          setFormData((prev) => ({ ...prev, video_url: data.url }))
+          toast.success('Slide video uploaded successfully!')
+          setIsVideoUploading(false)
+          return
+        }
+      }
+      toast.error('Video upload failed')
+      setIsVideoUploading(false)
+    } catch {
+      toast.error('Video upload failed')
+      setIsVideoUploading(false)
+    }
   }
 
   const handleSave = async (e: React.FormEvent) => {
@@ -290,28 +372,207 @@ export default function AdminHeroSlidesPage() {
                 />
               </div>
 
-              <div>
-                <label className="block text-xs font-bold text-zinc-700 mb-1">Slide Image Path or URL</label>
-                <input
-                  type="text"
-                  value={formData.image}
-                  onChange={(e) => setFormData({ ...formData, image: e.target.value })}
-                  placeholder="/images/transact/image0_3812_2.png or SVG"
-                  className="w-full px-4 py-2.5 rounded-xl border border-zinc-200 text-xs focus:ring-2 focus:ring-[#F6851F] focus:outline-none font-mono"
-                />
+              {/* ── 1. Slide Image Placeholder & Upload ── */}
+              <div className="space-y-2 p-4 rounded-2xl bg-slate-50 border border-slate-200">
+                <div className="flex items-center justify-between">
+                  <label className="block text-xs font-bold text-[#081022] uppercase tracking-wide">
+                    Slide Image Placeholder &amp; Gallery Upload *
+                  </label>
+                  <button
+                    type="button"
+                    onClick={() => setShowImageManualUrl(!showImageManualUrl)}
+                    className="text-[11px] text-[#F6851F] font-bold hover:underline inline-flex items-center gap-1 cursor-pointer"
+                  >
+                    <Link2 className="w-3 h-3" />
+                    {showImageManualUrl ? 'Hide URL Input' : 'Or Enter URL'}
+                  </button>
+                </div>
+
+                {showImageManualUrl && (
+                  <input
+                    type="text"
+                    value={formData.image}
+                    onChange={(e) => setFormData({ ...formData, image: e.target.value })}
+                    placeholder="/images/transact/image0_3812_2.png or SVG or HTTPS URL"
+                    className="w-full px-3.5 py-2 rounded-xl border border-zinc-200 text-xs focus:ring-2 focus:ring-[#F6851F] focus:outline-none font-mono bg-white"
+                  />
+                )}
+
+                <div className="grid grid-cols-1 sm:grid-cols-12 gap-3 items-center">
+                  {/* Live Preview Box */}
+                  <div className="sm:col-span-4 relative aspect-[4/3] rounded-xl bg-white border-2 border-dashed border-zinc-300 overflow-hidden flex items-center justify-center p-2 shadow-inner">
+                    {formData.image ? (
+                      <div className="relative w-full h-full">
+                        <Image
+                          src={formData.image}
+                          alt="Slide preview"
+                          fill
+                          unoptimized
+                          className="object-cover rounded-lg"
+                        />
+                      </div>
+                    ) : (
+                      <div className="text-center p-3 text-zinc-400">
+                        <ImageIcon className="w-7 h-7 mx-auto mb-1 opacity-50" />
+                        <span className="text-[10px] font-medium">No Image Selected</span>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Upload Placeholder / Dropzone */}
+                  <div
+                    onDragOver={(e) => {
+                      e.preventDefault()
+                      setIsImageDragOver(true)
+                    }}
+                    onDragLeave={() => setIsImageDragOver(false)}
+                    onDrop={(e) => {
+                      e.preventDefault()
+                      setIsImageDragOver(false)
+                      if (e.dataTransfer.files?.[0]) handleImageFile(e.dataTransfer.files[0])
+                    }}
+                    onClick={() => imageInputRef.current?.click()}
+                    className={`sm:col-span-8 border-2 border-dashed rounded-xl p-4 text-center cursor-pointer transition flex flex-col items-center justify-center min-h-[110px] ${
+                      isImageDragOver
+                        ? 'border-[#F6851F] bg-orange-50/70'
+                        : 'border-zinc-300 hover:border-[#F6851F] bg-white'
+                    }`}
+                  >
+                    <input
+                      ref={imageInputRef}
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => {
+                        if (e.target.files?.[0]) handleImageFile(e.target.files[0])
+                      }}
+                      className="hidden"
+                    />
+
+                    <div className="w-9 h-9 rounded-full bg-[#F6851F]/10 flex items-center justify-center text-[#F6851F] mb-1.5">
+                      {isImageUploading ? (
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                      ) : (
+                        <UploadCloud className="w-4 h-4" />
+                      )}
+                    </div>
+                    <p className="text-xs font-bold text-zinc-800">
+                      {isImageUploading ? 'Uploading Image...' : 'Click or Drag & Drop to Upload Image'}
+                    </p>
+                    <p className="text-[10px] text-zinc-500 mt-0.5">Upload direct from device gallery (PNG, JPG, SVG, WebP)</p>
+                  </div>
+                </div>
               </div>
 
-              <div>
-                <label className="block text-xs font-bold text-zinc-700 mb-1">
-                  Video Stream / MP4 URL (Optional)
-                </label>
-                <input
-                  type="text"
-                  value={formData.video_url || ''}
-                  onChange={(e) => setFormData({ ...formData, video_url: e.target.value })}
-                  placeholder="https://.../video.mp4 (e.g. Supabase storage video)"
-                  className="w-full px-4 py-2.5 rounded-xl border border-zinc-200 text-xs focus:ring-2 focus:ring-[#F6851F] focus:outline-none font-mono"
-                />
+              {/* ── 2. Slide Video Placeholder & Upload ── */}
+              <div className="space-y-2 p-4 rounded-2xl bg-slate-50 border border-slate-200">
+                <div className="flex items-center justify-between">
+                  <label className="block text-xs font-bold text-[#081022] uppercase tracking-wide">
+                    Video Stream / MP4 Video Placeholder (Optional)
+                  </label>
+                  <button
+                    type="button"
+                    onClick={() => setShowVideoManualUrl(!showVideoManualUrl)}
+                    className="text-[11px] text-[#F6851F] font-bold hover:underline inline-flex items-center gap-1 cursor-pointer"
+                  >
+                    <Link2 className="w-3 h-3" />
+                    {showVideoManualUrl ? 'Hide URL Input' : 'Or Enter Video URL'}
+                  </button>
+                </div>
+
+                {showVideoManualUrl && (
+                  <input
+                    type="text"
+                    value={formData.video_url || ''}
+                    onChange={(e) => setFormData({ ...formData, video_url: e.target.value })}
+                    placeholder="https://.../video.mp4"
+                    className="w-full px-3.5 py-2 rounded-xl border border-zinc-200 text-xs focus:ring-2 focus:ring-[#F6851F] focus:outline-none font-mono bg-white"
+                  />
+                )}
+
+                {formData.video_url ? (
+                  <div className="space-y-2">
+                    <div className="relative rounded-xl overflow-hidden bg-black aspect-video max-h-44 border border-zinc-300 flex items-center justify-center">
+                      <video
+                        src={formData.video_url}
+                        controls
+                        playsInline
+                        muted
+                        className="w-full h-full object-contain"
+                      />
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-[11px] text-zinc-500 truncate max-w-[280px]">
+                        {formData.video_url}
+                      </span>
+                      <div className="flex items-center gap-2">
+                        <button
+                          type="button"
+                          onClick={() => videoInputRef.current?.click()}
+                          className="text-xs text-[#F6851F] font-bold hover:underline cursor-pointer"
+                        >
+                          Replace Video
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setFormData({ ...formData, video_url: '' })}
+                          className="text-xs text-red-600 font-bold hover:underline cursor-pointer"
+                        >
+                          Remove
+                        </button>
+                      </div>
+                    </div>
+                    <input
+                      ref={videoInputRef}
+                      type="file"
+                      accept="video/mp4,video/webm,video/ogg,video/quicktime"
+                      onChange={(e) => {
+                        if (e.target.files?.[0]) handleVideoFile(e.target.files[0])
+                      }}
+                      className="hidden"
+                    />
+                  </div>
+                ) : (
+                  <div
+                    onDragOver={(e) => {
+                      e.preventDefault()
+                      setIsVideoDragOver(true)
+                    }}
+                    onDragLeave={() => setIsVideoDragOver(false)}
+                    onDrop={(e) => {
+                      e.preventDefault()
+                      setIsVideoDragOver(false)
+                      if (e.dataTransfer.files?.[0]) handleVideoFile(e.dataTransfer.files[0])
+                    }}
+                    onClick={() => videoInputRef.current?.click()}
+                    className={`border-2 border-dashed rounded-xl p-4 text-center cursor-pointer transition flex flex-col items-center justify-center min-h-[100px] ${
+                      isVideoDragOver
+                        ? 'border-[#F6851F] bg-orange-50/70'
+                        : 'border-zinc-300 hover:border-[#F6851F] bg-white'
+                    }`}
+                  >
+                    <input
+                      ref={videoInputRef}
+                      type="file"
+                      accept="video/mp4,video/webm,video/ogg,video/quicktime"
+                      onChange={(e) => {
+                        if (e.target.files?.[0]) handleVideoFile(e.target.files[0])
+                      }}
+                      className="hidden"
+                    />
+
+                    <div className="w-9 h-9 rounded-full bg-blue-50 flex items-center justify-center text-blue-600 mb-1.5">
+                      {isVideoUploading ? (
+                        <Loader2 className="w-4 h-4 animate-spin text-[#F6851F]" />
+                      ) : (
+                        <Video className="w-4 h-4" />
+                      )}
+                    </div>
+                    <p className="text-xs font-bold text-zinc-800">
+                      {isVideoUploading ? 'Uploading Video...' : 'Click or Drag & Drop Video (MP4, WebM)'}
+                    </p>
+                    <p className="text-[10px] text-zinc-500 mt-0.5">Upload hero background video directly from your device</p>
+                  </div>
+                )}
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

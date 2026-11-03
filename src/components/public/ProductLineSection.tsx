@@ -4,27 +4,16 @@ import React, { useState, useEffect } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { ArrowRight } from 'lucide-react'
-import { getStoredProductLine } from '@/src/lib/dataStore'
-import { ProductLineShowcase } from '@/src/types'
-
-interface ProductCardItem {
-  id: string
-  tag: string
-  title: string
-  subtitle: string
-  image: string
-  badgeIcon: string
-  badgeBg: string
-  buttonText: string
-  buttonLink: string
-  indexLabel: string
-}
+import { getStoredProductLine, getStoredProductLineCards } from '@/src/lib/dataStore'
+import { ProductLineShowcase, PortfolioShowcaseCard } from '@/src/types'
 
 export default function ProductLineSection() {
   const [data, setData] = useState<ProductLineShowcase>(getStoredProductLine())
+  const [cards, setCards] = useState<PortfolioShowcaseCard[]>(getStoredProductLineCards())
 
   const reloadData = () => {
     setData(getStoredProductLine())
+    setCards(getStoredProductLineCards().filter((c) => c.is_active !== false))
   }
 
   useEffect(() => {
@@ -32,63 +21,6 @@ export default function ProductLineSection() {
     window.addEventListener('transact_data_updated', reloadData)
     return () => window.removeEventListener('transact_data_updated', reloadData)
   }, [])
-
-  // 4 Smooth Stacking Cards matching Micromar reference & user screenshots
-  const cards: ProductCardItem[] = [
-    {
-      id: 'laryngoscopes-main',
-      tag: data.tag || 'Reusable & Disposable Airway Management',
-      title: data.item_title || 'Laryngoscopes',
-      subtitle:
-        data.item_subtitle ||
-        'Prioritising Ergonomic Design Enhancing Lives. German stainless steel blades and handles engineered for safe, controlled intubation.',
-      image: data.image_url || '/Rectangle 819 (1).svg',
-      badgeIcon: '/laryngoscope 2.svg',
-      badgeBg: 'bg-white/95',
-      buttonText: data.button_text || 'Meet The Laryngoscopes Line',
-      buttonLink: data.button_link || '/products?category=laryngoscopes',
-      indexLabel: '01 / 04',
-    },
-    {
-      id: 'diagnostic-sets',
-      tag: 'Fiber-Optic & High-Resolution Optics',
-      title: 'Diagnostic & Otoscopy Sets',
-      subtitle:
-        'Advanced LED & Xenon illumination with scratch-resistant optical lenses delivering pristine clinical visualization for ENT examinations.',
-      image: '/image 351 (1).svg',
-      badgeIcon: '/Diagnostics 2.svg',
-      badgeBg: 'bg-[#F6851F]',
-      buttonText: 'Explore Diagnostics Line',
-      buttonLink: '/products?category=diagnostics',
-      indexLabel: '02 / 04',
-    },
-    {
-      id: 'pocket-otoscope',
-      tag: 'Pocket Diagnostic Airway Systems',
-      title: 'Pocket Otoscopes',
-      subtitle:
-        'High-intensity fiber-optic illumination with precision multi-magnification lenses engineered for rapid, accurate clinical examinations.',
-      image: '/Rectangle 839.svg',
-      badgeIcon: '/Diagnostics 2.svg',
-      badgeBg: 'bg-[#F6851F]',
-      buttonText: 'Explore Otoscopy Systems',
-      buttonLink: '/products?category=diagnostics',
-      indexLabel: '03 / 04',
-    },
-    {
-      id: 'surgical-instruments',
-      tag: 'Hospital-Grade German Stainless Steel AISI 420 / 440',
-      title: 'Surgical & Airway Solutions',
-      subtitle:
-        'Micro-tolerance drop-forged instruments with cryogenic heat treatment, individual serialization, and global regulatory certification.',
-      image: '/image 352.svg',
-      badgeIcon: '/laryngoscope 2.svg',
-      badgeBg: 'bg-white/95',
-      buttonText: 'Discover Full Catalogues',
-      buttonLink: '/catalogues',
-      indexLabel: '04 / 04',
-    },
-  ]
 
   return (
     <section

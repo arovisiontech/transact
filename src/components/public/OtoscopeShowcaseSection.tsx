@@ -1,81 +1,25 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { ArrowRight } from 'lucide-react'
-
-interface ProductCardItem {
-  id: string
-  tag: string
-  title: string
-  subtitle: string
-  image: string
-  badgeIcon: string
-  badgeBg: string
-  buttonText: string
-  buttonLink: string
-  indexLabel: string
-}
+import { getStoredOtoscopeCards } from '@/src/lib/dataStore'
+import { PortfolioShowcaseCard } from '@/src/types'
 
 export default function OtoscopeShowcaseSection() {
   const [activeFilter, setActiveFilter] = useState<'all' | 'diagnostics' | 'laryngoscopes' | 'surgical'>('all')
+  const [cards, setCards] = useState<PortfolioShowcaseCard[]>(getStoredOtoscopeCards())
 
-  // 4 Stacking Cards matching Micromar reference & user screenshots
-  const cards: ProductCardItem[] = [
-    {
-      id: 'otoscope',
-      tag: 'Pocket Diagnostic',
-      title: 'Otoscope',
-      subtitle:
-        'Prioritising Ergonomic Design Enhancing Lives. Advanced fiber-optic illumination with scratch-resistant lenses delivering pristine clinical visualization for ear and canal inspection.',
-      image: '/Rectangle 839.svg',
-      badgeIcon: '/Diagnostics 2.svg',
-      badgeBg: 'bg-[#F6851F]',
-      buttonText: 'Meet The Otoscope Line',
-      buttonLink: '/products?category=diagnostics',
-      indexLabel: '01 / 04',
-    },
-    {
-      id: 'laryngoscope',
-      tag: 'Reusable & Disposable Airway Systems',
-      title: 'Laryngoscopes',
-      subtitle:
-        'Advanced Laryngoscopes Designed For Safe, Reliable, And Controlled Airway Management. Precision German stainless steel blades with integrated fiber-optics and ergonomic knurled handles.',
-      image: '/Rectangle 819 (1).svg',
-      badgeIcon: '/laryngoscope 2.svg',
-      badgeBg: 'bg-white/95',
-      buttonText: 'Meet The Laryngoscopes Line',
-      buttonLink: '/products?category=laryngoscopes',
-      indexLabel: '02 / 04',
-    },
-    {
-      id: 'ophthalmoscope',
-      tag: 'Clinical Diagnostic Arrays',
-      title: 'Ophthalmoscopes & ENT Sets',
-      subtitle:
-        'Coaxial optical alignment providing shadow-free fundoscopy, high-definition retinal examination, and multi-aperture lens selection for comprehensive patient evaluation.',
-      image: '/image 351 (1).svg',
-      badgeIcon: '/Diagnostics 2.svg',
-      badgeBg: 'bg-[#F6851F]',
-      buttonText: 'Explore Diagnostic Sets',
-      buttonLink: '/products?category=diagnostics',
-      indexLabel: '03 / 04',
-    },
-    {
-      id: 'surgical-solutions',
-      tag: 'Hospital-Grade German Stainless Steel AISI 420 / 440',
-      title: 'Surgical & Airway Solutions',
-      subtitle:
-        'Drop-forged surgical instruments with cryogenic hardening, micrometer tolerance, and certified biocompatibility engineered for operating room suites worldwide.',
-      image: '/image 352.svg',
-      badgeIcon: '/laryngoscope 2.svg',
-      badgeBg: 'bg-white/95',
-      buttonText: 'Discover Full Catalogues',
-      buttonLink: '/catalogues',
-      indexLabel: '04 / 04',
-    },
-  ]
+  const reloadData = () => {
+    setCards(getStoredOtoscopeCards().filter((c) => c.is_active !== false))
+  }
+
+  useEffect(() => {
+    reloadData()
+    window.addEventListener('transact_data_updated', reloadData)
+    return () => window.removeEventListener('transact_data_updated', reloadData)
+  }, [])
 
   return (
     <section

@@ -191,15 +191,32 @@ export interface QuoteCartItem {
   quantity: number
 }
 
+export interface PortfolioShowcaseCard {
+  id: string
+  tag: string
+  title: string
+  subtitle: string
+  image: string
+  badgeIcon: string
+  badgeBg: string
+  buttonText: string
+  buttonLink: string
+  indexLabel: string
+  sort_order?: number
+  is_active?: boolean
+}
+
 export interface ProductLineShowcase {
   title: string
   subtitle: string
+  eyebrow?: string
   tag: string
   item_title: string
   item_subtitle: string
   button_text: string
   button_link: string
   image_url: string
+  cards?: PortfolioShowcaseCard[]
 }
 
 export interface ProjectDevelopmentFeature {

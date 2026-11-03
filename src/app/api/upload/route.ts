@@ -22,10 +22,15 @@ export async function POST(req: Request) {
       // Determine directory based on file type / folder parameter
       const ext = path.extname(file.name).toLowerCase() || '.png'
       const isPdf = ext === '.pdf' || file.type === 'application/pdf'
+      const isVideo = ['.mp4', '.webm', '.ogg', '.mov', '.m4v'].includes(ext) || file.type.startsWith('video/')
 
-      let uploadSubDir = 'images/uploads'
-      if (isPdf || requestedFolder === 'catalogues') {
+      let uploadSubDir = requestedFolder || 'images/uploads'
+      if (isPdf && !requestedFolder) {
         uploadSubDir = 'catalogues'
+      } else if (requestedFolder === 'catalogues') {
+        uploadSubDir = 'catalogues'
+      } else if (isVideo && !requestedFolder) {
+        uploadSubDir = 'videos'
       } else if (requestedFolder === 'images/catalogues') {
         uploadSubDir = 'images/catalogues'
       }

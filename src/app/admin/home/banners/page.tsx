@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import Image from 'next/image'
 import {
   Sparkles,
@@ -12,6 +12,10 @@ import {
   CheckCircle,
   XCircle,
   ExternalLink,
+  UploadCloud,
+  Image as ImageIcon,
+  Loader2,
+  Link2,
 } from 'lucide-react'
 import { toast } from 'sonner'
 import { BannerItem } from '@/src/types'
@@ -26,6 +30,44 @@ export default function AdminBannersPage() {
   const [banners, setBanners] = useState<BannerItem[]>([])
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [editingBanner, setEditingBanner] = useState<BannerItem | null>(null)
+
+  const imageInputRef = useRef<HTMLInputElement>(null)
+  const [isImageUploading, setIsImageUploading] = useState(false)
+  const [isImageDragOver, setIsImageDragOver] = useState(false)
+  const [showImageManualUrl, setShowImageManualUrl] = useState(false)
+
+  const handleImageFile = async (file: File) => {
+    if (!file) return
+    setIsImageUploading(true)
+    try {
+      const fd = new FormData()
+      fd.append('file', file)
+      fd.append('folder', 'images/uploads')
+      const res = await fetch('/api/upload', {
+        method: 'POST',
+        body: fd,
+      })
+      if (res.ok) {
+        const data = await res.json()
+        if (data.url) {
+          setFormData((prev) => ({ ...prev, image_url: data.url }))
+          toast.success('Banner image uploaded successfully!')
+          setIsImageUploading(false)
+          return
+        }
+      }
+      const reader = new FileReader()
+      reader.onload = (e) => {
+        const b64 = e.target?.result as string
+        setFormData((prev) => ({ ...prev, image_url: b64 }))
+        setIsImageUploading(false)
+      }
+      reader.readAsDataURL(file)
+    } catch {
+      toast.error('Image upload failed')
+      setIsImageUploading(false)
+    }
+  }
 
   const [formData, setFormData] = useState<BannerItem>({
     id: '',
@@ -265,14 +307,93 @@ export default function AdminBannersPage() {
                 />
               </div>
 
-              <div>
-                <label className="block text-xs font-bold text-zinc-700 mb-1">Image URL / Path</label>
-                <input
-                  type="text"
-                  value={formData.image_url}
-                  onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
-                  className="w-full px-4 py-2.5 rounded-xl border border-zinc-200 text-xs focus:ring-2 focus:ring-[#F6851F] focus:outline-none font-mono"
-                />
+              {/* ── Banner Image Placeholder & Upload ── */}
+              <div className="space-y-2 p-4 rounded-2xl bg-slate-50 border border-slate-200">
+                <div className="flex items-center justify-between">
+                  <label className="block text-xs font-bold text-[#081022] uppercase tracking-wide">
+                    Banner Graphic Placeholder &amp; Upload *
+                  </label>
+                  <button
+                    type="button"
+                    onClick={() => setShowImageManualUrl(!showImageManualUrl)}
+                    className="text-[11px] text-[#F6851F] font-bold hover:underline inline-flex items-center gap-1 cursor-pointer"
+                  >
+                    <Link2 className="w-3 h-3" />
+                    {showImageManualUrl ? 'Hide URL Input' : 'Or Enter URL'}
+                  </button>
+                </div>
+
+                {showImageManualUrl && (
+                  <input
+                    type="text"
+                    value={formData.image_url}
+                    onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
+                    placeholder="/images/transact/image3_3812_2.jpg"
+                    className="w-full px-3.5 py-2 rounded-xl border border-zinc-200 text-xs focus:ring-2 focus:ring-[#F6851F] focus:outline-none font-mono bg-white"
+                  />
+                )}
+
+                <div className="grid grid-cols-1 sm:grid-cols-12 gap-3 items-center">
+                  <div className="sm:col-span-4 relative aspect-[16/9] rounded-xl bg-white border-2 border-dashed border-zinc-300 overflow-hidden flex items-center justify-center p-2 shadow-inner">
+                    {formData.image_url ? (
+                      <div className="relative w-full h-full">
+                        <Image
+                          src={formData.image_url}
+                          alt="Banner preview"
+                          fill
+                          unoptimized
+                          className="object-cover rounded-lg"
+                        />
+                      </div>
+                    ) : (
+                      <div className="text-center p-2 text-zinc-400">
+                        <ImageIcon className="w-6 h-6 mx-auto mb-1 opacity-50" />
+                        <span className="text-[10px] font-medium">No Image</span>
+                      </div>
+                    )}
+                  </div>
+
+                  <div
+                    onDragOver={(e) => {
+                      e.preventDefault()
+                      setIsImageDragOver(true)
+                    }}
+                    onDragLeave={() => setIsImageDragOver(false)}
+                    onDrop={(e) => {
+                      e.preventDefault()
+                      setIsImageDragOver(false)
+                      if (e.dataTransfer.files?.[0]) handleImageFile(e.dataTransfer.files[0])
+                    }}
+                    onClick={() => imageInputRef.current?.click()}
+                    className={`sm:col-span-8 border-2 border-dashed rounded-xl p-3.5 text-center cursor-pointer transition flex flex-col items-center justify-center min-h-[90px] ${
+                      isImageDragOver
+                        ? 'border-[#F6851F] bg-orange-50/70'
+                        : 'border-zinc-300 hover:border-[#F6851F] bg-white'
+                    }`}
+                  >
+                    <input
+                      ref={imageInputRef}
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => {
+                        if (e.target.files?.[0]) handleImageFile(e.target.files[0])
+                      }}
+                      className="hidden"
+                    />
+
+                    <div className="w-8 h-8 rounded-full bg-[#F6851F]/10 flex items-center justify-center text-[#F6851F] mb-1">
+                      {isImageUploading ? (
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                      ) : (
+                        <UploadCloud className="w-4 h-4" />
+                      )}
+                    </div>
+                    <p className="text-xs font-bold text-zinc-800">
+                      {isImageUploading ? 'Uploading...' : 'Click or Drag & Drop Banner Image'}
+                    </p>
+                    <p className="text-[10px] text-zinc-500 mt-0.5">Direct upload from gallery (JPG, PNG, WebP)</p>
+                  </div>
+                </div>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

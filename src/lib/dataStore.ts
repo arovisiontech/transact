@@ -8,6 +8,7 @@ import {
   StoreSettings,
   QuoteCartItem,
   ProductLineShowcase,
+  PortfolioShowcaseCard,
   ProjectDevelopmentSection,
   PrecisionManufacturingSection,
   FaqItem,
@@ -30,6 +31,8 @@ const STORAGE_KEYS = {
   SETTINGS: 'transact_settings_v2',
   QUOTE_CART: 'transact_quote_cart_v2',
   PRODUCT_LINE: 'transact_product_line_v2',
+  PORTFOLIO_CARDS: 'transact_portfolio_cards_v2',
+  OTOSCOPE_CARDS: 'transact_otoscope_cards_v2',
   PROJECT_DEV: 'transact_project_dev_v2',
   PRECISION_MFG: 'transact_precision_mfg_v2',
   FAQS: 'transact_faqs_v2',
@@ -852,6 +855,235 @@ export function getStoredProductLine(): ProductLineShowcase {
 export function saveProductLine(data: ProductLineShowcase): ProductLineShowcase {
   saveToStorage(STORAGE_KEYS.PRODUCT_LINE, data)
   return data
+}
+
+// ────────────────────────────────────────────
+// PORTFOLIO SHOWCASE CARDS (ss 2)
+// ────────────────────────────────────────────
+export const defaultPortfolioCards: PortfolioShowcaseCard[] = [
+  {
+    id: 'card-laryngoscopes-main',
+    tag: 'Reusable & Disposable Airway Management',
+    title: 'Laryngoscopes',
+    subtitle:
+      'Prioritising Ergonomic Design Enhancing Lives. German stainless steel blades and handles engineered for safe, controlled intubation.',
+    image: '/Rectangle 819 (1).svg',
+    badgeIcon: '/laryngoscope 2.svg',
+    badgeBg: 'bg-white/95',
+    buttonText: 'Meet The Laryngoscopes Line',
+    buttonLink: '/products?category=laryngoscopes',
+    indexLabel: '01 / 04',
+    sort_order: 1,
+    is_active: true,
+  },
+  {
+    id: 'card-diagnostic-sets',
+    tag: 'Fiber-Optic & High-Resolution Optics',
+    title: 'Diagnostic & Otoscopy Sets',
+    subtitle:
+      'Advanced LED & Xenon illumination with scratch-resistant optical lenses delivering pristine clinical visualization for ENT examinations.',
+    image: '/image 351 (1).svg',
+    badgeIcon: '/Diagnostics 2.svg',
+    badgeBg: 'bg-[#F6851F]',
+    buttonText: 'Explore Diagnostics Line',
+    buttonLink: '/products?category=diagnostics',
+    indexLabel: '02 / 04',
+    sort_order: 2,
+    is_active: true,
+  },
+  {
+    id: 'card-pocket-otoscope',
+    tag: 'Pocket Diagnostic Airway Systems',
+    title: 'Pocket Otoscopes',
+    subtitle:
+      'High-intensity fiber-optic illumination with precision multi-magnification lenses engineered for rapid, accurate clinical examinations.',
+    image: '/Rectangle 839.svg',
+    badgeIcon: '/Diagnostics 2.svg',
+    badgeBg: 'bg-[#F6851F]',
+    buttonText: 'Explore Otoscopy Systems',
+    buttonLink: '/products?category=diagnostics',
+    indexLabel: '03 / 04',
+    sort_order: 3,
+    is_active: true,
+  },
+  {
+    id: 'card-surgical-instruments',
+    tag: 'Hospital-Grade German Stainless Steel AISI 420 / 440',
+    title: 'Surgical & Airway Solutions',
+    subtitle:
+      'Micro-tolerance drop-forged instruments with cryogenic heat treatment, individual serialization, and global regulatory certification.',
+    image: '/image 352.svg',
+    badgeIcon: '/laryngoscope 2.svg',
+    badgeBg: 'bg-white/95',
+    buttonText: 'Discover Full Catalogues',
+    buttonLink: '/catalogues',
+    indexLabel: '04 / 04',
+    sort_order: 4,
+    is_active: true,
+  },
+]
+
+export function getStoredProductLineCards(): PortfolioShowcaseCard[] {
+  const cards = getFromStorage<PortfolioShowcaseCard[]>(STORAGE_KEYS.PORTFOLIO_CARDS, defaultPortfolioCards)
+  return cards && cards.length > 0 ? cards : defaultPortfolioCards
+}
+
+export function saveProductLineCards(cards: PortfolioShowcaseCard[]): PortfolioShowcaseCard[] {
+  saveToStorage(STORAGE_KEYS.PORTFOLIO_CARDS, cards)
+  return cards
+}
+
+export function saveProductLineCard(card: PortfolioShowcaseCard): PortfolioShowcaseCard {
+  const cards = [...getStoredProductLineCards()]
+  const idx = cards.findIndex((c) => c.id === card.id)
+  if (idx >= 0) {
+    cards[idx] = card
+  } else {
+    cards.push(card)
+  }
+  saveProductLineCards(cards)
+  return card
+}
+
+export function deleteProductLineCard(id: string): PortfolioShowcaseCard[] {
+  const cards = getStoredProductLineCards().filter((c) => c.id !== id)
+  saveProductLineCards(cards)
+  return cards
+}
+
+export function moveProductLineCardOrder(id: string, direction: 'up' | 'down'): PortfolioShowcaseCard[] {
+  const cards = [...getStoredProductLineCards()]
+  const idx = cards.findIndex((c) => c.id === id)
+  if (idx < 0) return cards
+  const targetIdx = direction === 'up' ? idx - 1 : idx + 1
+  if (targetIdx < 0 || targetIdx >= cards.length) return cards
+
+  const temp = cards[idx]
+  cards[idx] = cards[targetIdx]
+  cards[targetIdx] = temp
+
+  // Re-number indexLabel & sort_order
+  const updated = cards.map((c, i) => ({
+    ...c,
+    sort_order: i + 1,
+    indexLabel: `0${i + 1} / 0${cards.length}`,
+  }))
+  saveProductLineCards(updated)
+  return updated
+}
+
+// ────────────────────────────────────────────
+// OTOSCOPE SHOWCASE CARDS (ss 3)
+// ────────────────────────────────────────────
+export const defaultOtoscopeCards: PortfolioShowcaseCard[] = [
+  {
+    id: 'oto-otoscope',
+    tag: 'Pocket Diagnostic',
+    title: 'Otoscope',
+    subtitle:
+      'Prioritising Ergonomic Design Enhancing Lives. Advanced fiber-optic illumination with scratch-resistant lenses delivering pristine clinical visualization for ear and canal inspection.',
+    image: '/Rectangle 839.svg',
+    badgeIcon: '/Diagnostics 2.svg',
+    badgeBg: 'bg-[#F6851F]',
+    buttonText: 'Meet The Otoscope Line',
+    buttonLink: '/products?category=diagnostics',
+    indexLabel: '01 / 04',
+    sort_order: 1,
+    is_active: true,
+  },
+  {
+    id: 'oto-laryngoscope',
+    tag: 'Reusable & Disposable Airway Systems',
+    title: 'Laryngoscopes',
+    subtitle:
+      'Advanced Laryngoscopes Designed For Safe, Reliable, And Controlled Airway Management. Precision German stainless steel blades with integrated fiber-optics and ergonomic knurled handles.',
+    image: '/Rectangle 819 (1).svg',
+    badgeIcon: '/laryngoscope 2.svg',
+    badgeBg: 'bg-white/95',
+    buttonText: 'Meet The Laryngoscopes Line',
+    buttonLink: '/products?category=laryngoscopes',
+    indexLabel: '02 / 04',
+    sort_order: 2,
+    is_active: true,
+  },
+  {
+    id: 'oto-ophthalmoscope',
+    tag: 'Clinical Diagnostic Arrays',
+    title: 'Ophthalmoscopes & ENT Sets',
+    subtitle:
+      'Coaxial optical alignment providing shadow-free fundoscopy, high-definition retinal examination, and multi-aperture lens selection for comprehensive patient evaluation.',
+    image: '/image 351 (1).svg',
+    badgeIcon: '/Diagnostics 2.svg',
+    badgeBg: 'bg-[#F6851F]',
+    buttonText: 'Explore Diagnostic Sets',
+    buttonLink: '/products?category=diagnostics',
+    indexLabel: '03 / 04',
+    sort_order: 3,
+    is_active: true,
+  },
+  {
+    id: 'oto-surgical-solutions',
+    tag: 'Hospital-Grade German Stainless Steel AISI 420 / 440',
+    title: 'Surgical & Airway Solutions',
+    subtitle:
+      'Drop-forged surgical instruments with cryogenic hardening, micrometer tolerance, and certified biocompatibility engineered for operating room suites worldwide.',
+    image: '/image 352.svg',
+    badgeIcon: '/laryngoscope 2.svg',
+    badgeBg: 'bg-white/95',
+    buttonText: 'Discover Full Catalogues',
+    buttonLink: '/catalogues',
+    indexLabel: '04 / 04',
+    sort_order: 4,
+    is_active: true,
+  },
+]
+
+export function getStoredOtoscopeCards(): PortfolioShowcaseCard[] {
+  const cards = getFromStorage<PortfolioShowcaseCard[]>(STORAGE_KEYS.OTOSCOPE_CARDS, defaultOtoscopeCards)
+  return cards && cards.length > 0 ? cards : defaultOtoscopeCards
+}
+
+export function saveOtoscopeCards(cards: PortfolioShowcaseCard[]): PortfolioShowcaseCard[] {
+  saveToStorage(STORAGE_KEYS.OTOSCOPE_CARDS, cards)
+  return cards
+}
+
+export function saveOtoscopeCard(card: PortfolioShowcaseCard): PortfolioShowcaseCard {
+  const cards = [...getStoredOtoscopeCards()]
+  const idx = cards.findIndex((c) => c.id === card.id)
+  if (idx >= 0) {
+    cards[idx] = card
+  } else {
+    cards.push(card)
+  }
+  saveOtoscopeCards(cards)
+  return card
+}
+
+export function deleteOtoscopeCard(id: string): PortfolioShowcaseCard[] {
+  const cards = getStoredOtoscopeCards().filter((c) => c.id !== id)
+  saveOtoscopeCards(cards)
+  return cards
+}
+
+export function moveOtoscopeCardOrder(id: string, direction: 'up' | 'down'): PortfolioShowcaseCard[] {
+  const cards = [...getStoredOtoscopeCards()]
+  const idx = cards.findIndex((c) => c.id === id)
+  if (idx < 0) return cards
+  const targetIdx = direction === 'up' ? idx - 1 : idx + 1
+  if (targetIdx < 0 || targetIdx >= cards.length) return cards
+
+  const temp = cards[idx]
+  cards[idx] = cards[targetIdx]
+  cards[targetIdx] = temp
+
+  const updated = cards.map((c, i) => ({
+    ...c,
+    sort_order: i + 1,
+    indexLabel: `0${i + 1} / 0${cards.length}`,
+  }))
+  saveOtoscopeCards(updated)
+  return updated
 }
 
 // ============================================
