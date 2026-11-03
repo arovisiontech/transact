@@ -19,6 +19,7 @@ import {
   Info,
   Factory,
   HelpCircle,
+  Filter,
 } from 'lucide-react'
 import TransactLogo from '@/src/components/public/TransactLogo'
 
@@ -35,6 +36,7 @@ const sidebarSections = [
       { label: 'Products', href: '/admin/products', icon: Package },
       { label: 'Categories', href: '/admin/categories', icon: FolderOpen },
       { label: 'Subcategories', href: '/admin/subcategories', icon: Layers },
+      { label: 'Store Filters (SS 4)', href: '/admin/filters', icon: Filter },
       { label: 'Catalogue PDFs', href: '/admin/catalogues', icon: BookOpen },
     ],
   },

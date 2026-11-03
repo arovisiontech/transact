@@ -80,8 +80,8 @@ export default function AdminProductLinePage() {
     badgeIcon: '/laryngoscope 2.svg',
     badgeBg: 'bg-white/95',
     buttonText: 'Meet The Line',
-    buttonLink: '/products?category=laryngoscopes',
-    indexLabel: '01 / 04',
+    buttonLink: '/products?category=reusable-laryngoscopes',
+    indexLabel: '01 / 02',
     sort_order: 1,
     is_active: true,
   })
@@ -123,7 +123,7 @@ export default function AdminProductLinePage() {
     setEditingCard(null)
     const list = target === 'productLine' ? portfolioCards : otoscopeCards
     const newIdx = list.length + 1
-    const total = Math.max(list.length + 1, 4)
+    const total = Math.max(list.length + 1, 2)
     setShowCardImageManualUrl(false)
     setShowCardIconManualUrl(false)
 

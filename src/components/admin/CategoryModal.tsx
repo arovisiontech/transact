@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import Image from 'next/image'
 import { X, Save, FolderOpen, UploadCloud, Image as ImageIcon, Loader2, Link2 } from 'lucide-react'
+import { toast } from 'sonner'
 import { CategoryItem } from '@/src/types'
 import { saveCategory } from '@/src/lib/dataStore'
 
@@ -105,46 +106,54 @@ export default function CategoryModal({ category, isOpen, onClose, onSaved }: Ca
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!formData.name) return
+    if (!formData.name?.trim()) {
+      toast.error('Category name is required')
+      return
+    }
 
     setIsSaving(true)
     try {
       const catToSave: CategoryItem = {
         id: formData.id || `cat-${Date.now()}`,
-        name: formData.name,
-        slug: formData.slug || `cat-${Date.now()}`,
+        name: formData.name.trim(),
+        slug: formData.slug?.trim() || `cat-${Date.now()}`,
         description: formData.description || null,
         image_url: formData.image_url || null,
+        card_image: formData.image_url || null,
         sort_order: Number(formData.sort_order) || 1,
         is_published: Boolean(formData.is_published),
       }
 
       await saveCategory(catToSave)
+      toast.success(category ? 'Category updated successfully!' : 'Category created successfully!')
       onSaved()
       onClose()
     } catch (err) {
       console.error(err)
+      toast.error('Failed to save category')
     } finally {
       setIsSaving(false)
     }
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
-      <div className="relative w-full max-w-lg bg-white rounded-3xl shadow-2xl border border-zinc-200 overflow-hidden">
-        <div className="px-6 py-4 bg-[#081022] text-white flex items-center justify-between">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm overflow-y-auto animate-in fade-in duration-200">
+      <div className="relative w-full max-w-lg bg-white rounded-3xl shadow-2xl border border-zinc-200 my-auto flex flex-col max-h-[90vh] overflow-hidden">
+        {/* Sticky Header */}
+        <div className="px-6 py-4 bg-[#081022] text-white flex items-center justify-between shrink-0">
           <div className="flex items-center gap-2">
             <FolderOpen className="w-5 h-5 text-[#F6851F]" />
             <h3 className="text-base font-bold">
               {category ? 'Edit Category' : 'Add New Category'}
             </h3>
           </div>
-          <button onClick={onClose} className="p-1 text-zinc-400 hover:text-white rounded-lg">
+          <button type="button" onClick={onClose} className="p-1 text-zinc-400 hover:text-white rounded-lg cursor-pointer">
             <X className="w-5 h-5" />
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-6 space-y-4">
+        {/* Scrollable Form Body */}
+        <form onSubmit={handleSubmit} className="p-6 space-y-4 overflow-y-auto flex-1">
           <div>
             <label className="block text-xs font-bold text-[#081022] mb-1">Category Name *</label>
             <input
@@ -277,18 +286,18 @@ export default function CategoryModal({ category, isOpen, onClose, onSaved }: Ca
             <span>Active & Visible in Store Menu</span>
           </label>
 
-          <div className="pt-4 border-t border-zinc-200 flex items-center justify-end gap-3">
+          <div className="pt-4 border-t border-zinc-200 flex items-center justify-end gap-3 sticky bottom-0 bg-white/95 backdrop-blur-sm py-2">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2.5 rounded-xl text-xs font-semibold text-zinc-600 hover:bg-zinc-100 transition"
+              className="px-4 py-2.5 rounded-xl text-xs font-semibold text-zinc-600 hover:bg-zinc-100 transition cursor-pointer"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={isSaving}
-              className="px-6 py-2.5 bg-[#F6851F] hover:bg-[#E07314] text-white rounded-xl text-xs font-bold transition shadow flex items-center gap-1.5"
+              className="px-6 py-2.5 bg-[#F6851F] hover:bg-[#E07314] text-white rounded-xl text-xs font-bold transition shadow flex items-center gap-1.5 cursor-pointer"
             >
               <Save className="w-4 h-4" />
               <span>{isSaving ? 'Saving...' : 'Save Category'}</span>

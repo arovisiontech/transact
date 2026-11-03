@@ -1,6 +1,7 @@
 import {
   ProductItem,
   CategoryItem,
+  SubcategoryItem,
   CatalogueItem,
   HeroSlideItem,
   BannerItem,
@@ -19,28 +20,32 @@ import initialCatalogues from '@/src/data/catalogues.json'
 import initialFaqs from '@/src/data/faqs.json'
 import initialStoreSettings from '@/src/data/storeSettings.json'
 import initialHeroSlides from '@/src/data/heroSlides.json'
+import initialSubcategories from '@/src/data/subcategories.json'
 import { createClient } from './supabase/client'
 
 const STORAGE_KEYS = {
-  PRODUCTS: 'transact_products_v2',
-  CATEGORIES: 'transact_categories_v2',
-  CATALOGUES: 'transact_catalogues_v2',
-  HERO_SLIDES: 'transact_hero_slides_v2',
-  BANNERS: 'transact_banners_v2',
-  INQUIRIES: 'transact_inquiries_v2',
-  SETTINGS: 'transact_settings_v2',
-  QUOTE_CART: 'transact_quote_cart_v2',
-  PRODUCT_LINE: 'transact_product_line_v2',
-  PORTFOLIO_CARDS: 'transact_portfolio_cards_v2',
-  OTOSCOPE_CARDS: 'transact_otoscope_cards_v2',
-  PROJECT_DEV: 'transact_project_dev_v2',
-  PRECISION_MFG: 'transact_precision_mfg_v2',
-  FAQS: 'transact_faqs_v2',
+  PRODUCTS: 'transact_products_v3',
+  CATEGORIES: 'transact_categories_v3',
+  SUBCATEGORIES: 'transact_subcategories_v3',
+  CATALOGUES: 'transact_catalogues_v3',
+  HERO_SLIDES: 'transact_hero_slides_v3',
+  BANNERS: 'transact_banners_v3',
+  INQUIRIES: 'transact_inquiries_v3',
+  SETTINGS: 'transact_settings_v3',
+  QUOTE_CART: 'transact_quote_cart_v3',
+  PRODUCT_LINE: 'transact_product_line_v3',
+  PORTFOLIO_CARDS: 'transact_portfolio_cards_v3',
+  OTOSCOPE_CARDS: 'transact_otoscope_cards_v3',
+  FILTER_FACETS: 'transact_filter_facets_v3',
+  PROJECT_DEV: 'transact_project_dev_v3',
+  PRECISION_MFG: 'transact_precision_mfg_v3',
+  FAQS: 'transact_faqs_v3',
 }
 
 // In-Memory State Cache
 let memoryProducts: ProductItem[] = initialProducts as unknown as ProductItem[]
 let memoryCategories: CategoryItem[] = initialCategories as unknown as CategoryItem[]
+let memorySubcategories: SubcategoryItem[] = initialSubcategories as unknown as SubcategoryItem[]
 let memoryCatalogues: CatalogueItem[] = initialCatalogues as unknown as CatalogueItem[]
 let memoryFaqs: FaqItem[] = initialFaqs as unknown as FaqItem[]
 let memoryHeroSlides: HeroSlideItem[] = initialHeroSlides as unknown as HeroSlideItem[]
@@ -858,67 +863,37 @@ export function saveProductLine(data: ProductLineShowcase): ProductLineShowcase 
 }
 
 // ────────────────────────────────────────────
-// PORTFOLIO SHOWCASE CARDS (ss 2)
+// PORTFOLIO SHOWCASE CARDS (ss 2 - Exactly 2 Categories)
 // ────────────────────────────────────────────
 export const defaultPortfolioCards: PortfolioShowcaseCard[] = [
   {
-    id: 'card-laryngoscopes-main',
-    tag: 'Reusable & Disposable Airway Management',
-    title: 'Laryngoscopes',
+    id: 'card-reusable-laryngoscopes',
+    tag: 'Reusable Airway Management',
+    title: 'Reusable Laryngoscopes',
     subtitle:
-      'Prioritising Ergonomic Design Enhancing Lives. German stainless steel blades and handles engineered for safe, controlled intubation.',
+      'Precision engineered German stainless steel blades and handles engineered for safe, controlled intubation.',
     image: '/Rectangle 819 (1).svg',
     badgeIcon: '/laryngoscope 2.svg',
     badgeBg: 'bg-white/95',
-    buttonText: 'Meet The Laryngoscopes Line',
-    buttonLink: '/products?category=laryngoscopes',
-    indexLabel: '01 / 04',
+    buttonText: 'Explore Reusable Line',
+    buttonLink: '/products?category=reusable-laryngoscopes',
+    indexLabel: '01 / 02',
     sort_order: 1,
     is_active: true,
   },
   {
-    id: 'card-diagnostic-sets',
-    tag: 'Fiber-Optic & High-Resolution Optics',
-    title: 'Diagnostic & Otoscopy Sets',
+    id: 'card-single-use-laryngoscopes',
+    tag: 'Sterile Disposable Solutions',
+    title: 'Single Use Laryngoscopes',
     subtitle:
-      'Advanced LED & Xenon illumination with scratch-resistant optical lenses delivering pristine clinical visualization for ENT examinations.',
-    image: '/image 351 (1).svg',
-    badgeIcon: '/Diagnostics 2.svg',
-    badgeBg: 'bg-[#F6851F]',
-    buttonText: 'Explore Diagnostics Line',
-    buttonLink: '/products?category=diagnostics',
-    indexLabel: '02 / 04',
-    sort_order: 2,
-    is_active: true,
-  },
-  {
-    id: 'card-pocket-otoscope',
-    tag: 'Pocket Diagnostic Airway Systems',
-    title: 'Pocket Otoscopes',
-    subtitle:
-      'High-intensity fiber-optic illumination with precision multi-magnification lenses engineered for rapid, accurate clinical examinations.',
-    image: '/Rectangle 839.svg',
-    badgeIcon: '/Diagnostics 2.svg',
-    badgeBg: 'bg-[#F6851F]',
-    buttonText: 'Explore Otoscopy Systems',
-    buttonLink: '/products?category=diagnostics',
-    indexLabel: '03 / 04',
-    sort_order: 3,
-    is_active: true,
-  },
-  {
-    id: 'card-surgical-instruments',
-    tag: 'Hospital-Grade German Stainless Steel AISI 420 / 440',
-    title: 'Surgical & Airway Solutions',
-    subtitle:
-      'Micro-tolerance drop-forged instruments with cryogenic heat treatment, individual serialization, and global regulatory certification.',
+      'Sterile, single-patient use airway blades preventing cross-contamination in critical airway management.',
     image: '/image 352.svg',
     badgeIcon: '/laryngoscope 2.svg',
-    badgeBg: 'bg-white/95',
-    buttonText: 'Discover Full Catalogues',
-    buttonLink: '/catalogues',
-    indexLabel: '04 / 04',
-    sort_order: 4,
+    badgeBg: 'bg-[#F6851F]',
+    buttonText: 'Explore Single-Use Line',
+    buttonLink: '/products?category=single-use-laryngoscopes',
+    indexLabel: '02 / 02',
+    sort_order: 2,
     is_active: true,
   },
 ]
@@ -973,67 +948,37 @@ export function moveProductLineCardOrder(id: string, direction: 'up' | 'down'): 
 }
 
 // ────────────────────────────────────────────
-// OTOSCOPE SHOWCASE CARDS (ss 3)
+// OTOSCOPE SHOWCASE CARDS (ss 3 - Exactly 2 Categories)
 // ────────────────────────────────────────────
 export const defaultOtoscopeCards: PortfolioShowcaseCard[] = [
   {
-    id: 'oto-otoscope',
-    tag: 'Pocket Diagnostic',
-    title: 'Otoscope',
+    id: 'card-diagnostic-sets',
+    tag: 'Fiber-Optic & High-Resolution Optics',
+    title: 'Diagnostic & Otoscopy Sets',
     subtitle:
-      'Prioritising Ergonomic Design Enhancing Lives. Advanced fiber-optic illumination with scratch-resistant lenses delivering pristine clinical visualization for ear and canal inspection.',
-    image: '/Rectangle 839.svg',
+      'Advanced LED & Xenon illumination with scratch-resistant optical lenses delivering pristine clinical visualization for ENT examinations.',
+    image: '/image 351 (1).svg',
     badgeIcon: '/Diagnostics 2.svg',
     badgeBg: 'bg-[#F6851F]',
-    buttonText: 'Meet The Otoscope Line',
+    buttonText: 'Explore Diagnostics Line',
     buttonLink: '/products?category=diagnostics',
-    indexLabel: '01 / 04',
+    indexLabel: '01 / 02',
     sort_order: 1,
     is_active: true,
   },
   {
-    id: 'oto-laryngoscope',
-    tag: 'Reusable & Disposable Airway Systems',
-    title: 'Laryngoscopes',
+    id: 'card-pocket-otoscopes',
+    tag: 'Pocket Diagnostic Airway Systems',
+    title: 'Pocket Otoscopes',
     subtitle:
-      'Advanced Laryngoscopes Designed For Safe, Reliable, And Controlled Airway Management. Precision German stainless steel blades with integrated fiber-optics and ergonomic knurled handles.',
-    image: '/Rectangle 819 (1).svg',
-    badgeIcon: '/laryngoscope 2.svg',
-    badgeBg: 'bg-white/95',
-    buttonText: 'Meet The Laryngoscopes Line',
-    buttonLink: '/products?category=laryngoscopes',
-    indexLabel: '02 / 04',
-    sort_order: 2,
-    is_active: true,
-  },
-  {
-    id: 'oto-ophthalmoscope',
-    tag: 'Clinical Diagnostic Arrays',
-    title: 'Ophthalmoscopes & ENT Sets',
-    subtitle:
-      'Coaxial optical alignment providing shadow-free fundoscopy, high-definition retinal examination, and multi-aperture lens selection for comprehensive patient evaluation.',
-    image: '/image 351 (1).svg',
+      'High-intensity fiber-optic illumination with precision multi-magnification lenses engineered for rapid, accurate clinical examinations.',
+    image: '/Rectangle 839.svg',
     badgeIcon: '/Diagnostics 2.svg',
-    badgeBg: 'bg-[#F6851F]',
-    buttonText: 'Explore Diagnostic Sets',
-    buttonLink: '/products?category=diagnostics',
-    indexLabel: '03 / 04',
-    sort_order: 3,
-    is_active: true,
-  },
-  {
-    id: 'oto-surgical-solutions',
-    tag: 'Hospital-Grade German Stainless Steel AISI 420 / 440',
-    title: 'Surgical & Airway Solutions',
-    subtitle:
-      'Drop-forged surgical instruments with cryogenic hardening, micrometer tolerance, and certified biocompatibility engineered for operating room suites worldwide.',
-    image: '/image 352.svg',
-    badgeIcon: '/laryngoscope 2.svg',
     badgeBg: 'bg-white/95',
-    buttonText: 'Discover Full Catalogues',
-    buttonLink: '/catalogues',
-    indexLabel: '04 / 04',
-    sort_order: 4,
+    buttonText: 'Explore Otoscopy Line',
+    buttonLink: '/products?category=pocket-otoscopes',
+    indexLabel: '02 / 02',
+    sort_order: 2,
     is_active: true,
   },
 ]
@@ -1084,6 +1029,113 @@ export function moveOtoscopeCardOrder(id: string, direction: 'up' | 'down'): Por
   }))
   saveOtoscopeCards(updated)
   return updated
+}
+
+// ────────────────────────────────────────────
+// SUBCATEGORIES API
+// ────────────────────────────────────────────
+export function getStoredSubcategories(): SubcategoryItem[] {
+  if (isBrowser()) {
+    const fromStorage = getFromStorage<SubcategoryItem[]>(STORAGE_KEYS.SUBCATEGORIES, [])
+    if (fromStorage.length > 0) return fromStorage
+    saveToStorage(STORAGE_KEYS.SUBCATEGORIES, memorySubcategories)
+  }
+  return memorySubcategories
+}
+
+export async function saveSubcategory(subcat: SubcategoryItem): Promise<SubcategoryItem> {
+  const list = [...getStoredSubcategories()]
+  const idx = list.findIndex((s) => s.id === subcat.id)
+  const updated = {
+    ...subcat,
+    updated_at: new Date().toISOString(),
+  }
+  if (idx >= 0) {
+    list[idx] = updated
+  } else {
+    list.push(updated)
+  }
+  memorySubcategories = list
+  saveToStorage(STORAGE_KEYS.SUBCATEGORIES, list)
+
+  if (isBrowser()) {
+    try {
+      await fetch('/api/subcategories', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'save', subcategory: updated }),
+      })
+    } catch (err) {
+      console.warn('Failed to persist subcategory:', err)
+    }
+  }
+  return updated
+}
+
+export async function deleteSubcategory(id: string): Promise<boolean> {
+  const list = getStoredSubcategories().filter((s) => s.id !== id)
+  memorySubcategories = list
+  saveToStorage(STORAGE_KEYS.SUBCATEGORIES, list)
+
+  if (isBrowser()) {
+    try {
+      await fetch('/api/subcategories', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'delete', id }),
+      })
+    } catch (err) {
+      console.warn('Failed to delete subcategory:', err)
+    }
+  }
+  return true
+}
+
+export function moveSubcategoryOrder(id: string, direction: 'up' | 'down'): SubcategoryItem[] {
+  const list = [...getStoredSubcategories()]
+  const idx = list.findIndex((s) => s.id === id)
+  if (idx < 0) return list
+  const targetIdx = direction === 'up' ? idx - 1 : idx + 1
+  if (targetIdx < 0 || targetIdx >= list.length) return list
+
+  const temp = list[idx]
+  list[idx] = list[targetIdx]
+  list[targetIdx] = temp
+
+  const updated = list.map((s, i) => ({ ...s, sort_order: i + 1 }))
+  memorySubcategories = updated
+  saveToStorage(STORAGE_KEYS.SUBCATEGORIES, updated)
+
+  if (isBrowser()) {
+    fetch('/api/subcategories', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'setAll', subcategories: updated }),
+    }).catch((e) => console.warn(e))
+  }
+  return updated
+}
+
+// ────────────────────────────────────────────
+// STORE FILTERS & FACETS API (ss 4)
+// ────────────────────────────────────────────
+export interface FilterFacets {
+  productTypes: string[]
+  materials: string[]
+}
+
+const defaultFilterFacets: FilterFacets = {
+  productTypes: ['Macintosh Blades', 'Miller Blades', 'Conventional Single Use', 'Plastic / Fiber Optic'],
+  materials: ['Stainless Steel', 'Fiber Optic'],
+}
+
+export function getStoredFilterFacets(): FilterFacets {
+  return getFromStorage<FilterFacets>(STORAGE_KEYS.FILTER_FACETS, defaultFilterFacets)
+}
+
+export function saveFilterFacets(facets: FilterFacets): FilterFacets {
+  saveToStorage(STORAGE_KEYS.FILTER_FACETS, facets)
+  return facets
 }
 
 // ============================================

@@ -1,0 +1,54 @@
+[
+  {
+    "id": "subcat-macintosh-miller",
+    "category_id": "cat-reusable-laryngoscopes",
+    "category_name": "Reusable Laryngoscopes",
+    "name": "Macintosh & Miller Reusable Blades",
+    "slug": "macintosh-miller-blades",
+    "description": "Integrated fiber optic illumination and standard reusable stainless steel blades.",
+    "image_url": "/images/products/integrated-macintosh-fiber-optic-blade.png",
+    "sort_order": 1,
+    "is_active": true,
+    "created_at": "2026-10-25T12:00:00.000Z",
+    "updated_at": "2026-10-25T12:00:00.000Z"
+  },
+  {
+    "id": "subcat-disposable-sterile",
+    "category_id": "cat-single-use-laryngoscopes",
+    "category_name": "Single Use Laryngoscopes",
+    "name": "Sterile Disposable Airway Blades",
+    "slug": "disposable-sterile-blades",
+    "description": "Hygienic single-use intubation blades with high-transmission light guides.",
+    "image_url": "/images/products/integrated-macintosh-fiber-optic-blade.png",
+    "sort_order": 2,
+    "is_active": true,
+    "created_at": "2026-10-25T12:00:00.000Z",
+    "updated_at": "2026-10-25T12:00:00.000Z"
+  },
+  {
+    "id": "subcat-clinical-diagnostics",
+    "category_id": "cat-diagnostic-sets",
+    "category_name": "Diagnostic & Otoscopy Sets",
+    "name": "Clinical Diagnostic Otoscopy Sets",
+    "slug": "clinical-diagnostic-sets",
+    "description": "High-definition optical otoscope and ophthalmoscope examination sets.",
+    "image_url": "/image 351 (1).svg",
+    "sort_order": 3,
+    "is_active": true,
+    "created_at": "2026-10-25T12:00:00.000Z",
+    "updated_at": "2026-10-25T12:00:00.000Z"
+  },
+  {
+    "id": "subcat-pocket-led-otoscopes",
+    "category_id": "cat-pocket-otoscopes",
+    "category_name": "Pocket Otoscopes",
+    "name": "Pocket LED Otoscopes",
+    "slug": "pocket-led-otoscopes",
+    "description": "Compact portable ENT otoscopes with 3x optical magnification.",
+    "image_url": "/Rectangle 839.svg",
+    "sort_order": 4,
+    "is_active": true,
+    "created_at": "2026-10-25T12:00:00.000Z",
+    "updated_at": "2026-10-25T12:00:00.000Z"
+  }
+]
