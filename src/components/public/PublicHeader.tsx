@@ -67,7 +67,18 @@ export default function PublicHeader({ onOpenSearch, onOpenQuote }: PublicHeader
   const navLinks: NavLinkItem[] = [
     { name: 'Home', href: '/' },
     { name: 'About Us', href: '/about' },
-    { name: 'Products', href: '/products' },
+    {
+      name: 'Products',
+      href: '/products',
+      hasDropdown: true,
+      items: [
+        { name: 'All Instruments Catalog', href: '/products' },
+        { name: 'Reusable Laryngoscopes', href: '/products?category=reusable-laryngoscopes' },
+        { name: 'Single Use Laryngoscopes', href: '/products?category=single-use-laryngoscopes' },
+        { name: 'Diagnostic & Otoscopy Sets', href: '/products?category=diagnostics' },
+        { name: 'Pocket Otoscopes', href: '/products?category=pocket-otoscopes' },
+      ],
+    },
     {
       name: 'Service',
       href: '/production',

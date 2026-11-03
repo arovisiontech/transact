@@ -222,14 +222,22 @@ export default function AdminSubcategoriesPage() {
                     </td>
                     <td className="px-5 py-3.5 text-right">
                       <div className="flex items-center justify-end gap-2">
-                        <Link
-                          href={`/products?category=${item.slug}`}
-                          target="_blank"
-                          title="View on Store"
-                          className="p-1.5 rounded-lg text-zinc-400 hover:text-[#081022] hover:bg-zinc-100 transition"
-                        >
-                          <ExternalLink className="w-4 h-4" />
-                        </Link>
+                        {(() => {
+                          const parentCat = categories.find((c) => c.id === item.category_id)
+                          const liveUrl = parentCat
+                            ? `/products?category=${parentCat.slug}&subcategory=${item.id}`
+                            : `/products?subcategory=${item.id}`
+                          return (
+                            <Link
+                              href={liveUrl}
+                              target="_blank"
+                              title="View on Store"
+                              className="p-1.5 rounded-lg text-zinc-400 hover:text-[#081022] hover:bg-zinc-100 transition"
+                            >
+                              <ExternalLink className="w-4 h-4" />
+                            </Link>
+                          )
+                        })()}
                         <button
                           onClick={() => handleOpenEdit(item)}
                           title="Edit Subcategory"
