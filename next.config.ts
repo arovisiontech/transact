@@ -22,8 +22,10 @@ const nextConfig: NextConfig = {
       },
     ],
   },
-  cacheComponents: true,
-  partialPrefetching: true,
+  experimental: {
+    cpus: 2,
+    workerThreads: false,
+  },
 };
 
 export default nextConfig;

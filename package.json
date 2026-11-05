@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build --webpack",
+    "build": "NEXT_CPU_NUM=2 next build --webpack",
     "start": "next start",
     "lint": "eslint"
   },
