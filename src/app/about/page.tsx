@@ -30,7 +30,7 @@ export default function AboutPage() {
     <PublicShell>
       {/* ======================================================== */}
       {/* ======================================================== */}
-      {/* 1. HERO SECTION (Matching SS 1 Reference)                */}
+      {/* 1. HERO SECTION                                          */}
       {/* ======================================================== */}
       <section className="relative w-full bg-[#081022] text-white min-h-[380px] sm:min-h-[460px] lg:min-h-[540px] 2xl:min-h-[620px] flex items-center overflow-hidden">
         {/* Background Operating Room Visual */}
@@ -43,7 +43,7 @@ export default function AboutPage() {
             unoptimized
             className="object-cover object-center"
           />
-          {/* Subtle soft dark gradient on left for high-contrast crisp text matching SS 1 */}
+          {/* Subtle soft dark gradient on left for high-contrast crisp text */}
           <div className="absolute inset-0 bg-gradient-to-r from-black/75 via-black/35 to-transparent" />
         </div>
 
@@ -145,18 +145,18 @@ export default function AboutPage() {
       </section>
 
       {/* ======================================================== */}
-      {/* 3. TIMELINE: "Where It All Began" (Matching SS 1)        */}
+      {/* 3. TIMELINE: "Where It All Began"                        */}
       {/* ======================================================== */}
       <section className="bg-[#EFEEEC] py-14 sm:py-20 lg:py-24 px-4 sm:px-8 border-b border-zinc-200">
         <div className="max-w-[1400px] 2xl:max-w-[1600px] mx-auto space-y-8 sm:space-y-10">
-          {/* Centered Top Statement matching SS 1 */}
+          {/* Centered Top Statement */}
           <div className="text-center max-w-4xl mx-auto px-4">
             <h3 className="text-base sm:text-xl lg:text-2xl font-bold text-[#081022] leading-relaxed">
               {timeline.statement}
             </h3>
           </div>
 
-          {/* Dark Timeline Card with image 421.svg background matching SS 1 */}
+          {/* Dark Timeline Card with image 421.svg background */}
           <div className="relative max-w-5xl mx-auto rounded-[28px] sm:rounded-[34px] overflow-hidden shadow-2xl border border-zinc-800 bg-[#0A0E17]">
             {/* Background image 421.svg with dark overlay */}
             <div className="absolute inset-0 z-0">
@@ -176,7 +176,7 @@ export default function AboutPage() {
                 {timeline.heading || 'Where It All Began'}
               </h2>
 
-              {/* 2-Column Milestones side-by-side matching SS 1 */}
+              {/* 2-Column Milestones side-by-side */}
               {(() => {
                 const milestones = timeline.milestones || []
                 const m1 = milestones[activeTimelineIdx % milestones.length] || {}
@@ -240,7 +240,7 @@ export default function AboutPage() {
                 )
               })()}
 
-              {/* 5 Bottom Dashes Pagination Indicator matching SS 1 */}
+              {/* 5 Bottom Dashes Pagination Indicator */}
               <div className="flex items-center justify-center gap-2 pt-10">
                 {(timeline.milestones || []).map((_: any, idx: number) => (
                   <button
@@ -261,11 +261,11 @@ export default function AboutPage() {
       </section>
 
       {/* ======================================================== */}
-      {/* 4. GLOBAL MANUFACTURING (Matching SS 3)                  */}
+      {/* 4. GLOBAL MANUFACTURING                                  */}
       {/* ======================================================== */}
       <section className="bg-white py-14 sm:py-20 lg:py-28 px-4 sm:px-8 border-b border-zinc-100 overflow-hidden relative">
         <div className="max-w-[1400px] 2xl:max-w-[1600px] mx-auto text-center space-y-6 sm:space-y-8 relative z-10">
-          {/* Eyebrow Pill matching SS 3 */}
+          {/* Eyebrow Pill */}
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#EFEFF9] text-[#081022] text-xs font-bold tracking-wide mx-auto border border-zinc-200/60 shadow-sm">
             <span className="w-2 h-2 rounded-full bg-[#F6851F]" />
             <span>{manufacturing.badge || 'MANUFACTURING EXCELLENCE. DELIVERED WORLDWIDE.'}</span>
@@ -279,9 +279,9 @@ export default function AboutPage() {
             {manufacturing.description}
           </p>
 
-          {/* Dotted World Map centered with blank left/right space & concentric circular waves matching SS 3 */}
+          {/* Dotted World Map centered with blank left/right space & concentric circular waves */}
           <div className="relative w-full max-w-4xl mx-auto px-4 py-6 sm:py-10 flex items-center justify-center">
-            {/* Concentric faint circular waves matching SS 3 */}
+            {/* Concentric faint circular waves */}
             <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-40">
               <div className="w-[280px] h-[280px] rounded-full border border-zinc-300" />
               <div className="absolute w-[440px] h-[440px] rounded-full border border-zinc-200" />
@@ -303,11 +303,11 @@ export default function AboutPage() {
       </section>
 
       {/* ======================================================== */}
-      {/* 5. COMMITMENT TO EXCELLENCE (Matching SS 4)              */}
+      {/* 5. COMMITMENT TO EXCELLENCE                              */}
       {/* ======================================================== */}
       <section className="bg-[#FAFAFC] py-14 sm:py-20 lg:py-24 px-4 sm:px-8 border-b border-zinc-200">
         <div className="max-w-[1400px] 2xl:max-w-[1600px] mx-auto space-y-10 sm:space-y-12">
-          {/* Top Two-Column Row matching SS 4 */}
+          {/* Top Two-Column Row */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
             {/* Left Header Narrative */}
             <div className="lg:col-span-6 space-y-4">
@@ -320,7 +320,7 @@ export default function AboutPage() {
               </p>
             </div>
 
-            {/* Right Side Photo of Worker Packaging / Inspecting matching SS 4 */}
+            {/* Right Side Photo of Worker Packaging / Inspecting */}
             <div className="lg:col-span-6 flex justify-end">
               <div className="relative w-full max-w-md lg:max-w-lg aspect-[639/420] sm:aspect-[639/480] rounded-2xl overflow-hidden shadow-xl border border-zinc-200 bg-zinc-900 group">
                 <Image
@@ -334,7 +334,7 @@ export default function AboutPage() {
             </div>
           </div>
 
-          {/* 5 Regulatory Cards sitting across horizontally matching SS 4 */}
+          {/* 5 Regulatory Cards sitting across horizontally */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 pt-2">
             {/* 1. EU-MDR */}
             <div className="bg-white p-5 rounded-2xl border border-zinc-200/90 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between space-y-4">

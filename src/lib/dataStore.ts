@@ -845,7 +845,7 @@ export function clearQuoteCart(): void {
 }
 
 // ============================================
-// PRODUCT LINE SHOWCASE (ss 1)
+// PRODUCT LINE SHOWCASE
 // ============================================
 const defaultProductLine: ProductLineShowcase = {
   title: 'Our Complete Product Line',
@@ -869,7 +869,7 @@ export function saveProductLine(data: ProductLineShowcase): ProductLineShowcase 
 }
 
 // ────────────────────────────────────────────
-// PORTFOLIO SHOWCASE CARDS (ss 2 - Exactly 2 Categories)
+// PORTFOLIO SHOWCASE CARDS (Airway Management)
 // ────────────────────────────────────────────
 export const defaultPortfolioCards: PortfolioShowcaseCard[] = [
   {
@@ -976,7 +976,7 @@ export function moveProductLineCardOrder(id: string, direction: 'up' | 'down'): 
 }
 
 // ────────────────────────────────────────────
-// OTOSCOPE SHOWCASE CARDS (ss 3 - Exactly 2 Categories)
+// OTOSCOPE SHOWCASE CARDS (Diagnostics & Otoscopy)
 // ────────────────────────────────────────────
 export const defaultOtoscopeCards: PortfolioShowcaseCard[] = [
   {
@@ -1167,7 +1167,7 @@ export function moveSubcategoryOrder(id: string, direction: 'up' | 'down'): Subc
 }
 
 // ────────────────────────────────────────────
-// STORE FILTERS & FACETS API (ss 4)
+// STORE FILTERS & FACETS API
 // ────────────────────────────────────────────
 export interface FilterFacets {
   productTypes: string[]
@@ -1189,7 +1189,7 @@ export function saveFilterFacets(facets: FilterFacets): FilterFacets {
 }
 
 // ============================================
-// PROJECT DEVELOPMENT (ss 2)
+// PROJECT DEVELOPMENT
 // ============================================
 const defaultProjectDev: ProjectDevelopmentSection = {
   features: [
@@ -1230,7 +1230,7 @@ export function saveProjectDev(data: ProjectDevelopmentSection): ProjectDevelopm
 }
 
 // ============================================
-// PRECISION MANUFACTURING & QUALITY CONTROL (ss 1)
+// PRECISION MANUFACTURING & QUALITY CONTROL
 // ============================================
 const defaultPrecisionMfg: PrecisionManufacturingSection = {
   eyebrow: 'QUALITY & MANUFACTURING',
@@ -1374,7 +1374,7 @@ export function saveImpactNumbers(data: ImpactNumbersData): ImpactNumbersData {
   return data
 }
 
-// ── About & Facility Section (SS 1) ──
+// ── About & Facility Section ──
 export interface AboutFacilityData {
   eyebrow: string
   title: string

@@ -23,7 +23,7 @@ export default function ImpactNumbersSection() {
     <section className="bg-white border-b border-zinc-200/80 shadow-xs relative z-10">
       <div className="max-w-[1440px] mx-auto px-4 sm:px-8 py-6 lg:py-8">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 lg:gap-4 items-center">
-          {/* Left Title Box matching ss 1 & ss 2 */}
+          {/* Left Title Box */}
           <div className="relative pl-4 border-l-4 border-[#F6851F] flex flex-col justify-center py-1">
             {/* Subtle decorative dot pattern in background */}
             <div 

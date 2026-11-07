@@ -260,7 +260,7 @@ function ProductDetailContent() {
       </section>
 
       {/* ─────────────────────────────────────────────────────────── */}
-      {/* 2. PRODUCT DETAILS & SPECIFICATIONS (Matching SS 3)        */}
+      {/* 2. PRODUCT DETAILS & SPECIFICATIONS                         */}
       {/* ─────────────────────────────────────────────────────────── */}
       <section className="bg-white py-12 sm:py-16">
         <div className="max-w-[1600px] 3xl:max-w-[1800px] mx-auto px-6 sm:px-10 lg:px-16">

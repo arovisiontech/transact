@@ -50,7 +50,7 @@ export default function OtoscopeShowcaseSection() {
       className="bg-white py-16 sm:py-24 px-4 sm:px-8 border-b border-zinc-100 transition-colors"
     >
       <div className="max-w-[1380px] mx-auto space-y-10 sm:space-y-12">
-        {/* ── Section Header with Dual Accent Line (matching ss 1) ── */}
+        {/* ── Section Header with Dual Accent Line ── */}
         <div className="text-center space-y-3">
           {/* Dual Navy/Orange accent bar */}
           <div className="flex items-center justify-center gap-1.5 mb-2">
@@ -68,7 +68,7 @@ export default function OtoscopeShowcaseSection() {
           </p>
         </div>
 
-        {/* ── Filter / Navigation Strip matching ss 1 ── */}
+        {/* ── Filter / Navigation Strip ── */}
         <div className="flex items-center justify-start pb-2">
           <Link
             href="/products"

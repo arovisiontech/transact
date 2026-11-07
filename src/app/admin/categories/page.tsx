@@ -82,8 +82,8 @@ export default function AdminCategoriesPage() {
       section: targetSection,
       section_label:
         targetSection === 'diagnostics'
-          ? 'Section 2: Diagnostics & Otoscopy (SS 5)'
-          : 'Section 1: Airway Management (SS 2)',
+          ? 'Section 2: Diagnostics & Otoscopy'
+          : 'Section 1: Airway Management',
     })
     setIsModalOpen(true)
   }
@@ -122,7 +122,7 @@ export default function AdminCategoriesPage() {
             Main Categories &amp; Showcase Management
           </h1>
           <p className="text-xs sm:text-sm text-[#4B5D71] mt-1">
-            Separated into Section 1 (Airway / Laryngoscopes - SS 2) and Section 2 (Diagnostics - SS 5) for instant homepage sync.
+            Separated into Section 1 (Airway / Laryngoscopes) and Section 2 (Diagnostics &amp; Otoscopy) for instant homepage sync.
           </p>
         </div>
 
@@ -174,7 +174,7 @@ export default function AdminCategoriesPage() {
           }`}
         >
           <Layers className="w-3.5 h-3.5" />
-          <span>Section 1: Airway Showcase (SS 2)</span>
+          <span>Section 1: Airway Showcase</span>
           <span className="px-1.5 py-0.5 rounded-full text-[10px] bg-white/20">{airwayCount}</span>
         </button>
 
@@ -187,7 +187,7 @@ export default function AdminCategoriesPage() {
           }`}
         >
           <Stethoscope className="w-3.5 h-3.5" />
-          <span>Section 2: Diagnostics Showcase (SS 5)</span>
+          <span>Section 2: Diagnostics Showcase</span>
           <span className="px-1.5 py-0.5 rounded-full text-[10px] bg-white/20">{diagnosticsCount}</span>
         </button>
       </div>
@@ -276,12 +276,12 @@ export default function AdminCategoriesPage() {
                       {isDiag ? (
                         <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold bg-blue-50 text-blue-700 border border-blue-200">
                           <Stethoscope className="w-3 h-3" />
-                          <span>Section 2: Diagnostics (SS 5)</span>
+                          <span>Section 2: Diagnostics</span>
                         </span>
                       ) : (
                         <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold bg-orange-50 text-orange-700 border border-orange-200">
                           <Layers className="w-3 h-3" />
-                          <span>Section 1: Airway (SS 2)</span>
+                          <span>Section 1: Airway</span>
                         </span>
                       )}
                     </td>

@@ -115,13 +115,13 @@ export default function AdminFiltersPage() {
         <div>
           <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#F6851F]">
             <Filter className="w-4 h-4" />
-            <span>Storefront Navigation Facets (SS 4)</span>
+            <span>Storefront Navigation Facets</span>
           </div>
           <h1 className="text-2xl sm:text-3xl font-black text-[#081022] mt-1">
             Product Filters &amp; Facets Management
           </h1>
           <p className="text-xs sm:text-sm text-[#4B5D71] mt-1">
-            Manage the Product Category, Product Type, and Material checkboxes displayed in the catalog sidebar (Screenshot 4).
+            Manage the Product Category, Product Type, and Material checkboxes displayed in the catalog sidebar.
           </p>
         </div>
 
@@ -190,7 +190,7 @@ export default function AdminFiltersPage() {
           <div className="bg-white p-6 rounded-3xl border border-zinc-200 shadow-xs space-y-4">
             <div className="border-b border-zinc-100 pb-3">
               <h2 className="text-sm font-black text-[#081022]">
-                2. Product Types Filter (SS 4 Group 2)
+                2. Product Types Filter
               </h2>
               <p className="text-xs text-zinc-500">
                 Add, edit, or remove specific instrument types (e.g. Macintosh Blades, Miller Blades, etc.).
@@ -238,7 +238,7 @@ export default function AdminFiltersPage() {
           <div className="bg-white p-6 rounded-3xl border border-zinc-200 shadow-xs space-y-4">
             <div className="border-b border-zinc-100 pb-3">
               <h2 className="text-sm font-black text-[#081022]">
-                3. Materials Filter (SS 4 Group 3)
+                3. Materials Filter
               </h2>
               <p className="text-xs text-zinc-500">
                 Add, edit, or remove metallurgy and material options (e.g. Stainless Steel, Fiber Optic, Titanium).

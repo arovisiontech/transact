@@ -56,7 +56,7 @@ export default function AdminProductLinePage() {
   // Product Line Showcase Header State
   const [productLine, setProductLine] = useState<ProductLineShowcase>(getStoredProductLine())
 
-  // SS 2 & SS 3 Showcase Cards States
+  // Portfolio & Diagnostics Showcase Cards States
   const [portfolioCards, setPortfolioCards] = useState<PortfolioShowcaseCard[]>([])
   const [otoscopeCards, setOtoscopeCards] = useState<PortfolioShowcaseCard[]>([])
 
@@ -385,7 +385,7 @@ export default function AdminProductLinePage() {
             </h1>
           </div>
           <p className="text-xs text-zinc-500 mt-1">
-            Manage Portfolio Showcase (ss 2) and Otoscope &amp; Diagnostics Showcase (ss 3) cards, direct uploads &amp; actions.
+            Manage Portfolio Showcase (Airway) and Otoscope &amp; Diagnostics Showcase cards, direct uploads &amp; actions.
           </p>
         </div>
 
@@ -400,7 +400,7 @@ export default function AdminProductLinePage() {
                 : 'text-zinc-600 hover:text-black'
             }`}
           >
-            1. Portfolio Showcase (ss 2)
+            1. Portfolio Showcase (Airway)
           </button>
           <button
             type="button"
@@ -411,7 +411,7 @@ export default function AdminProductLinePage() {
                 : 'text-zinc-600 hover:text-black'
             }`}
           >
-            2. Otoscope Showcase (ss 3)
+            2. Otoscope Showcase (Diagnostics)
           </button>
           <button
             type="button"
@@ -439,7 +439,7 @@ export default function AdminProductLinePage() {
       </div>
 
       {/* ────────────────────────────────────────────────────────── */}
-      {/* ── TAB 1: Complete Product Line (Portfolio Showcase ss 2)── */}
+      {/* ── TAB 1: Complete Product Line (Portfolio Showcase) ─────── */}
       {/* ────────────────────────────────────────────────────────── */}
       {activeTab === 'productLine' && (
         <div className="space-y-8">
@@ -451,7 +451,7 @@ export default function AdminProductLinePage() {
             <div className="flex items-center justify-between border-b border-zinc-100 pb-3">
               <div>
                 <h2 className="text-sm font-black text-[#081022]">
-                  Section Header Settings (ss 2 Top)
+                  Section Header Settings (Airway Top)
                 </h2>
                 <p className="text-xs text-zinc-500">
                   Controls the eyebrow tag, heading, and subtitle displayed above the sliding cards.
@@ -503,21 +503,21 @@ export default function AdminProductLinePage() {
             </div>
           </form>
 
-          {/* Cards / Categories List for SS 2 */}
+          {/* Cards / Categories List for Airway Showcase */}
           <div className="space-y-4">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-5 rounded-2xl border border-zinc-200 shadow-xs">
               <div>
                 <div className="flex items-center gap-2">
                   <span className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
                   <h3 className="text-base font-black text-[#081022]">
-                    Showcase Category Cards (SS 2)
+                    Showcase Category Cards (Airway)
                   </h3>
                   <span className="px-2 py-0.5 rounded-full bg-orange-50 text-[#F6851F] text-[11px] font-bold">
                     {portfolioCards.length} Cards
                   </span>
                 </div>
                 <p className="text-xs text-zinc-500 mt-0.5">
-                  These cards match the Micromar-style sliding cards in ss 2. Edit, delete, reorder, or upload visuals directly from your device gallery.
+                  These cards match the sliding cards on the homepage. Edit, delete, reorder, or upload visuals directly from your device gallery.
                 </p>
               </div>
 
@@ -664,7 +664,7 @@ export default function AdminProductLinePage() {
       )}
 
       {/* ────────────────────────────────────────────────────────── */}
-      {/* ── TAB 2: Otoscope & Diagnostics Showcase (ss 3) ──────── */}
+      {/* ── TAB 2: Otoscope & Diagnostics Showcase ─────────────── */}
       {/* ────────────────────────────────────────────────────────── */}
       {activeTab === 'otoscopeShowcase' && (
         <div className="space-y-6">
@@ -673,14 +673,14 @@ export default function AdminProductLinePage() {
               <div className="flex items-center gap-2">
                 <span className="w-2.5 h-2.5 rounded-full bg-blue-500" />
                 <h3 className="text-base font-black text-[#081022]">
-                  Complete Product Line / Otoscope Showcase (SS 3)
+                  Complete Product Line / Otoscope Showcase (Diagnostics)
                 </h3>
                 <span className="px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 text-[11px] font-bold">
                   {otoscopeCards.length} Cards
                 </span>
               </div>
               <p className="text-xs text-zinc-500 mt-0.5">
-                Manage the diagnostic instruments and otoscope showcase cards shown in Section 10 on the homepage (ss 3).
+                Manage the diagnostic instruments and otoscope showcase cards shown in Section 10 on the homepage.
               </p>
             </div>
 
@@ -828,8 +828,8 @@ export default function AdminProductLinePage() {
                 </h3>
                 <p className="text-xs text-zinc-500">
                   {cardModalTarget === 'productLine'
-                    ? 'Portfolio Showcase Card (ss 2)'
-                    : 'Otoscope & Diagnostics Card (ss 3)'}
+                    ? 'Portfolio Showcase Card (Airway)'
+                    : 'Otoscope & Diagnostics Card (Diagnostics)'}
                 </p>
               </div>
               <button
@@ -1316,7 +1316,7 @@ export default function AdminProductLinePage() {
             {/* Live Preview */}
             <div className="space-y-3">
               <span className="text-xs font-bold uppercase tracking-wider text-zinc-400 block">
-                Live Preview (ss 2)
+                Live Preview
               </span>
 
               <div className="bg-zinc-50 p-6 rounded-3xl border border-zinc-200 space-y-6">

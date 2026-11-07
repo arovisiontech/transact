@@ -36,7 +36,7 @@ const sidebarSections = [
       { label: 'Products', href: '/admin/products', icon: Package },
       { label: 'Categories', href: '/admin/categories', icon: FolderOpen },
       { label: 'Subcategories', href: '/admin/subcategories', icon: Layers },
-      { label: 'Store Filters (SS 4)', href: '/admin/filters', icon: Filter },
+      { label: 'Store Filters', href: '/admin/filters', icon: Filter },
       { label: 'Catalogue PDFs', href: '/admin/catalogues', icon: BookOpen },
     ],
   },

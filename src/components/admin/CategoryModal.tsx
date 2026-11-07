@@ -125,8 +125,8 @@ export default function CategoryModal({ category, isOpen, onClose, onSaved }: Ca
         section: formData.section || 'airway',
         section_label:
           formData.section === 'diagnostics'
-            ? 'Section 2: Diagnostics & Otoscopy (SS 5)'
-            : 'Section 1: Airway Management (SS 2)',
+            ? 'Section 2: Diagnostics & Otoscopy'
+            : 'Section 1: Airway Management',
       }
 
       await saveCategory(catToSave)
@@ -159,7 +159,7 @@ export default function CategoryModal({ category, isOpen, onClose, onSaved }: Ca
 
         {/* Scrollable Form Body */}
         <form onSubmit={handleSubmit} className="p-6 space-y-4 overflow-y-auto flex-1">
-          {/* ── Section Placement Selector (SS 2 vs SS 5) ── */}
+          {/* ── Section Placement Selector ── */}
           <div className="space-y-1.5 pb-1">
             <label className="block text-xs font-bold text-[#081022]">
               Homepage Showcase Placement *
@@ -171,7 +171,7 @@ export default function CategoryModal({ category, isOpen, onClose, onSaved }: Ca
                   setFormData((prev) => ({
                     ...prev,
                     section: 'airway',
-                    section_label: 'Section 1: Airway Management (SS 2)',
+                    section_label: 'Section 1: Airway Management',
                   }))
                 }
                 className={`p-3 rounded-xl border text-left transition cursor-pointer ${
@@ -181,7 +181,7 @@ export default function CategoryModal({ category, isOpen, onClose, onSaved }: Ca
                 }`}
               >
                 <div className="text-xs font-bold text-[#081022]">Section 1: Airway</div>
-                <div className="text-[11px] text-zinc-500 mt-0.5">Laryngoscopes Showcase (SS 2)</div>
+                <div className="text-[11px] text-zinc-500 mt-0.5">Laryngoscopes Showcase</div>
               </button>
               <button
                 type="button"
@@ -189,7 +189,7 @@ export default function CategoryModal({ category, isOpen, onClose, onSaved }: Ca
                   setFormData((prev) => ({
                     ...prev,
                     section: 'diagnostics',
-                    section_label: 'Section 2: Diagnostics & Otoscopy (SS 5)',
+                    section_label: 'Section 2: Diagnostics & Otoscopy',
                   }))
                 }
                 className={`p-3 rounded-xl border text-left transition cursor-pointer ${
@@ -199,7 +199,7 @@ export default function CategoryModal({ category, isOpen, onClose, onSaved }: Ca
                 }`}
               >
                 <div className="text-xs font-bold text-[#081022]">Section 2: Diagnostics</div>
-                <div className="text-[11px] text-zinc-500 mt-0.5">Otoscopy Showcase (SS 5)</div>
+                <div className="text-[11px] text-zinc-500 mt-0.5">Otoscopy Showcase</div>
               </button>
             </div>
           </div>

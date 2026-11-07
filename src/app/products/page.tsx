@@ -59,7 +59,7 @@ function ProductsCatalogContent() {
   const [isInquiryOpen, setIsInquiryOpen] = useState(false)
   const [mobileFilterOpen, setMobileFilterOpen] = useState(false)
 
-  // Single Selection Filter States (matching SS 4)
+  // Single Selection Filter States
   const [selectedCategory, setSelectedCategory] = useState<string>('all')
   const [selectedSubcategory, setSelectedSubcategory] = useState<string>('all')
   const [selectedType, setSelectedType] = useState<string>('all')
@@ -345,7 +345,7 @@ function ProductsCatalogContent() {
       )}
 
       {/* ─────────────────────────────────────────────────────────── */}
-      {/* 3. MAIN CATALOG BODY (Filters Sidebar SS 4 + Products Grid)*/}
+      {/* 3. MAIN CATALOG BODY (Filters Sidebar + Products Grid)       */}
       {/* ─────────────────────────────────────────────────────────── */}
       <section className="bg-white py-10 sm:py-14">
         <div className="max-w-[1600px] 3xl:max-w-[1800px] mx-auto px-6 sm:px-10 lg:px-16">
@@ -364,7 +364,7 @@ function ProductsCatalogContent() {
           </div>
 
           <div className="flex flex-col lg:flex-row items-start gap-8 xl:gap-10">
-            {/* ───────────── LEFT SIDEBAR (SS 4 FILTERS) ───────────── */}
+            {/* ───────────── LEFT SIDEBAR (CATALOG FILTERS) ───────────── */}
             <aside
               className={`fixed inset-y-0 left-0 z-50 w-80 bg-white p-6 shadow-2xl transition-transform duration-300 lg:static lg:z-auto lg:w-[310px] xl:w-[330px] lg:p-0 lg:shadow-none lg:translate-x-0 ${
                 mobileFilterOpen ? 'translate-x-0 overflow-y-auto' : '-translate-x-full lg:translate-x-0'
@@ -381,7 +381,7 @@ function ProductsCatalogContent() {
                 </button>
               </div>
 
-              {/* Filters Container Box (matching screenshot ss 4) */}
+              {/* Filters Container Box */}
               <div className="bg-[#F8FAFC] border border-[#E2E8F0] rounded-2xl p-6 space-y-6">
                 <div className="flex items-center justify-between pb-1 border-b border-slate-200/60">
                   <h3 className="font-bold text-slate-900 text-lg">Filters</h3>
@@ -403,7 +403,7 @@ function ProductsCatalogContent() {
                   )}
                 </div>
 
-                {/* Group 1: Product Category (SS 4) */}
+                {/* Group 1: Product Category */}
                 <div className="space-y-3">
                   <h4 className="text-sm font-bold text-slate-900">Product Category</h4>
                   <div className="space-y-2.5">
@@ -464,7 +464,7 @@ function ProductsCatalogContent() {
                   </div>
                 </div>
 
-                {/* Group 2: Product Type (SS 4 - Managed dynamically in /admin/filters) */}
+                {/* Group 2: Product Type */}
                 <div className="space-y-3 pt-2 border-t border-slate-200/70">
                   <h4 className="text-sm font-bold text-slate-900">Product Type</h4>
                   <div className="space-y-2.5">
@@ -509,7 +509,7 @@ function ProductsCatalogContent() {
                   </div>
                 </div>
 
-                {/* Group 3: Material (SS 4 - Managed dynamically in /admin/filters) */}
+                {/* Group 3: Material */}
                 <div className="space-y-3 pt-2 border-t border-slate-200/70">
                   <h4 className="text-sm font-bold text-slate-900">Material</h4>
                   <div className="space-y-2.5">

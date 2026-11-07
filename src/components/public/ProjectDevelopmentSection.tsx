@@ -22,7 +22,7 @@ export default function ProjectDevelopmentSection() {
   return (
     <section className="bg-white py-14 sm:py-20 px-4 sm:px-8 border-b border-zinc-100">
       <div className="max-w-[1380px] mx-auto space-y-12 sm:space-y-16">
-        {/* ── Top 5-Feature Bar matching ss 2 ── */}
+        {/* ── Top 5-Feature Bar ── */}
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-6 sm:gap-2 items-center border-b border-zinc-200/80 pb-10">
           {data.features.map((item, idx) => (
             <div
@@ -48,7 +48,7 @@ export default function ProjectDevelopmentSection() {
           ))}
         </div>
 
-        {/* ── Main 3-Column Split matching ss 2 ── */}
+        {/* ── Main 3-Column Split ── */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
           {/* Left Column: Text Content */}
           <div className="lg:col-span-5 space-y-5">
@@ -98,11 +98,11 @@ export default function ProjectDevelopmentSection() {
             </div>
           </div>
 
-          {/* Right Column: 6-Step Process List matching ss 1 */}
+          {/* Right Column: 6-Step Process List */}
           <div className="lg:col-span-3 space-y-5 pl-0 lg:pl-2">
             {data.steps.map((step, i) => (
               <div key={i} className="flex items-center gap-3.5 group">
-                {/* Solid circular bullet matching ss 1 */}
+                {/* Solid circular bullet */}
                 <span className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-[#D4D4D8] shrink-0 group-hover:bg-[#F6851F] transition-colors" />
 
                 {/* Step Name */}

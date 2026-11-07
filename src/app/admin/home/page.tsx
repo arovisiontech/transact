@@ -166,9 +166,9 @@ export default function AdminHomePageEditor() {
   }
 
   const tabs: { key: HomeTab; label: string; icon: React.ElementType; sectionBadge: string }[] = [
-    { key: 'about', label: 'About Facility (SS 1)', icon: Building2, sectionBadge: 'Section 3' },
-    { key: 'showcase_airway', label: 'Airway Showcase (SS 2)', icon: Layers, sectionBadge: 'Section 5' },
-    { key: 'showcase_diag', label: 'Diagnostics Showcase (SS 5)', icon: Cpu, sectionBadge: 'Section 10' },
+    { key: 'about', label: 'About Facility', icon: Building2, sectionBadge: 'Section 3' },
+    { key: 'showcase_airway', label: 'Airway Showcase', icon: Layers, sectionBadge: 'Section 5' },
+    { key: 'showcase_diag', label: 'Diagnostics Showcase', icon: Cpu, sectionBadge: 'Section 10' },
     { key: 'impact', label: 'Impact in Numbers', icon: Sparkles, sectionBadge: 'Section 2' },
     { key: 'trust', label: 'Trust & Metallurgy', icon: ShieldCheck, sectionBadge: 'Section 4' },
     { key: 'project_dev', label: 'Project Development', icon: Workflow, sectionBadge: 'Section 6' },
@@ -231,7 +231,7 @@ export default function AdminHomePageEditor() {
       </div>
 
       {/* ───────────────────────────────────────────────────────────── */}
-      {/* TAB 1: About & Facility Section (SS 1 Corner-to-Corner)       */}
+      {/* TAB 1: About & Facility Section                               */}
       {/* ───────────────────────────────────────────────────────────── */}
       {activeTab === 'about' && (
         <form onSubmit={handleSaveAbout} className="bg-white rounded-3xl p-6 sm:p-8 border border-zinc-200 shadow-sm space-y-6">
@@ -239,7 +239,7 @@ export default function AdminHomePageEditor() {
             <div>
               <div className="flex items-center gap-2">
                 <span className="px-2.5 py-0.5 rounded-md text-[10px] font-bold bg-orange-50 text-[#F6851F] border border-orange-200">
-                  Section 3 • SS 1
+                  Section 3
                 </span>
                 <h2 className="text-lg font-bold text-[#081022]">About Facility &amp; Precision Manufacturing</h2>
               </div>
@@ -386,7 +386,7 @@ export default function AdminHomePageEditor() {
       )}
 
       {/* ───────────────────────────────────────────────────────────── */}
-      {/* TAB 2: Section 1 Airway Showcase (SS 2)                       */}
+      {/* TAB 2: Section 1 Airway Showcase                              */}
       {/* ───────────────────────────────────────────────────────────── */}
       {activeTab === 'showcase_airway' && (
         <div className="bg-white rounded-3xl p-6 sm:p-8 border border-zinc-200 shadow-sm space-y-6">
@@ -394,7 +394,7 @@ export default function AdminHomePageEditor() {
             <div>
               <div className="flex items-center gap-2">
                 <span className="px-2.5 py-0.5 rounded-md text-[10px] font-bold bg-orange-50 text-[#F6851F] border border-orange-200">
-                  Section 5 • SS 2
+                  Section 5
                 </span>
                 <h2 className="text-lg font-bold text-[#081022]">Section 1: Airway Management Showcase (Laryngoscopes)</h2>
               </div>
@@ -482,7 +482,7 @@ export default function AdminHomePageEditor() {
       )}
 
       {/* ───────────────────────────────────────────────────────────── */}
-      {/* TAB 3: Section 2 Diagnostics Showcase (SS 5)                  */}
+      {/* TAB 3: Section 2 Diagnostics Showcase                         */}
       {/* ───────────────────────────────────────────────────────────── */}
       {activeTab === 'showcase_diag' && (
         <div className="bg-white rounded-3xl p-6 sm:p-8 border border-zinc-200 shadow-sm space-y-6">
@@ -490,7 +490,7 @@ export default function AdminHomePageEditor() {
             <div>
               <div className="flex items-center gap-2">
                 <span className="px-2.5 py-0.5 rounded-md text-[10px] font-bold bg-blue-50 text-blue-700 border border-blue-200">
-                  Section 10 • SS 5
+                  Section 10
                 </span>
                 <h2 className="text-lg font-bold text-[#081022]">Section 2: Diagnostics &amp; Otoscopy Showcase</h2>
               </div>

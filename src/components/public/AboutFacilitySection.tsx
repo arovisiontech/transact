@@ -92,7 +92,7 @@ export default function AboutFacilitySection() {
           </div>
         </div>
 
-        {/* Right – Building image Corner-to-Corner flush to right edge (SS 1) */}
+        {/* Right – Building image Corner-to-Corner flush to right edge */}
         <div className="w-full lg:w-1/2 relative h-[380px] sm:h-[460px] lg:h-[580px] 2xl:h-[640px] pr-0 overflow-hidden">
           {/* Orange diagonal accent strip (top-right corner) */}
           <div

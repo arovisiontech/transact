@@ -23,7 +23,7 @@ export default function HomePage() {
         <HeroSection />
       </ClientOnly>
 
-      {/* 2. Impact in Numbers Section — exact as ss 1 & ss 2 */}
+      {/* 2. Impact in Numbers Section */}
       <ImpactNumbersSection />
 
       {/* 3. About / Facility — text left / building right */}
@@ -32,31 +32,31 @@ export default function HomePage() {
       {/* 4. Trust & Metallurgy strip — Quality You Can Trust, Every Time */}
       <TrustFeaturesSection />
 
-      {/* 5. Our Complete Product Line — exact as ss 1 */}
+      {/* 5. Our Complete Product Line (Airway Showcase) */}
       <ClientOnly fallback={<div className="py-16 bg-white min-h-[450px]" />}>
         <ProductLineSection />
       </ClientOnly>
 
-      {/* 6. New Products Project Development — exact as ss 1 */}
+      {/* 6. New Products Project Development */}
       <ClientOnly fallback={<div className="py-16 bg-white min-h-[500px]" />}>
         <ProjectDevelopmentSection />
       </ClientOnly>
 
-      {/* 7. Precision Manufacturing & Quality Control — exact as ss 1 */}
+      {/* 7. Precision Manufacturing & Quality Control */}
       <ClientOnly fallback={<div className="py-16 bg-white min-h-[500px]" />}>
         <PrecisionManufacturingSection />
       </ClientOnly>
 
-      {/* 8. Global B2B Partner Section — exact as ss 1 */}
+      {/* 8. Global B2B Partner Section */}
       <GlobalPartnerSection />
 
-      {/* 9. Laryngoscope Expertise / Built for Precision & Reliability — exact as ss 2 */}
+      {/* 9. Laryngoscope Expertise / Built for Precision & Reliability */}
       <LaryngoscopeExpertiseSection />
 
-      {/* 10. Complete Product Line / Otoscope Showcase — exact as ss 3 */}
+      {/* 10. Complete Product Line / Otoscope Showcase */}
       <OtoscopeShowcaseSection />
 
-      {/* 11. Compliance & Quality + Latest Blogs — exact as ss 4 */}
+      {/* 11. Compliance & Quality + Latest Blogs */}
       <ComplianceAndBlogsSection />
     </PublicShell>
   )

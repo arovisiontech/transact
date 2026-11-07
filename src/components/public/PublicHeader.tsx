@@ -42,7 +42,7 @@ export default function PublicHeader({ onOpenSearch, onOpenQuote }: PublicHeader
     return () => window.removeEventListener('transact_data_updated', updateQuote)
   }, [])
 
-  // Detect when navbar is scrolling over "Our Complete Product Line" section (ss 1, 2, 3)
+  // Detect when navbar is scrolling over "Our Complete Product Line" section
   useEffect(() => {
     const checkScroll = () => {
       const el1 = document.getElementById('complete-product-line-showcase')
@@ -62,7 +62,7 @@ export default function PublicHeader({ onOpenSearch, onOpenQuote }: PublicHeader
     return () => window.removeEventListener('scroll', checkScroll)
   }, [])
 
-  // Links exactly matching SS 2:
+  // Navigation Links:
   // Home | About Us | Products | Service v | Quality v | Contact
   const navLinks: NavLinkItem[] = [
     { name: 'Home', href: '/' },
@@ -149,7 +149,7 @@ export default function PublicHeader({ onOpenSearch, onOpenQuote }: PublicHeader
           />
         </Link>
 
-        {/* Center: Desktop Nav Links (matching SS 2 exact font, spacing, and styling) */}
+        {/* Center: Desktop Nav Links */}
         <nav className="hidden lg:flex items-center gap-1 xl:gap-2 mx-auto">
           {navLinks.map((link) => {
             const isActive =
@@ -219,7 +219,7 @@ export default function PublicHeader({ onOpenSearch, onOpenQuote }: PublicHeader
           })}
         </nav>
 
-        {/* Right: Search Icon + Cart Icon + "Partner With Us ->" Pill Button (Matching SS 2) */}
+        {/* Right: Search Icon + Cart Icon + "Partner With Us ->" Pill Button */}
         <div className="flex items-center gap-4 sm:gap-5 shrink-0">
           {/* 1. Search Icon (search-icon 1.svg) */}
           <button
