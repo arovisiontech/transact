@@ -4,7 +4,11 @@ import React, { useState, useEffect } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { ArrowRight } from 'lucide-react'
-import { getStoredProductLine, getStoredProductLineCards } from '@/src/lib/dataStore'
+import {
+  getStoredProductLine,
+  getStoredProductLineCards,
+  getStoredCategories,
+} from '@/src/lib/dataStore'
 import { ProductLineShowcase, PortfolioShowcaseCard } from '@/src/types'
 
 export default function ProductLineSection() {
@@ -13,7 +17,32 @@ export default function ProductLineSection() {
 
   const reloadData = () => {
     setData(getStoredProductLine())
-    setCards(getStoredProductLineCards().filter((c) => c.is_active !== false))
+
+    // Direct synchronization with Section 1 (Airway) categories if defined
+    const cats = getStoredCategories().filter(
+      (c) => (c.section === 'airway' || !c.section || c.section === 'section_1') && c.is_published !== false
+    )
+    if (cats.length > 0) {
+      const mapped: PortfolioShowcaseCard[] = cats.map((cat, idx) => ({
+        id: `card-${cat.id}`,
+        tag: cat.name.toLowerCase().includes('single')
+          ? 'Sterile Disposable Solutions'
+          : 'Reusable Airway Management',
+        title: cat.name,
+        subtitle: cat.description || '',
+        image: cat.card_image || cat.image_url || '/Rectangle 819 (1).svg',
+        badgeIcon: '/laryngoscope 2.svg',
+        badgeBg: cat.name.toLowerCase().includes('single') ? 'bg-[#F6851F]' : 'bg-white/95',
+        buttonText: `Explore ${cat.name.replace(' Laryngoscopes', '')} Line`,
+        buttonLink: `/products?category=${cat.slug}`,
+        indexLabel: `0${idx + 1} / 0${cats.length}`,
+        sort_order: cat.sort_order || idx + 1,
+        is_active: true,
+      }))
+      setCards(mapped)
+    } else {
+      setCards(getStoredProductLineCards().filter((c) => c.is_active !== false))
+    }
   }
 
   useEffect(() => {
@@ -28,7 +57,7 @@ export default function ProductLineSection() {
       className="bg-white py-16 sm:py-24 px-4 sm:px-8 border-b border-zinc-100 transition-colors"
     >
       <div className="max-w-[1340px] mx-auto space-y-12 sm:space-y-16">
-        {/* ── Section Header matching ss 1 ── */}
+        {/* ── Section Header ── */}
         <div className="text-center max-w-2xl mx-auto space-y-3">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-orange-50 border border-orange-200/60 text-[#F6851F] text-xs font-bold uppercase tracking-wider">
             <span>Portfolio Showcase</span>
@@ -44,10 +73,9 @@ export default function ProductLineSection() {
           </p>
         </div>
 
-        {/* ── Stacking Cards Container (Micromar Reference: smooth sticky stacking cards) ── */}
+        {/* ── Stacking Cards Container (Clickable Anywhere) ── */}
         <div className="relative pb-24">
           {cards.map((card, index) => {
-            // Sticky top offset
             const stickyTop = 84 + index * 10
             const isLast = index === cards.length - 1
             const marginBottom = isLast ? '0' : '50vh'
@@ -63,9 +91,11 @@ export default function ProductLineSection() {
                   marginBottom: marginBottom,
                 }}
               >
-                {/* ── Visual Card Surface ── */}
-                <div
-                  className="relative w-full rounded-2xl sm:rounded-3xl overflow-hidden bg-[#F6F5F4] border border-zinc-200/90 shadow-[0_-12px_45px_rgba(0,0,0,0.12),0_25px_60px_rgba(0,0,0,0.18)] flex flex-col justify-between group"
+                {/* ── Visual Card Surface Wrapped in Link (Clickable Anywhere) ── */}
+                <Link
+                  href={card.buttonLink}
+                  title={`Open ${card.title}`}
+                  className="relative w-full rounded-2xl sm:rounded-3xl overflow-hidden bg-[#F6F5F4] border border-zinc-200/90 shadow-[0_-12px_45px_rgba(0,0,0,0.12),0_25px_60px_rgba(0,0,0,0.18)] flex flex-col justify-between group cursor-pointer block"
                   style={{
                     minHeight: 'clamp(440px, 62vh, 640px)',
                   }}
@@ -78,7 +108,7 @@ export default function ProductLineSection() {
                       fill
                       unoptimized
                       priority={index === 0}
-                      className="object-cover object-center group-hover:scale-[1.02] transition-transform duration-700"
+                      className="object-cover object-center group-hover:scale-[1.03] transition-transform duration-700"
                     />
                     {/* Dark gradient for text readability and cinematic depth */}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/35 to-black/10 pointer-events-none" />
@@ -125,7 +155,7 @@ export default function ProductLineSection() {
                       </div>
 
                       {/* Title */}
-                      <h3 className="text-3xl sm:text-5xl lg:text-6xl font-light text-white tracking-tight leading-none drop-shadow-sm font-sans">
+                      <h3 className="text-3xl sm:text-5xl lg:text-6xl font-light text-white tracking-tight leading-none drop-shadow-sm font-sans group-hover:text-orange-100 transition-colors">
                         {card.title}
                       </h3>
 
@@ -135,20 +165,17 @@ export default function ProductLineSection() {
                       </p>
                     </div>
 
-                    {/* Right Action Button */}
+                    {/* Right Action Button (Visual inside Link) */}
                     <div className="shrink-0 pt-2 sm:pt-0">
-                      <Link
-                        href={card.buttonLink}
-                        className="inline-flex items-center gap-2.5 px-6 sm:px-7 py-3 sm:py-3.5 bg-[#F6851F] hover:bg-[#e07516] text-white text-xs sm:text-sm font-bold rounded-full transition-all duration-300 shadow-xl hover:shadow-2xl cursor-pointer group/btn"
-                      >
+                      <div className="inline-flex items-center gap-2.5 px-6 sm:px-7 py-3 sm:py-3.5 bg-[#F6851F] group-hover:bg-[#e07516] text-white text-xs sm:text-sm font-bold rounded-full transition-all duration-300 shadow-xl group-hover:shadow-2xl">
                         <span>{card.buttonText}</span>
-                        <span className="w-5 h-5 rounded-full bg-white/25 flex items-center justify-center group-hover/btn:translate-x-1 transition-transform">
+                        <span className="w-5 h-5 rounded-full bg-white/25 flex items-center justify-center group-hover:translate-x-1 transition-transform">
                           <ArrowRight className="w-3 h-3 text-white" />
                         </span>
-                      </Link>
+                      </div>
                     </div>
                   </div>
-                </div>
+                </Link>
               </div>
             )
           })}

@@ -122,6 +122,11 @@ export default function CategoryModal({ category, isOpen, onClose, onSaved }: Ca
         card_image: formData.image_url || null,
         sort_order: Number(formData.sort_order) || 1,
         is_published: Boolean(formData.is_published),
+        section: formData.section || 'airway',
+        section_label:
+          formData.section === 'diagnostics'
+            ? 'Section 2: Diagnostics & Otoscopy (SS 5)'
+            : 'Section 1: Airway Management (SS 2)',
       }
 
       await saveCategory(catToSave)
@@ -154,6 +159,51 @@ export default function CategoryModal({ category, isOpen, onClose, onSaved }: Ca
 
         {/* Scrollable Form Body */}
         <form onSubmit={handleSubmit} className="p-6 space-y-4 overflow-y-auto flex-1">
+          {/* ── Section Placement Selector (SS 2 vs SS 5) ── */}
+          <div className="space-y-1.5 pb-1">
+            <label className="block text-xs font-bold text-[#081022]">
+              Homepage Showcase Placement *
+            </label>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <button
+                type="button"
+                onClick={() =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    section: 'airway',
+                    section_label: 'Section 1: Airway Management (SS 2)',
+                  }))
+                }
+                className={`p-3 rounded-xl border text-left transition cursor-pointer ${
+                  formData.section !== 'diagnostics'
+                    ? 'border-[#F6851F] bg-orange-50/60 ring-2 ring-[#F6851F]/20'
+                    : 'border-zinc-200 bg-white hover:border-zinc-300'
+                }`}
+              >
+                <div className="text-xs font-bold text-[#081022]">Section 1: Airway</div>
+                <div className="text-[11px] text-zinc-500 mt-0.5">Laryngoscopes Showcase (SS 2)</div>
+              </button>
+              <button
+                type="button"
+                onClick={() =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    section: 'diagnostics',
+                    section_label: 'Section 2: Diagnostics & Otoscopy (SS 5)',
+                  }))
+                }
+                className={`p-3 rounded-xl border text-left transition cursor-pointer ${
+                  formData.section === 'diagnostics'
+                    ? 'border-[#F6851F] bg-orange-50/60 ring-2 ring-[#F6851F]/20'
+                    : 'border-zinc-200 bg-white hover:border-zinc-300'
+                }`}
+              >
+                <div className="text-xs font-bold text-[#081022]">Section 2: Diagnostics</div>
+                <div className="text-[11px] text-zinc-500 mt-0.5">Otoscopy Showcase (SS 5)</div>
+              </button>
+            </div>
+          </div>
+
           <div>
             <label className="block text-xs font-bold text-[#081022] mb-1">Category Name *</label>
             <input

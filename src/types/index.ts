@@ -80,6 +80,8 @@ export interface CategoryItem {
   is_active?: boolean
   is_featured?: boolean
   product_count?: number
+  section?: 'airway' | 'diagnostics' | string
+  section_label?: string
   created_at?: string
   updated_at?: string
   subcategories?: SubcategoryItem[]

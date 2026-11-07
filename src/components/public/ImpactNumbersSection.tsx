@@ -1,35 +1,23 @@
 'use client'
 
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import Image from 'next/image'
+import { getStoredImpactNumbers, ImpactNumbersData } from '@/src/lib/dataStore'
 
 export default function ImpactNumbersSection() {
-  const stats = [
-    {
-      type: 'factory',
-      icon: '/factory-icon 1.svg',
-      value: '1800SQ +',
-      label: 'Products Manufactured',
-    },
-    {
-      type: 'worker',
-      icon: '/Worker-icon 1.svg',
-      value: '150+',
-      label: 'Dedicated Professionals',
-    },
-    {
-      type: 'global',
-      icon: '/global-icon 1.svg',
-      value: '80+',
-      label: 'Global Presence In Countries',
-    },
-    {
-      type: 'laryngoscope',
-      icon: '/laryngoscope 2.svg',
-      value: '100+',
-      label: 'Products Range',
-    },
-  ]
+  const [data, setData] = useState<ImpactNumbersData>(getStoredImpactNumbers())
+
+  const reloadData = () => {
+    setData(getStoredImpactNumbers())
+  }
+
+  useEffect(() => {
+    reloadData()
+    window.addEventListener('transact_data_updated', reloadData)
+    return () => window.removeEventListener('transact_data_updated', reloadData)
+  }, [])
+
+  const stats = data.stats || []
 
   return (
     <section className="bg-white border-b border-zinc-200/80 shadow-xs relative z-10">
@@ -46,11 +34,11 @@ export default function ImpactNumbersSection() {
               }}
             />
             <h3 className="text-sm sm:text-base font-black tracking-wider leading-tight text-[#081022] uppercase">
-              OUR IMPACT <br />
-              <span className="text-[#1B5BFF]">IN NUMBERS</span>
+              {data.eyebrow || 'OUR IMPACT'} <br />
+              <span className="text-[#1B5BFF]">{data.eyebrow_accent || 'IN NUMBERS'}</span>
             </h3>
             <p className="text-[11px] text-zinc-500 font-medium leading-snug mt-1">
-              Delivering Quality, Building Healthier Tomorrow.
+              {data.tagline || 'Delivering Quality, Building Healthier Tomorrow.'}
             </p>
           </div>
 
@@ -66,7 +54,7 @@ export default function ImpactNumbersSection() {
               {item.type === 'factory' ? (
                 <div className="relative w-12 h-10 shrink-0 flex items-center justify-center p-1 rounded-sm border border-red-200/70 bg-[radial-gradient(#f87171_1px,transparent_1px)] [background-size:5px_5px]">
                   <Image
-                    src={item.icon}
+                    src={item.icon || '/factory-icon 1.svg'}
                     alt={item.label}
                     width={36}
                     height={30}
@@ -77,7 +65,7 @@ export default function ImpactNumbersSection() {
               ) : (
                 <div className="w-12 h-11 shrink-0 flex items-center justify-center">
                   <Image
-                    src={item.icon}
+                    src={item.icon || '/global-icon 1.svg'}
                     alt={item.label}
                     width={38}
                     height={38}

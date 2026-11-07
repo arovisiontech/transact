@@ -24,8 +24,8 @@ import initialSubcategories from '@/src/data/subcategories.json'
 import { createClient } from './supabase/client'
 
 const STORAGE_KEYS = {
-  PRODUCTS: 'transact_products_v4',
-  CATEGORIES: 'transact_categories_v3',
+  PRODUCTS: 'transact_products_v5',
+  CATEGORIES: 'transact_categories_v4',
   SUBCATEGORIES: 'transact_subcategories_v3',
   CATALOGUES: 'transact_catalogues_v3',
   HERO_SLIDES: 'transact_hero_slides_v3',
@@ -34,12 +34,18 @@ const STORAGE_KEYS = {
   SETTINGS: 'transact_settings_v3',
   QUOTE_CART: 'transact_quote_cart_v3',
   PRODUCT_LINE: 'transact_product_line_v3',
-  PORTFOLIO_CARDS: 'transact_portfolio_cards_v3',
-  OTOSCOPE_CARDS: 'transact_otoscope_cards_v3',
+  PORTFOLIO_CARDS: 'transact_portfolio_cards_v4',
+  OTOSCOPE_CARDS: 'transact_otoscope_cards_v4',
   FILTER_FACETS: 'transact_filter_facets_v3',
   PROJECT_DEV: 'transact_project_dev_v3',
   PRECISION_MFG: 'transact_precision_mfg_v3',
   FAQS: 'transact_faqs_v3',
+  IMPACT_NUMBERS: 'transact_impact_numbers_v2',
+  ABOUT_FACILITY: 'transact_about_facility_v2',
+  TRUST_FEATURES: 'transact_trust_features_v2',
+  GLOBAL_PARTNER: 'transact_global_partner_v2',
+  LARYNGOSCOPE_EXPERTISE: 'transact_laryngoscope_expertise_v2',
+  FOOTER_INFO: 'transact_footer_info_v2',
 }
 
 // In-Memory State Cache
@@ -899,6 +905,28 @@ export const defaultPortfolioCards: PortfolioShowcaseCard[] = [
 ]
 
 export function getStoredProductLineCards(): PortfolioShowcaseCard[] {
+  const cats = getStoredCategories().filter(
+    (c) => (c.section === 'airway' || !c.section || c.section === 'section_1') && c.is_published !== false
+  )
+  if (cats.length > 0) {
+    const total = cats.length
+    return cats.map((cat, idx) => ({
+      id: `card-${cat.id}`,
+      tag: cat.name.toLowerCase().includes('single')
+        ? 'Sterile Disposable Solutions'
+        : 'Reusable Airway Management',
+      title: cat.name,
+      subtitle: cat.description || '',
+      image: cat.card_image || cat.image_url || '/Rectangle 819 (1).svg',
+      badgeIcon: '/laryngoscope 2.svg',
+      badgeBg: cat.name.toLowerCase().includes('single') ? 'bg-[#F6851F]' : 'bg-white/95',
+      buttonText: `Explore ${cat.name.replace(' Laryngoscopes', '')} Line`,
+      buttonLink: `/products?category=${cat.slug}`,
+      indexLabel: `0${idx + 1} / 0${total}`,
+      sort_order: cat.sort_order || idx + 1,
+      is_active: true,
+    }))
+  }
   const cards = getFromStorage<PortfolioShowcaseCard[]>(STORAGE_KEYS.PORTFOLIO_CARDS, defaultPortfolioCards)
   return cards && cards.length > 0 ? cards : defaultPortfolioCards
 }
@@ -984,6 +1012,28 @@ export const defaultOtoscopeCards: PortfolioShowcaseCard[] = [
 ]
 
 export function getStoredOtoscopeCards(): PortfolioShowcaseCard[] {
+  const cats = getStoredCategories().filter(
+    (c) => (c.section === 'diagnostics' || c.section === 'section_2') && c.is_published !== false
+  )
+  if (cats.length > 0) {
+    const total = cats.length
+    return cats.map((cat, idx) => ({
+      id: `card-${cat.id}`,
+      tag: cat.name.toLowerCase().includes('pocket')
+        ? 'Pocket Diagnostic Airway Systems'
+        : 'Fiber-Optic & High-Resolution Optics',
+      title: cat.name,
+      subtitle: cat.description || '',
+      image: cat.card_image || cat.image_url || '/image 351 (1).svg',
+      badgeIcon: '/Diagnostics 2.svg',
+      badgeBg: 'bg-[#F6851F]',
+      buttonText: `Explore ${cat.name.replace(' Sets', '')} Line`,
+      buttonLink: `/products?category=${cat.slug}`,
+      indexLabel: `0${idx + 1} / 0${total}`,
+      sort_order: cat.sort_order || idx + 1,
+      is_active: true,
+    }))
+  }
   const cards = getFromStorage<PortfolioShowcaseCard[]>(STORAGE_KEYS.OTOSCOPE_CARDS, defaultOtoscopeCards)
   return cards && cards.length > 0 ? cards : defaultOtoscopeCards
 }
@@ -1265,5 +1315,282 @@ export async function deleteFaq(id: string): Promise<void> {
   } catch (err) {
     console.error('Failed to delete FAQ on server:', err)
   }
+}
+
+// ============================================
+// HOME PAGE SECTIONS API (Section-by-Section)
+// ============================================
+
+export interface ImpactNumbersData {
+  eyebrow: string
+  eyebrow_accent: string
+  tagline: string
+  stats: {
+    type: string
+    icon: string
+    value: string
+    label: string
+  }[]
+}
+
+const defaultImpactNumbers: ImpactNumbersData = {
+  eyebrow: 'OUR IMPACT',
+  eyebrow_accent: 'IN NUMBERS',
+  tagline: 'Delivering Quality, Building Healthier Tomorrow.',
+  stats: [
+    {
+      type: 'factory',
+      icon: '/factory-icon 1.svg',
+      value: '1800SQ +',
+      label: 'Products Manufactured',
+    },
+    {
+      type: 'worker',
+      icon: '/Worker-icon 1.svg',
+      value: '150+',
+      label: 'Dedicated Professionals',
+    },
+    {
+      type: 'global',
+      icon: '/global-icon 1.svg',
+      value: '80+',
+      label: 'Global Presence In Countries',
+    },
+    {
+      type: 'laryngoscope',
+      icon: '/laryngoscope 2.svg',
+      value: '100+',
+      label: 'Products Range',
+    },
+  ],
+}
+
+export function getStoredImpactNumbers(): ImpactNumbersData {
+  return getFromStorage<ImpactNumbersData>(STORAGE_KEYS.IMPACT_NUMBERS, defaultImpactNumbers)
+}
+
+export function saveImpactNumbers(data: ImpactNumbersData): ImpactNumbersData {
+  saveToStorage(STORAGE_KEYS.IMPACT_NUMBERS, data)
+  return data
+}
+
+// ── About & Facility Section (SS 1) ──
+export interface AboutFacilityData {
+  eyebrow: string
+  title: string
+  title_highlight: string
+  paragraph_1: string
+  paragraph_2: string
+  checklist: string[]
+  button_text: string
+  button_link: string
+  image_url: string
+}
+
+const defaultAboutFacility: AboutFacilityData = {
+  eyebrow: 'Since 1990 — ISO 9001 & 13485 Certified',
+  title: 'Global Manufacturer Of Laryngoscopes, Blades, And Airway Management Instruments',
+  title_highlight: 'Laryngoscopes, Blades,',
+  paragraph_1:
+    'At Transact International, Quality Is Not Just A Standard — It Is Our Foundation. We Are Dedicated To Crafting Laryngoscope & Diagnostics Instruments That Embody Precision, Performance, And Trust. Every Product We Manufacture Undergoes Rigorous Inspection And Testing To Ensure It Meets The Highest International Benchmarks For Safety, Reliability, And Efficiency.',
+  paragraph_2:
+    'Our Commitment To Excellence Is Deeply Embedded In Every Stage Of Our Process, Ensuring That Healthcare Professionals Receive Instruments They Can Rely On With Complete Confidence.',
+  checklist: [
+    'State-of-the-art CNC Machining & Drop Forging Units',
+    'Dedicated Passivation & Ultrasonic Decontamination Line',
+    '100% Dimensional & Rockwell Hardness Testing (HRC 50-54)',
+    'Class 10,000 Cleanroom Sterile Packing Facility',
+    'Custom Laser Marking, Barcoding & UDI Tracking',
+  ],
+  button_text: 'About Us More',
+  button_link: '/about',
+  image_url: '/building-jpg 1.svg',
+}
+
+export function getStoredAboutFacility(): AboutFacilityData {
+  return getFromStorage<AboutFacilityData>(STORAGE_KEYS.ABOUT_FACILITY, defaultAboutFacility)
+}
+
+export function saveAboutFacility(data: AboutFacilityData): AboutFacilityData {
+  saveToStorage(STORAGE_KEYS.ABOUT_FACILITY, data)
+  return data
+}
+
+// ── Trust & Quality Features Section ──
+export interface TrustFeaturesData {
+  eyebrow: string
+  title: string
+  subtitle: string
+  features: {
+    icon: string
+    title: string
+    description: string
+  }[]
+}
+
+const defaultTrustFeatures: TrustFeaturesData = {
+  eyebrow: 'Built For Safety. Designed For Excellence.',
+  title: 'Quality You Can Trust, Every Time',
+  subtitle:
+    'From Raw Material To Final Inspection – Every Step Is Controlled, So You Can Focus On What Matters Most: Your Patients',
+  features: [
+    {
+      icon: '/reusable-grade 1.svg',
+      title: 'Premium Quality Materials',
+      description:
+        'High-Quality Materials Selected For Superior Durability, Precision, And Long-Lasting Performance.',
+    },
+    {
+      icon: '/Inspection Process-icon 1.svg',
+      title: 'Advanced Inspection Process',
+      description:
+        'Precision Testing And Detailed Inspections At Every Stage To Ensure Consistent Quality And Reliability.',
+    },
+    {
+      icon: '/quality-icon 1 (1).svg',
+      title: 'Certified Quality Systems',
+      description:
+        'Manufactured Under Internationally Recognized Quality Standards For Safety, Consistency, And Performance.',
+    },
+    {
+      icon: '/factory-orange.svg',
+      title: 'Modern Manufacturing',
+      description:
+        'Advanced Manufacturing Facilities Delivering High-Precision Instruments With Consistent Results.',
+    },
+    {
+      icon: '/Global Presence-icon 1.svg',
+      title: 'Global Presence',
+      description:
+        'Trusted By Healthcare Professionals And Partners Across Multiple Countries Worldwide.',
+    },
+  ],
+}
+
+export function getStoredTrustFeatures(): TrustFeaturesData {
+  return getFromStorage<TrustFeaturesData>(STORAGE_KEYS.TRUST_FEATURES, defaultTrustFeatures)
+}
+
+export function saveTrustFeatures(data: TrustFeaturesData): TrustFeaturesData {
+  saveToStorage(STORAGE_KEYS.TRUST_FEATURES, data)
+  return data
+}
+
+// ── Global B2B Partnership Section ──
+export interface GlobalPartnerData {
+  eyebrow: string
+  title: string
+  title_highlight: string
+  paragraph_1: string
+  paragraph_2: string
+  metrics: {
+    value: string
+    label: string
+    icon: string
+  }[]
+  primary_btn_text: string
+  primary_btn_link: string
+  tag_1: string
+  tag_2: string
+}
+
+const defaultGlobalPartner: GlobalPartnerData = {
+  eyebrow: 'GLOBAL B2B PARTNERSHIP',
+  title: 'Your Reliable Medical Instrument Partner',
+  title_highlight: 'Instrument Partner',
+  paragraph_1:
+    'Transact Works With Healthcare Distributors, Hospitals, Medical Companies And Global Brands Seeking Dependable Laryngoscope Solutions.',
+  paragraph_2:
+    'With 50+ Countries Of Global Presence And 150+ Dedicated Professionals, We Offer Flexible OEM / Private Label Opportunities Tailored To Your Requirements.',
+  metrics: [
+    {
+      value: '50+',
+      label: 'Countries Global Presence',
+      icon: '/Global Presence-icon 2.svg',
+    },
+    {
+      value: '150+',
+      label: 'Dedicated Professionals',
+      icon: '/Dedicated Professionals-icon 1.svg',
+    },
+    {
+      value: 'OEM / Private Label',
+      label: 'Flexible Solutions',
+      icon: '/Flexible Solutions-icon 1.svg',
+    },
+  ],
+  primary_btn_text: 'Request Your Product',
+  primary_btn_link: '/contact',
+  tag_1: 'OEM / Private Label',
+  tag_2: 'Global Distribution',
+}
+
+export function getStoredGlobalPartner(): GlobalPartnerData {
+  return getFromStorage<GlobalPartnerData>(STORAGE_KEYS.GLOBAL_PARTNER, defaultGlobalPartner)
+}
+
+export function saveGlobalPartner(data: GlobalPartnerData): GlobalPartnerData {
+  saveToStorage(STORAGE_KEYS.GLOBAL_PARTNER, data)
+  return data
+}
+
+// ── Laryngoscope Expertise Section ──
+export interface LaryngoscopeExpertiseData {
+  eyebrow: string
+  title: string
+  description: string
+  steps: string[]
+}
+
+const defaultLaryngoscopeExpertise: LaryngoscopeExpertiseData = {
+  eyebrow: 'LARYNGOSCOPE EXPERTISE',
+  title: 'BUILT FOR PRECISION & RELIABILITY',
+  description:
+    'Our Manufacturing Expertise Combines Advanced Production Techniques, Skilled Craftsmanship, Quality Materials, And Rigorous Inspection To Create Instruments That Meet The Demanding Requirements Of Healthcare Professionals, Hospitals, Distributors, And Global Medical Brands.',
+  steps: [
+    'Raw Material Selection',
+    'Stamping And Forging',
+    'CNC Machining And Milling',
+    'Fiber Optic Integration',
+    'Grinding And Polishing',
+    'Passivation And Sterilization',
+    'Quality Control And Testing',
+  ],
+}
+
+export function getStoredLaryngoscopeExpertise(): LaryngoscopeExpertiseData {
+  return getFromStorage<LaryngoscopeExpertiseData>(
+    STORAGE_KEYS.LARYNGOSCOPE_EXPERTISE,
+    defaultLaryngoscopeExpertise
+  )
+}
+
+export function saveLaryngoscopeExpertise(data: LaryngoscopeExpertiseData): LaryngoscopeExpertiseData {
+  saveToStorage(STORAGE_KEYS.LARYNGOSCOPE_EXPERTISE, data)
+  return data
+}
+
+// ── Footer & Contact Info ──
+export interface FooterInfoData {
+  company_name: string
+  address: string
+  phones: string
+  email: string
+}
+
+const defaultFooterInfo: FooterInfoData = {
+  company_name: 'Transact International',
+  address: 'Roras Road Muzaffar Pur, Sialkot - 51310 Pakistan.',
+  phones: 'Phone: (+92) 345-2626832 | (+92) 52-3251700 | (+92) 52-3258989',
+  email: 'info@transactintl.com',
+}
+
+export function getStoredFooterInfo(): FooterInfoData {
+  return getFromStorage<FooterInfoData>(STORAGE_KEYS.FOOTER_INFO, defaultFooterInfo)
+}
+
+export function saveFooterInfo(data: FooterInfoData): FooterInfoData {
+  saveToStorage(STORAGE_KEYS.FOOTER_INFO, data)
+  return data
 }
 

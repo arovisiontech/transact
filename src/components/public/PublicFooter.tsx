@@ -1,8 +1,9 @@
 'use client'
 
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
+import { getStoredFooterInfo, FooterInfoData } from '@/src/lib/dataStore'
 function InstagramIcon({ className = 'w-4 h-4' }: { className?: string }) {
   return (
     <svg className={className} fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
@@ -47,6 +48,15 @@ function PinterestIcon({ className = 'w-4 h-4' }: { className?: string }) {
 }
 
 export default function PublicFooter() {
+  const [footer, setFooter] = useState<FooterInfoData>(getStoredFooterInfo())
+
+  useEffect(() => {
+    const reload = () => setFooter(getStoredFooterInfo())
+    reload()
+    window.addEventListener('transact_data_updated', reload)
+    return () => window.removeEventListener('transact_data_updated', reload)
+  }, [])
+
   return (
     <footer className="bg-[#0A1328] text-white overflow-hidden border-t border-[#1E293B]">
       {/* Main Footer Container */}
@@ -69,16 +79,14 @@ export default function PublicFooter() {
               <h4 className="text-white text-xs font-bold uppercase tracking-wider">
                 OUR LOCATIONS
               </h4>
-              <p className="text-sm text-slate-300 leading-relaxed font-normal">
-                Roras Road Muzaffar Pur,<br />
-                Sialkot - 51310 Pakistan.
+              <p className="text-sm text-slate-300 leading-relaxed font-normal whitespace-pre-line">
+                {footer.address || 'Roras Road Muzaffar Pur,\nSialkot - 51310 Pakistan.'}
               </p>
               <div className="space-y-1 text-sm text-slate-300 pt-1">
-                <p>Phone : (+92) 345-2626832</p>
-                <p>Phone: (+92) 52-3251700 | (+92) 52-3258989</p>
+                <p>{footer.phones || 'Phone: (+92) 345-2626832 | (+92) 52-3251700 | (+92) 52-3258989'}</p>
               </div>
               <p className="text-sm text-slate-300 pt-1">
-                Email: <a href="mailto:info@transactintl.com" className="text-slate-300 hover:text-[#F36C21] transition">info@transactintl.com</a>
+                Email: <a href={`mailto:${footer.email || 'info@transactintl.com'}`} className="text-slate-300 hover:text-[#F36C21] transition">{footer.email || 'info@transactintl.com'}</a>
               </p>
             </div>
 

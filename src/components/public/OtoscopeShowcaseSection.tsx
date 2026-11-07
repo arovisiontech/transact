@@ -4,15 +4,38 @@ import React, { useState, useEffect } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { ArrowRight } from 'lucide-react'
-import { getStoredOtoscopeCards } from '@/src/lib/dataStore'
+import { getStoredOtoscopeCards, getStoredCategories } from '@/src/lib/dataStore'
 import { PortfolioShowcaseCard } from '@/src/types'
 
 export default function OtoscopeShowcaseSection() {
-  const [activeFilter, setActiveFilter] = useState<'all' | 'diagnostics' | 'laryngoscopes' | 'surgical'>('all')
   const [cards, setCards] = useState<PortfolioShowcaseCard[]>(getStoredOtoscopeCards())
 
   const reloadData = () => {
-    setCards(getStoredOtoscopeCards().filter((c) => c.is_active !== false))
+    // Direct synchronization with Section 2 (Diagnostics) categories if defined
+    const cats = getStoredCategories().filter(
+      (c) => (c.section === 'diagnostics' || c.section === 'section_2') && c.is_published !== false
+    )
+    if (cats.length > 0) {
+      const mapped: PortfolioShowcaseCard[] = cats.map((cat, idx) => ({
+        id: `card-${cat.id}`,
+        tag: cat.name.toLowerCase().includes('pocket')
+          ? 'Pocket Diagnostic Airway Systems'
+          : 'Fiber-Optic & High-Resolution Optics',
+        title: cat.name,
+        subtitle: cat.description || '',
+        image: cat.card_image || cat.image_url || '/image 351 (1).svg',
+        badgeIcon: '/Diagnostics 2.svg',
+        badgeBg: 'bg-[#F6851F]',
+        buttonText: `Explore ${cat.name.replace(' Sets', '')} Line`,
+        buttonLink: `/products?category=${cat.slug}`,
+        indexLabel: `0${idx + 1} / 0${cats.length}`,
+        sort_order: cat.sort_order || idx + 1,
+        is_active: true,
+      }))
+      setCards(mapped)
+    } else {
+      setCards(getStoredOtoscopeCards().filter((c) => c.is_active !== false))
+    }
   }
 
   useEffect(() => {
@@ -58,25 +81,17 @@ export default function OtoscopeShowcaseSection() {
               stroke="currentColor"
               viewBox="0 0 24 24"
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M4 6h16M4 12h16m-7 6h7"
-              />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h10M4 18h7" />
             </svg>
           </Link>
         </div>
 
-        {/* ── Stacking Cards Container (Micromar Reference: buttery smooth scroll with distinct track per card) ── */}
+        {/* ── Stacking Cards Container (Clickable Anywhere) ── */}
         <div className="relative pb-24">
           {cards.map((card, index) => {
-            // Sticky top offset so cards nest cleanly like an album deck
             const stickyTop = 84 + index * 10
-            // Generous scroll margin so each card has its own peaceful travel distance
             const isLast = index === cards.length - 1
             const marginBottom = isLast ? '0' : '50vh'
-
             const isWhiteBadge = card.badgeBg.includes('white')
 
             return (
@@ -89,14 +104,16 @@ export default function OtoscopeShowcaseSection() {
                   marginBottom: marginBottom,
                 }}
               >
-                {/* ── Visual Card Surface ── */}
-                <div
-                  className="relative w-full rounded-2xl sm:rounded-3xl overflow-hidden bg-[#8E9094] border border-zinc-200/90 shadow-[0_-12px_45px_rgba(0,0,0,0.12),0_25px_60px_rgba(0,0,0,0.18)] flex flex-col justify-between group"
+                {/* ── Visual Card Surface Wrapped in Link (Clickable Anywhere) ── */}
+                <Link
+                  href={card.buttonLink}
+                  title={`Open ${card.title}`}
+                  className="relative w-full rounded-2xl sm:rounded-3xl overflow-hidden bg-[#F6F5F4] border border-zinc-200/90 shadow-[0_-12px_45px_rgba(0,0,0,0.12),0_25px_60px_rgba(0,0,0,0.18)] flex flex-col justify-between group cursor-pointer block"
                   style={{
                     minHeight: 'clamp(440px, 62vh, 640px)',
                   }}
                 >
-                  {/* Background Instrument Visual */}
+                  {/* Background Image */}
                   <div className="absolute inset-0 z-0 overflow-hidden">
                     <Image
                       src={card.image}
@@ -104,7 +121,7 @@ export default function OtoscopeShowcaseSection() {
                       fill
                       unoptimized
                       priority={index === 0}
-                      className="object-cover object-center group-hover:scale-[1.02] transition-transform duration-700"
+                      className="object-cover object-center group-hover:scale-[1.03] transition-transform duration-700"
                     />
                     {/* Dark gradient for text readability and cinematic depth */}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/35 to-black/10 pointer-events-none" />
@@ -139,7 +156,7 @@ export default function OtoscopeShowcaseSection() {
                   {/* Middle Spacer to allow large card visuals */}
                   <div className="h-32 sm:h-48 md:h-56" />
 
-                  {/* Bottom Content Area: Details + Action Button (matching ss 1 & ss 2) */}
+                  {/* Bottom Content Area: Details + Action Button */}
                   <div className="relative z-10 p-6 sm:p-10 flex flex-col sm:flex-row sm:items-end justify-between gap-6 bg-gradient-to-t from-black/90 via-black/60 to-transparent pt-12">
                     {/* Left Info Column */}
                     <div className="space-y-3 max-w-2xl">
@@ -151,7 +168,7 @@ export default function OtoscopeShowcaseSection() {
                       </div>
 
                       {/* Title */}
-                      <h3 className="text-3xl sm:text-5xl lg:text-6xl font-light text-white tracking-tight leading-none drop-shadow-sm font-sans">
+                      <h3 className="text-3xl sm:text-5xl lg:text-6xl font-light text-white tracking-tight leading-none drop-shadow-sm font-sans group-hover:text-orange-100 transition-colors">
                         {card.title}
                       </h3>
 
@@ -161,20 +178,17 @@ export default function OtoscopeShowcaseSection() {
                       </p>
                     </div>
 
-                    {/* Right Action Button */}
+                    {/* Right Action Button (Visual inside Link) */}
                     <div className="shrink-0 pt-2 sm:pt-0">
-                      <Link
-                        href={card.buttonLink}
-                        className="inline-flex items-center gap-2.5 px-6 sm:px-7 py-3 sm:py-3.5 bg-[#F6851F] hover:bg-[#e07516] text-white text-xs sm:text-sm font-bold rounded-full transition-all duration-300 shadow-xl hover:shadow-2xl cursor-pointer group/btn"
-                      >
+                      <div className="inline-flex items-center gap-2.5 px-6 sm:px-7 py-3 sm:py-3.5 bg-[#F6851F] group-hover:bg-[#e07516] text-white text-xs sm:text-sm font-bold rounded-full transition-all duration-300 shadow-xl group-hover:shadow-2xl">
                         <span>{card.buttonText}</span>
-                        <span className="w-5 h-5 rounded-full bg-white/25 flex items-center justify-center group-hover/btn:translate-x-1 transition-transform">
+                        <span className="w-5 h-5 rounded-full bg-white/25 flex items-center justify-center group-hover:translate-x-1 transition-transform">
                           <ArrowRight className="w-3 h-3 text-white" />
                         </span>
-                      </Link>
+                      </div>
                     </div>
                   </div>
-                </div>
+                </Link>
               </div>
             )
           })}

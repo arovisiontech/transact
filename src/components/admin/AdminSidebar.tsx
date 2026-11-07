@@ -43,6 +43,7 @@ const sidebarSections = [
   {
     title: 'CONTENT & HOME',
     items: [
+      { label: 'Home Page Editor (All Sections)', href: '/admin/home', icon: LayoutDashboard },
       { label: 'Hero Slides', href: '/admin/home/hero-slides', icon: Sliders },
       { label: 'Product Line & Dev', href: '/admin/home/product-line', icon: Layers },
       { label: 'Promotional Banners', href: '/admin/home/banners', icon: Sparkles },

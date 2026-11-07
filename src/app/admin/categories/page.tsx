@@ -14,6 +14,8 @@ import {
   CheckCircle2,
   ExternalLink,
   Layers,
+  Sparkles,
+  Stethoscope,
 } from 'lucide-react'
 import {
   getStoredCategories,
@@ -27,6 +29,7 @@ import CategoryModal from '@/src/components/admin/CategoryModal'
 export default function AdminCategoriesPage() {
   const [categories, setCategories] = useState<CategoryItem[]>([])
   const [search, setSearch] = useState('')
+  const [activeTab, setActiveTab] = useState<'all' | 'airway' | 'diagnostics'>('all')
   const [modalCategory, setModalCategory] = useState<CategoryItem | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [actionNotice, setActionNotice] = useState('')
@@ -37,6 +40,9 @@ export default function AdminCategoriesPage() {
 
   useEffect(() => {
     reloadData()
+    const handleUpdate = () => reloadData()
+    window.addEventListener('transact_data_updated', handleUpdate)
+    return () => window.removeEventListener('transact_data_updated', handleUpdate)
   }, [])
 
   const showNotice = (msg: string) => {
@@ -63,11 +69,49 @@ export default function AdminCategoriesPage() {
     showNotice('Category position updated')
   }
 
-  const filtered = categories.filter(
-    (c) =>
-      c.name.toLowerCase().includes(search.toLowerCase()) ||
-      c.description?.toLowerCase().includes(search.toLowerCase())
-  )
+  const handleOpenAdd = (targetSection: 'airway' | 'diagnostics' = 'airway') => {
+    setModalCategory({
+      id: `cat-${Date.now()}`,
+      name: '',
+      slug: '',
+      description: '',
+      image_url: targetSection === 'airway' ? '/Rectangle 819 (1).svg' : '/image 351 (1).svg',
+      card_image: targetSection === 'airway' ? '/Rectangle 819 (1).svg' : '/image 351 (1).svg',
+      sort_order: categories.length + 1,
+      is_published: true,
+      section: targetSection,
+      section_label:
+        targetSection === 'diagnostics'
+          ? 'Section 2: Diagnostics & Otoscopy (SS 5)'
+          : 'Section 1: Airway Management (SS 2)',
+    })
+    setIsModalOpen(true)
+  }
+
+  const airwayCount = categories.filter(
+    (c) => c.section === 'airway' || !c.section || c.section === 'section_1'
+  ).length
+  const diagnosticsCount = categories.filter(
+    (c) => c.section === 'diagnostics' || c.section === 'section_2'
+  ).length
+
+  const filtered = categories.filter((c) => {
+    if (activeTab === 'airway') {
+      if (c.section === 'diagnostics' || c.section === 'section_2') return false
+    }
+    if (activeTab === 'diagnostics') {
+      if (c.section !== 'diagnostics' && c.section !== 'section_2') return false
+    }
+    if (search.trim()) {
+      const q = search.toLowerCase()
+      return (
+        c.name.toLowerCase().includes(q) ||
+        (c.description || '').toLowerCase().includes(q) ||
+        c.slug.toLowerCase().includes(q)
+      )
+    }
+    return true
+  })
 
   return (
     <div className="space-y-6">
@@ -75,23 +119,29 @@ export default function AdminCategoriesPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-zinc-200">
         <div>
           <h1 className="text-2xl sm:text-3xl font-black text-[#081022]">
-            Specialties & Category Management
+            Main Categories &amp; Showcase Management
           </h1>
           <p className="text-xs sm:text-sm text-[#4B5D71] mt-1">
-            Organize surgical specialties, add new procedure lines, and reorder navigation.
+            Separated into Section 1 (Airway / Laryngoscopes - SS 2) and Section 2 (Diagnostics - SS 5) for instant homepage sync.
           </p>
         </div>
 
-        <button
-          onClick={() => {
-            setModalCategory(null)
-            setIsModalOpen(true)
-          }}
-          className="px-5 py-2.5 bg-[#F6851F] hover:bg-[#E07314] text-white font-bold text-xs rounded-xl transition shadow flex items-center gap-2 self-start sm:self-auto"
-        >
-          <Plus className="w-4 h-4" />
-          <span>Add New Specialty</span>
-        </button>
+        <div className="flex items-center gap-2.5 flex-wrap">
+          <button
+            onClick={() => handleOpenAdd('airway')}
+            className="px-4 py-2.5 bg-[#081022] hover:bg-[#1a233a] text-white font-bold text-xs rounded-xl transition shadow flex items-center gap-2 cursor-pointer"
+          >
+            <Plus className="w-4 h-4 text-[#F6851F]" />
+            <span>+ Add to Section 1 (Airway)</span>
+          </button>
+          <button
+            onClick={() => handleOpenAdd('diagnostics')}
+            className="px-4 py-2.5 bg-[#F6851F] hover:bg-[#E07314] text-white font-bold text-xs rounded-xl transition shadow flex items-center gap-2 cursor-pointer"
+          >
+            <Plus className="w-4 h-4 text-white" />
+            <span>+ Add to Section 2 (Diagnostics)</span>
+          </button>
+        </div>
       </div>
 
       {actionNotice && (
@@ -101,6 +151,47 @@ export default function AdminCategoriesPage() {
         </div>
       )}
 
+      {/* Showcase Section Tabs */}
+      <div className="flex items-center gap-2 border-b border-zinc-200 pb-2 overflow-x-auto">
+        <button
+          onClick={() => setActiveTab('all')}
+          className={`px-4 py-2 rounded-xl text-xs font-bold transition cursor-pointer flex items-center gap-2 ${
+            activeTab === 'all'
+              ? 'bg-[#081022] text-white shadow'
+              : 'bg-white text-zinc-600 hover:bg-zinc-100 border border-zinc-200'
+          }`}
+        >
+          <span>All Categories</span>
+          <span className="px-1.5 py-0.5 rounded-full text-[10px] bg-white/20">{categories.length}</span>
+        </button>
+
+        <button
+          onClick={() => setActiveTab('airway')}
+          className={`px-4 py-2 rounded-xl text-xs font-bold transition cursor-pointer flex items-center gap-2 ${
+            activeTab === 'airway'
+              ? 'bg-[#F6851F] text-white shadow'
+              : 'bg-white text-zinc-600 hover:bg-zinc-100 border border-zinc-200'
+          }`}
+        >
+          <Layers className="w-3.5 h-3.5" />
+          <span>Section 1: Airway Showcase (SS 2)</span>
+          <span className="px-1.5 py-0.5 rounded-full text-[10px] bg-white/20">{airwayCount}</span>
+        </button>
+
+        <button
+          onClick={() => setActiveTab('diagnostics')}
+          className={`px-4 py-2 rounded-xl text-xs font-bold transition cursor-pointer flex items-center gap-2 ${
+            activeTab === 'diagnostics'
+              ? 'bg-[#1E3A8A] text-white shadow'
+              : 'bg-white text-zinc-600 hover:bg-zinc-100 border border-zinc-200'
+          }`}
+        >
+          <Stethoscope className="w-3.5 h-3.5" />
+          <span>Section 2: Diagnostics Showcase (SS 5)</span>
+          <span className="px-1.5 py-0.5 rounded-full text-[10px] bg-white/20">{diagnosticsCount}</span>
+        </button>
+      </div>
+
       {/* Search Bar */}
       <div className="bg-white p-4 rounded-2xl border border-zinc-200 shadow-sm flex items-center justify-between">
         <div className="relative w-full max-w-sm">
@@ -109,12 +200,12 @@ export default function AdminCategoriesPage() {
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search specialties..."
+            placeholder="Search specialties & categories..."
             className="w-full text-xs pl-10 pr-4 py-2 rounded-xl bg-[#FAFAFC] border border-zinc-200 focus:outline-none focus:border-[#F6851F]"
           />
         </div>
         <span className="text-xs text-zinc-400 font-medium">
-          {filtered.length} Categories
+          Showing {filtered.length} of {categories.length}
         </span>
       </div>
 
@@ -126,121 +217,136 @@ export default function AdminCategoriesPage() {
               <tr>
                 <th className="px-5 py-3.5 w-16">Reorder</th>
                 <th className="px-5 py-3.5">Category Details</th>
-                <th className="px-5 py-3.5">Slug Identifier</th>
-                <th className="px-5 py-3.5">Instruments Count</th>
+                <th className="px-5 py-3.5">Showcase Section</th>
+                <th className="px-5 py-3.5">Slug URL</th>
                 <th className="px-5 py-3.5 text-center">Status</th>
                 <th className="px-5 py-3.5 text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-zinc-100">
-              {filtered.map((cat, idx) => (
-                <tr key={cat.id} className="hover:bg-[#FAFAFC] transition">
-                  {/* Reorder Buttons */}
-                  <td className="px-5 py-3.5">
-                    <div className="flex items-center gap-1">
-                      <button
-                        onClick={() => handleMove(cat.id, 'up')}
-                        disabled={idx === 0}
-                        title="Move Up"
-                        className="p-1 rounded hover:bg-zinc-200 text-zinc-500 disabled:opacity-20"
-                      >
-                        <ArrowUp className="w-3.5 h-3.5" />
-                      </button>
-                      <button
-                        onClick={() => handleMove(cat.id, 'down')}
-                        disabled={idx === filtered.length - 1}
-                        title="Move Down"
-                        className="p-1 rounded hover:bg-zinc-200 text-zinc-500 disabled:opacity-20"
-                      >
-                        <ArrowDown className="w-3.5 h-3.5" />
-                      </button>
-                    </div>
-                  </td>
-
-                  {/* Name & Image */}
-                  <td className="px-5 py-3.5">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-xl bg-zinc-100 border border-zinc-200 overflow-hidden relative shrink-0">
-                        <Image
-                          src={cat.card_image || cat.image_url || '/images/transact/image5_3812_2.jpg'}
-                          alt={cat.name}
-                          fill
-                          unoptimized
-                          className="object-cover"
-                        />
+              {filtered.map((cat, idx) => {
+                const isDiag = cat.section === 'diagnostics' || cat.section === 'section_2'
+                return (
+                  <tr key={cat.id} className="hover:bg-[#FAFAFC] transition">
+                    {/* Reorder Buttons */}
+                    <td className="px-5 py-3.5">
+                      <div className="flex items-center gap-1">
+                        <button
+                          onClick={() => handleMove(cat.id, 'up')}
+                          disabled={idx === 0}
+                          className="p-1 text-zinc-400 hover:text-[#081022] disabled:opacity-30 disabled:hover:text-zinc-400 transition"
+                          title="Move Up"
+                        >
+                          <ArrowUp className="w-3.5 h-3.5" />
+                        </button>
+                        <button
+                          onClick={() => handleMove(cat.id, 'down')}
+                          disabled={idx === filtered.length - 1}
+                          className="p-1 text-zinc-400 hover:text-[#081022] disabled:opacity-30 disabled:hover:text-zinc-400 transition"
+                          title="Move Down"
+                        >
+                          <ArrowDown className="w-3.5 h-3.5" />
+                        </button>
                       </div>
-                      <div className="min-w-0">
-                        <p className="font-bold text-[#081022] truncate">{cat.name}</p>
-                        <p className="text-[11px] text-zinc-400 truncate max-w-xs">{cat.description || 'Specialty category'}</p>
+                    </td>
+
+                    {/* Details */}
+                    <td className="px-5 py-3.5">
+                      <div className="flex items-center gap-3">
+                        <div className="relative w-11 h-11 rounded-xl bg-zinc-100 overflow-hidden shrink-0 border border-zinc-200 flex items-center justify-center p-1">
+                          <Image
+                            src={cat.card_image || cat.image_url || '/image 351 (1).svg'}
+                            alt={cat.name}
+                            fill
+                            unoptimized
+                            className="object-contain p-1"
+                          />
+                        </div>
+                        <div>
+                          <p className="font-bold text-[#081022] text-xs">{cat.name}</p>
+                          <p className="text-[11px] text-[#4B5D71] line-clamp-1 max-w-sm">
+                            {cat.description || 'No description provided.'}
+                          </p>
+                        </div>
                       </div>
-                    </div>
-                  </td>
+                    </td>
 
-                  {/* Slug */}
-                  <td className="px-5 py-3.5 font-mono text-zinc-600">
-                    /{cat.slug}
-                  </td>
+                    {/* Showcase Section Badge */}
+                    <td className="px-5 py-3.5">
+                      {isDiag ? (
+                        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold bg-blue-50 text-blue-700 border border-blue-200">
+                          <Stethoscope className="w-3 h-3" />
+                          <span>Section 2: Diagnostics (SS 5)</span>
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold bg-orange-50 text-orange-700 border border-orange-200">
+                          <Layers className="w-3 h-3" />
+                          <span>Section 1: Airway (SS 2)</span>
+                        </span>
+                      )}
+                    </td>
 
-                  {/* Count */}
-                  <td className="px-5 py-3.5 font-mono font-bold text-[#081022]">
-                    {cat.product_count || 12} Items
-                  </td>
+                    {/* Slug */}
+                    <td className="px-5 py-3.5 font-mono text-zinc-500 text-[11px]">
+                      /{cat.slug}
+                    </td>
 
-                  {/* Status Toggle */}
-                  <td className="px-5 py-3.5 text-center">
-                    <button
-                      onClick={() => handleTogglePublished(cat)}
-                      className={`px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase transition ${
-                        cat.is_published
-                          ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                          : 'bg-zinc-100 text-zinc-500 border border-zinc-200'
-                      }`}
-                    >
-                      {cat.is_published ? 'Active' : 'Disabled'}
-                    </button>
-                  </td>
-
-                  {/* Actions */}
-                  <td className="px-5 py-3.5 text-right">
-                    <div className="flex items-center justify-end gap-2">
-                      <Link
-                        href={`/categories/${cat.slug}`}
-                        target="_blank"
-                        title="View Category on Store"
-                        className="p-1.5 rounded-lg text-zinc-400 hover:text-[#081022] hover:bg-zinc-100 transition"
-                      >
-                        <ExternalLink className="w-4 h-4" />
-                      </Link>
+                    {/* Status */}
+                    <td className="px-5 py-3.5 text-center">
                       <button
-                        onClick={() => {
-                          setModalCategory(cat)
-                          setIsModalOpen(true)
-                        }}
-                        title="Edit Category"
-                        className="p-1.5 rounded-lg text-blue-600 hover:bg-blue-50 transition"
+                        onClick={() => handleTogglePublished(cat)}
+                        className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase transition cursor-pointer ${
+                          cat.is_published
+                            ? 'bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100'
+                            : 'bg-zinc-100 text-zinc-500 border border-zinc-200 hover:bg-zinc-200'
+                        }`}
                       >
-                        <Edit2 className="w-4 h-4" />
+                        {cat.is_published ? 'Active' : 'Draft'}
                       </button>
-                      <button
-                        onClick={() => handleDelete(cat)}
-                        title="Delete Category"
-                        className="p-1.5 rounded-lg text-red-600 hover:bg-red-50 transition"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
+                    </td>
+
+                    {/* Actions */}
+                    <td className="px-5 py-3.5 text-right">
+                      <div className="flex items-center justify-end gap-1.5">
+                        <Link
+                          href={`/products?category=${cat.slug}`}
+                          target="_blank"
+                          title="View on Store"
+                          className="p-1.5 rounded-lg text-zinc-400 hover:text-[#081022] hover:bg-zinc-100 transition"
+                        >
+                          <ExternalLink className="w-4 h-4" />
+                        </Link>
+                        <button
+                          onClick={() => {
+                            setModalCategory(cat)
+                            setIsModalOpen(true)
+                          }}
+                          className="p-1.5 rounded-lg text-blue-600 hover:bg-blue-50 transition cursor-pointer"
+                          title="Edit Category"
+                        >
+                          <Edit2 className="w-4 h-4" />
+                        </button>
+                        <button
+                          onClick={() => handleDelete(cat)}
+                          className="p-1.5 rounded-lg text-red-500 hover:bg-red-50 transition cursor-pointer"
+                          title="Delete Category"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                )
+              })}
             </tbody>
           </table>
         </div>
       </div>
 
-      {/* Category Modal */}
+      {/* Modal */}
       <CategoryModal
-        category={modalCategory}
         isOpen={isModalOpen}
+        category={modalCategory}
         onClose={() => setIsModalOpen(false)}
         onSaved={reloadData}
       />
