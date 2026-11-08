@@ -17,7 +17,11 @@ function readCategories(): CategoryItem[] {
 }
 
 function writeCategories(categories: CategoryItem[]) {
-  fs.writeFileSync(filePath, JSON.stringify(categories, null, 2), 'utf8')
+  try {
+    fs.writeFileSync(filePath, JSON.stringify(categories, null, 2), 'utf8')
+  } catch (err) {
+    console.warn('Could not write to categories.json file (e.g. read-only env):', err)
+  }
 }
 
 export async function GET() {
@@ -39,7 +43,7 @@ export async function POST(req: NextRequest) {
       if (idx !== -1) {
         categories[idx] = { ...categories[idx], ...body.category, updated_at: new Date().toISOString() }
       } else {
-        categories.unshift({
+        categories.push({
           ...body.category,
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString(),

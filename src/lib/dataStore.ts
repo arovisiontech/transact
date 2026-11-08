@@ -26,6 +26,8 @@ import { createClient } from './supabase/client'
 const STORAGE_KEYS = {
   PRODUCTS: 'transact_products_v5',
   CATEGORIES: 'transact_categories_v4',
+  DELETED_CATEGORIES: 'transact_deleted_categories_v1',
+  DELETED_PRODUCTS: 'transact_deleted_products_v1',
   SUBCATEGORIES: 'transact_subcategories_v3',
   CATALOGUES: 'transact_catalogues_v3',
   HERO_SLIDES: 'transact_hero_slides_v3',
@@ -102,15 +104,51 @@ export async function initLiveSupabase(): Promise<void> {
       if (serverProdsRes.ok) {
         const p = await serverProdsRes.json()
         if (Array.isArray(p) && p.length > 0) {
-          memoryProducts = p
-          saveToStorage(STORAGE_KEYS.PRODUCTS, p)
+          const localProds = getFromStorage<ProductItem[]>(STORAGE_KEYS.PRODUCTS, [])
+          const deletedProds = getFromStorage<string[]>(STORAGE_KEYS.DELETED_PRODUCTS, [])
+          if (localProds.length === 0) {
+            memoryProducts = p
+            saveToStorage(STORAGE_KEYS.PRODUCTS, p)
+          } else {
+            const merged = [...localProds]
+            let changed = false
+            for (const sp of p) {
+              if (!merged.some((m) => m.id === sp.id || m.sku === sp.sku) && !deletedProds.includes(sp.id)) {
+                merged.push(sp)
+                changed = true
+              }
+            }
+            if (changed) {
+              memoryProducts = merged
+              saveToStorage(STORAGE_KEYS.PRODUCTS, merged)
+            }
+          }
         }
       }
       if (serverCatsRes.ok) {
         const c = await serverCatsRes.json()
         if (Array.isArray(c) && c.length > 0) {
-          memoryCategories = c
-          saveToStorage(STORAGE_KEYS.CATEGORIES, c)
+          const localCats = getFromStorage<CategoryItem[]>(STORAGE_KEYS.CATEGORIES, [])
+          const deletedCats = getFromStorage<string[]>(STORAGE_KEYS.DELETED_CATEGORIES, [])
+          if (localCats.length === 0) {
+            memoryCategories = c
+            saveToStorage(STORAGE_KEYS.CATEGORIES, c)
+          } else {
+            // CRITICAL: NEVER overwrite user-added categories!
+            // Preserve all locally added categories across browser refresh
+            const merged = [...localCats]
+            let changed = false
+            for (const sc of c) {
+              if (!merged.some((m) => m.id === sc.id || m.slug === sc.slug) && !deletedCats.includes(sc.id)) {
+                merged.push(sc)
+                changed = true
+              }
+            }
+            if (changed) {
+              memoryCategories = merged
+              saveToStorage(STORAGE_KEYS.CATEGORIES, merged)
+            }
+          }
         }
       }
       if (serverCatsLogRes.ok) {
@@ -152,8 +190,25 @@ export async function initLiveSupabase(): Promise<void> {
     }
 
     if (cats && cats.length > 0) {
-      memoryCategories = cats
-      saveToStorage(STORAGE_KEYS.CATEGORIES, cats)
+      const localCats = getFromStorage<CategoryItem[]>(STORAGE_KEYS.CATEGORIES, [])
+      const deletedCats = getFromStorage<string[]>(STORAGE_KEYS.DELETED_CATEGORIES, [])
+      if (localCats.length === 0) {
+        memoryCategories = cats
+        saveToStorage(STORAGE_KEYS.CATEGORIES, cats)
+      } else {
+        const merged = [...localCats]
+        let changed = false
+        for (const sc of cats) {
+          if (!merged.some((m) => m.id === sc.id || m.slug === sc.slug) && !deletedCats.includes(sc.id)) {
+            merged.push(sc)
+            changed = true
+          }
+        }
+        if (changed) {
+          memoryCategories = merged
+          saveToStorage(STORAGE_KEYS.CATEGORIES, merged)
+        }
+      }
     }
 
     if (catalogues && catalogues.length > 0) {
@@ -174,8 +229,20 @@ export async function initLiveSupabase(): Promise<void> {
         saveToStorage(STORAGE_KEYS.HERO_SLIDES, freshSlides)
       }
       if (freshCats.length) {
-        memoryCategories = freshCats
-        saveToStorage(STORAGE_KEYS.CATEGORIES, freshCats)
+        const localCats = getFromStorage<CategoryItem[]>(STORAGE_KEYS.CATEGORIES, [])
+        const deletedCats = getFromStorage<string[]>(STORAGE_KEYS.DELETED_CATEGORIES, [])
+        const merged = [...localCats]
+        let changed = false
+        for (const sc of freshCats) {
+          if (!merged.some((m) => m.id === sc.id || m.slug === sc.slug) && !deletedCats.includes(sc.id)) {
+            merged.push(sc)
+            changed = true
+          }
+        }
+        if (changed) {
+          memoryCategories = merged
+          saveToStorage(STORAGE_KEYS.CATEGORIES, merged)
+        }
       }
       if (freshCatalogues.length) {
         memoryCatalogues = freshCatalogues
@@ -260,6 +327,17 @@ export async function saveProduct(product: ProductItem): Promise<ProductItem> {
     prods.unshift(updatedProduct)
   }
 
+  // Remove from deleted list if present
+  if (isBrowser()) {
+    const deletedProds = getFromStorage<string[]>(STORAGE_KEYS.DELETED_PRODUCTS, [])
+    if (deletedProds.includes(updatedProduct.id)) {
+      saveToStorage(
+        STORAGE_KEYS.DELETED_PRODUCTS,
+        deletedProds.filter((id) => id !== updatedProduct.id)
+      )
+    }
+  }
+
   memoryProducts = prods
   saveToStorage(STORAGE_KEYS.PRODUCTS, prods)
 
@@ -307,6 +385,15 @@ export async function deleteProduct(id: string): Promise<boolean> {
   const prods = getStoredProducts().filter((p) => p.id !== id)
   memoryProducts = prods
   saveToStorage(STORAGE_KEYS.PRODUCTS, prods)
+
+  // Track deleted product so it doesn't get re-added on server sync
+  if (isBrowser()) {
+    const deletedProds = getFromStorage<string[]>(STORAGE_KEYS.DELETED_PRODUCTS, [])
+    if (!deletedProds.includes(id)) {
+      deletedProds.push(id)
+      saveToStorage(STORAGE_KEYS.DELETED_PRODUCTS, deletedProds)
+    }
+  }
 
   // Persist deletion directly to server JSON file
   if (isBrowser()) {
@@ -410,6 +497,17 @@ export async function saveCategory(category: CategoryItem): Promise<CategoryItem
     cats.push(updatedCategory)
   }
 
+  // Remove from deleted list if present
+  if (isBrowser()) {
+    const deletedCats = getFromStorage<string[]>(STORAGE_KEYS.DELETED_CATEGORIES, [])
+    if (deletedCats.includes(updatedCategory.id)) {
+      saveToStorage(
+        STORAGE_KEYS.DELETED_CATEGORIES,
+        deletedCats.filter((id) => id !== updatedCategory.id)
+      )
+    }
+  }
+
   memoryCategories = cats
   saveToStorage(STORAGE_KEYS.CATEGORIES, cats)
 
@@ -449,6 +547,15 @@ export async function deleteCategory(id: string): Promise<boolean> {
   const cats = getStoredCategories().filter((c) => c.id !== id)
   memoryCategories = cats
   saveToStorage(STORAGE_KEYS.CATEGORIES, cats)
+
+  // Track deleted category so it doesn't get re-added on server sync
+  if (isBrowser()) {
+    const deletedCats = getFromStorage<string[]>(STORAGE_KEYS.DELETED_CATEGORIES, [])
+    if (!deletedCats.includes(id)) {
+      deletedCats.push(id)
+      saveToStorage(STORAGE_KEYS.DELETED_CATEGORIES, deletedCats)
+    }
+  }
 
   // Persist category deletion to server JSON file
   if (isBrowser()) {

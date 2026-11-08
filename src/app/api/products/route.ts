@@ -17,7 +17,11 @@ function readProducts(): ProductItem[] {
 }
 
 function writeProducts(products: ProductItem[]) {
-  fs.writeFileSync(filePath, JSON.stringify(products, null, 2), 'utf8')
+  try {
+    fs.writeFileSync(filePath, JSON.stringify(products, null, 2), 'utf8')
+  } catch (err) {
+    console.warn('Could not write to products.json file (e.g. read-only env):', err)
+  }
 }
 
 export async function GET() {
