@@ -14,5 +14,8 @@
   "youtube_url": "https://youtube.com/transactintl",
   "iso_certified": true,
   "ce_certified": true,
-  "fda_registered": true
+  "fda_registered": true,
+  "block_pakistan": true,
+  "blocked_countries": ["PK"],
+  "geo_bypass_key": "transact"
 }

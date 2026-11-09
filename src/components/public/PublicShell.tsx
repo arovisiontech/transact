@@ -6,6 +6,7 @@ import PublicFooter from './PublicFooter'
 import PublicSearchModal from './PublicSearchModal'
 import CartQuoteModal from './CartQuoteModal'
 import FloatingContactCTA from './FloatingContactCTA'
+import GeoBlockGuard from './GeoBlockGuard'
 
 interface PublicShellProps {
   children: React.ReactNode
@@ -17,6 +18,9 @@ export default function PublicShell({ children }: PublicShellProps) {
 
   return (
     <div className="min-h-screen flex flex-col bg-white text-[#081022]">
+      {/* Geo-Blocking Guard for Pakistan */}
+      <GeoBlockGuard />
+
       {/* Header */}
       <Suspense fallback={<header className="h-24 bg-[#081022] border-b border-zinc-800" />}>
         <PublicHeader

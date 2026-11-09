@@ -182,6 +182,9 @@ export interface StoreSettings {
   iso_certified: boolean
   ce_certified: boolean
   fda_registered: boolean
+  block_pakistan?: boolean
+  blocked_countries?: string[]
+  geo_bypass_key?: string
 }
 
 export interface QuoteCartItem {

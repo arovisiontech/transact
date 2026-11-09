@@ -11,6 +11,9 @@ import {
   ShieldCheck,
   Globe,
   Share2,
+  ShieldAlert,
+  Lock,
+  CheckCircle2,
 } from 'lucide-react'
 import { toast } from 'sonner'
 import { StoreSettings } from '@/src/types'
@@ -35,6 +38,9 @@ export default function AdminSettingsPage() {
     iso_certified: true,
     ce_certified: true,
     fda_registered: true,
+    block_pakistan: true,
+    blocked_countries: ['PK'],
+    geo_bypass_key: 'transact',
   })
 
   useEffect(() => {
@@ -253,6 +259,76 @@ export default function AdminSettingsPage() {
                 <span className="text-[10px] text-zinc-500">USA Import Compliant</span>
               </div>
             </label>
+          </div>
+        </div>
+
+        {/* ── Geo-Fencing & Country Access Restriction (Pakistan Block) ── */}
+        <div className="bg-white p-6 rounded-2xl border-2 border-red-100 shadow-xs space-y-5">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-zinc-100">
+            <div className="flex items-center gap-2">
+              <ShieldAlert className="w-5 h-5 text-red-600" />
+              <div>
+                <h2 className="text-sm font-black text-[#081022] uppercase tracking-wide">
+                  Geo-Fencing &amp; Region Blocking
+                </h2>
+                <p className="text-xs text-zinc-500">
+                  Control website access by country. Restricts public visitor traffic while keeping Admin Panel accessible.
+                </p>
+              </div>
+            </div>
+            <span
+              className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black self-start sm:self-auto ${
+                settings.block_pakistan !== false
+                  ? 'bg-red-50 text-red-700 border border-red-200'
+                  : 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+              }`}
+            >
+              <span
+                className={`w-2 h-2 rounded-full ${
+                  settings.block_pakistan !== false ? 'bg-red-500 animate-pulse' : 'bg-emerald-500'
+                }`}
+              />
+              {settings.block_pakistan !== false
+                ? 'Pakistan Traffic: BLOCKED'
+                : 'Pakistan Traffic: ALLOWED'}
+            </span>
+          </div>
+
+          <div className="space-y-4">
+            <label className="flex items-start gap-3.5 p-4 rounded-xl border border-red-200 bg-red-50/40 cursor-pointer hover:bg-red-50/70 transition">
+              <input
+                type="checkbox"
+                checked={settings.block_pakistan !== false}
+                onChange={(e) => setSettings({ ...settings, block_pakistan: e.target.checked })}
+                className="rounded text-red-600 focus:ring-red-500 w-5 h-5 mt-0.5 cursor-pointer"
+              />
+              <div className="space-y-1">
+                <span className="text-xs font-black text-red-900 block">
+                  Block Website in Pakistan (Country Code: PK)
+                </span>
+                <p className="text-[11px] text-zinc-600 leading-relaxed">
+                  When enabled, all public visitors from Pakistan will see the &quot;Access Restricted&quot; 403 screen.
+                  Visitors from all other countries worldwide (USA, UK, Europe, Middle East, etc.) will have full access.
+                </p>
+              </div>
+            </label>
+
+            <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
+              <div className="flex items-center gap-2 text-xs font-bold text-[#081022]">
+                <Lock className="w-4 h-4 text-[#F6851F]" />
+                <span>Admin &amp; Client Access from Pakistan</span>
+              </div>
+              <p className="text-[11px] text-zinc-600 leading-relaxed">
+                • <strong>Admin Panel (<code className="text-[#F6851F] font-mono">/admin</code>):</strong> Always accessible from Pakistan so you can manage products, categories, and settings without interruption.
+              </p>
+              <p className="text-[11px] text-zinc-600 leading-relaxed">
+                • <strong>Preview Public Site:</strong> To preview the public website from Pakistan while keeping it blocked for everyone else, simply open:
+                <br />
+                <code className="inline-block mt-1 px-2.5 py-1 bg-white border border-zinc-300 rounded-lg text-xs font-mono font-bold text-[#081022]">
+                  ?bypass_geo={settings.geo_bypass_key || 'transact'}
+                </code>
+              </p>
+            </div>
           </div>
         </div>
 
