@@ -50,9 +50,26 @@ export default function AdminSettingsPage() {
     }
   }, [])
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     saveStoreSettings(settings)
+
+    if (typeof window !== 'undefined') {
+      const isBlocked = settings.block_pakistan !== false
+      localStorage.setItem('transact_block_pk', String(isBlocked))
+      document.cookie = `transact_block_pk=${isBlocked}; path=/; max-age=2592000`
+    }
+
+    try {
+      await fetch('/api/settings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(settings),
+      })
+    } catch (err) {
+      console.warn('Settings API sync error:', err)
+    }
+
     toast.success('Site settings saved and applied to storefront!')
   }
 
@@ -307,8 +324,8 @@ export default function AdminSettingsPage() {
                   Block Website in Pakistan (Country Code: PK)
                 </span>
                 <p className="text-[11px] text-zinc-600 leading-relaxed">
-                  When enabled, all public visitors from Pakistan will see the &quot;Access Restricted&quot; 403 screen.
-                  Visitors from all other countries worldwide (USA, UK, Europe, Middle East, etc.) will have full access.
+                  When enabled, no website appears in Pakistan (displays a generic, unbranded 404 Not Found screen as if the domain has no site hosted).
+                  Visitors from all other countries worldwide (USA, UK, Europe, Middle East, etc.) will have full, normal access.
                 </p>
               </div>
             </label>
@@ -319,11 +336,15 @@ export default function AdminSettingsPage() {
                 <span>Admin &amp; Client Access from Pakistan</span>
               </div>
               <p className="text-[11px] text-zinc-600 leading-relaxed">
-                • <strong>Admin Panel (<code className="text-[#F6851F] font-mono">/admin</code>):</strong> Always accessible from Pakistan so you can manage products, categories, and settings without interruption.
+                • <strong>Admin Panel (<code className="text-[#F6851F] font-mono">/admin</code>):</strong> Always 100% accessible from Pakistan so you can manage products, categories, and settings anytime without being locked out.
               </p>
               <p className="text-[11px] text-zinc-600 leading-relaxed">
-                • <strong>Preview Public Site:</strong> To preview the public website from Pakistan while keeping it blocked for everyone else, simply open:
+                • <strong>Preview Public Site:</strong> To preview the full website from Pakistan while connecting your domain or testing, simply open:
                 <br />
+                <code className="inline-block mt-1 px-2.5 py-1 bg-white border border-zinc-300 rounded-lg text-xs font-mono font-bold text-[#081022]">
+                  ?preview=1
+                </code>
+                &nbsp;or&nbsp;
                 <code className="inline-block mt-1 px-2.5 py-1 bg-white border border-zinc-300 rounded-lg text-xs font-mono font-bold text-[#081022]">
                   ?bypass_geo={settings.geo_bypass_key || 'transact'}
                 </code>
