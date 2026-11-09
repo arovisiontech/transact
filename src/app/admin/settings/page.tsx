@@ -338,17 +338,32 @@ export default function AdminSettingsPage() {
               <p className="text-[11px] text-zinc-600 leading-relaxed">
                 • <strong>Admin Panel (<code className="text-[#F6851F] font-mono">/admin</code>):</strong> Always 100% accessible from Pakistan so you can manage products, categories, and settings anytime without being locked out.
               </p>
-              <p className="text-[11px] text-zinc-600 leading-relaxed">
-                • <strong>Preview Public Site:</strong> To preview the full website from Pakistan while connecting your domain or testing, simply open:
-                <br />
-                <code className="inline-block mt-1 px-2.5 py-1 bg-white border border-zinc-300 rounded-lg text-xs font-mono font-bold text-[#081022]">
-                  ?preview=1
-                </code>
-                &nbsp;or&nbsp;
-                <code className="inline-block mt-1 px-2.5 py-1 bg-white border border-zinc-300 rounded-lg text-xs font-mono font-bold text-[#081022]">
-                  ?bypass_geo={settings.geo_bypass_key || 'transact'}
-                </code>
-              </p>
+              <div className="space-y-1.5 pt-1">
+                <p className="text-[11px] text-zinc-700 font-bold">
+                  • Secret Client Preview Link (Send this to yourself or your client):
+                </p>
+                <div className="flex items-center gap-2">
+                  <code className="flex-1 px-3 py-2 bg-white border border-zinc-300 rounded-lg text-xs font-mono font-bold text-[#F6851F] select-all">
+                    /preview
+                  </code>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (typeof window !== 'undefined') {
+                        const url = `${window.location.origin}/preview`
+                        navigator.clipboard.writeText(url)
+                        toast.success('Secret Client Preview Link copied to clipboard!')
+                      }
+                    }}
+                    className="px-3 py-2 bg-[#F6851F] hover:bg-[#e07314] text-white text-xs font-bold rounded-lg transition cursor-pointer"
+                  >
+                    Copy Full Link
+                  </button>
+                </div>
+                <p className="text-[10px] text-zinc-500">
+                  Anyone who clicks this link will have full access unlocked on their phone or computer, while all other Pakistan visitors see an empty 404 page.
+                </p>
+              </div>
             </div>
           </div>
         </div>

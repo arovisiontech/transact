@@ -9,8 +9,15 @@ export default function GeoBlockGuard() {
   const [hostname, setHostname] = useState('server')
 
   useEffect(() => {
-    // 1. Never block admin routes
-    if (!pathname || pathname.startsWith('/admin') || pathname === '/blocked') {
+    // 1. Never block admin or secret preview routes
+    if (
+      !pathname ||
+      pathname.startsWith('/admin') ||
+      pathname.startsWith('/preview') ||
+      pathname.startsWith('/secret-preview') ||
+      pathname.startsWith('/access') ||
+      pathname === '/blocked'
+    ) {
       return
     }
 
@@ -18,9 +25,9 @@ export default function GeoBlockGuard() {
 
     setHostname(window.location.hostname || 'server')
 
-    // 2. Check for secret preview bypass in URL (e.g. ?preview=1 or ?bypass_geo=transact)
+    // 2. Check for secret preview bypass in URL (e.g. ?preview=1 or ?bypass_geo=transact or ?secret=transact)
     const params = new URLSearchParams(window.location.search)
-    const bypassParam = params.get('bypass_geo') || params.get('preview')
+    const bypassParam = params.get('bypass_geo') || params.get('preview') || params.get('secret')
     if (
       bypassParam === 'transact' ||
       bypassParam === 'transact2026' ||

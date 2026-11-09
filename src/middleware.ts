@@ -20,41 +20,77 @@ export function middleware(request: NextRequest) {
     return NextResponse.next()
   }
 
-  // 3. Always allow /blocked page
-  if (pathname === '/blocked') {
-    return NextResponse.next()
-  }
+  // 3. Secret Preview Custom Link (/preview, /secret-preview, /access)
+  // Clicking or opening /preview instantly unlocks the website for 1 year and redirects to homepage
+  if (
+    pathname === '/preview' ||
+    pathname === '/secret-preview' ||
+    pathname === '/access'
+  ) {
+    // If exit or reset requested: clear bypass
+    if (searchParams.get('exit') === '1' || searchParams.get('reset') === '1') {
+      const response = NextResponse.redirect(new URL('/', request.url))
+      response.cookies.delete('transact_geo_bypass')
+      return response
+    }
 
-  // 4. Check for secret bypass parameter or cookie
-  // Visiting ?bypass_geo=transact or ?preview=1 sets a 30-day cookie allowing preview from Pakistan
-  const bypassParam = searchParams.get('bypass_geo') || searchParams.get('preview')
-  const hasBypassCookie = request.cookies.get('transact_geo_bypass')?.value === 'true'
-
-  if (bypassParam === 'transact' || bypassParam === 'transact2026' || bypassParam === '1' || bypassParam === 'true') {
-    const cleanUrl = new URL(pathname, request.url)
-    cleanUrl.searchParams.delete('bypass_geo')
-    cleanUrl.searchParams.delete('preview')
+    const target = searchParams.get('to') || '/'
+    const cleanUrl = new URL(target, request.url)
     const response = NextResponse.redirect(cleanUrl)
     response.cookies.set('transact_geo_bypass', 'true', {
       path: '/',
-      maxAge: 60 * 60 * 24 * 30, // 30 days
+      maxAge: 60 * 60 * 24 * 365, // 1 year
       httpOnly: false,
       sameSite: 'lax',
     })
     return response
   }
 
+  // 4. Always allow /blocked page
+  if (pathname === '/blocked') {
+    return NextResponse.next()
+  }
+
+  // 5. Check for secret bypass query parameters in URL
+  // e.g. ?preview=1 or ?bypass_geo=transact or ?secret=transact
+  const bypassParam =
+    searchParams.get('bypass_geo') ||
+    searchParams.get('preview') ||
+    searchParams.get('secret')
+
+  if (
+    bypassParam === 'transact' ||
+    bypassParam === 'transact2026' ||
+    bypassParam === '1' ||
+    bypassParam === 'true'
+  ) {
+    const cleanUrl = new URL(pathname, request.url)
+    cleanUrl.searchParams.delete('bypass_geo')
+    cleanUrl.searchParams.delete('preview')
+    cleanUrl.searchParams.delete('secret')
+    const response = NextResponse.redirect(cleanUrl)
+    response.cookies.set('transact_geo_bypass', 'true', {
+      path: '/',
+      maxAge: 60 * 60 * 24 * 365, // 1 year
+      httpOnly: false,
+      sameSite: 'lax',
+    })
+    return response
+  }
+
+  // 6. If visitor has active bypass cookie, allow full access
+  const hasBypassCookie = request.cookies.get('transact_geo_bypass')?.value === 'true'
   if (hasBypassCookie) {
     return NextResponse.next()
   }
 
-  // 5. Check if regional blocking was disabled by admin in settings
+  // 7. Check if regional blocking was disabled by admin in settings
   const blockSettingCookie = request.cookies.get('transact_block_pk')?.value
   if (blockSettingCookie === 'false') {
     return NextResponse.next()
   }
 
-  // 6. Detect country from Cloudflare, Vercel, Hostinger or proxy headers
+  // 8. Detect country from Cloudflare, Vercel, Hostinger or proxy headers
   const country = (
     request.headers.get('cf-ipcountry') ||
     request.headers.get('x-vercel-ip-country') ||
@@ -64,7 +100,7 @@ export function middleware(request: NextRequest) {
     ''
   ).toUpperCase()
 
-  // 7. If visitor is from Pakistan (PK):
+  // 9. If visitor is from Pakistan (PK) and not bypassed:
   // Return generic Apache/Nginx 404 Not Found so NO website or branding appears in Pakistan
   if (country === 'PK' || country === 'PAKISTAN') {
     return new NextResponse(
