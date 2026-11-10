@@ -101,18 +101,9 @@ export function middleware(request: NextRequest) {
   ).toUpperCase()
 
   // 9. If visitor is from Pakistan (PK) and not bypassed:
-  // Return generic Apache/Nginx 404 Not Found so NO website or branding appears in Pakistan
+  // Show professional "Website Under Construction" page
   if (country === 'PK' || country === 'PAKISTAN') {
-    return new NextResponse(
-      `<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">\n<html><head>\n<title>404 Not Found</title>\n</head><body>\n<h1>Not Found</h1>\n<p>The requested URL was not found on this server.</p>\n<hr>\n<address>Apache Server at ${request.nextUrl.host} Port 80</address>\n</body></html>`,
-      {
-        status: 404,
-        statusText: 'Not Found',
-        headers: {
-          'Content-Type': 'text/html; charset=utf-8',
-        },
-      }
-    )
+    return NextResponse.rewrite(new URL('/blocked', request.url))
   }
 
   return NextResponse.next()

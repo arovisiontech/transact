@@ -324,7 +324,7 @@ export default function AdminSettingsPage() {
                   Block Website in Pakistan (Country Code: PK)
                 </span>
                 <p className="text-[11px] text-zinc-600 leading-relaxed">
-                  When enabled, no website appears in Pakistan (displays a generic, unbranded 404 Not Found screen as if the domain has no site hosted).
+                  When enabled, visitors from Pakistan will see a professional &quot;Website Under Construction &amp; System Upgrade in Progress&quot; platform notice.
                   Visitors from all other countries worldwide (USA, UK, Europe, Middle East, etc.) will have full, normal access.
                 </p>
               </div>
