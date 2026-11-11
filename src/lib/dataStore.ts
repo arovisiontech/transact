@@ -94,27 +94,37 @@ export async function syncServerData(): Promise<void> {
   isSyncing = true
 
   try {
-    const [serverProdsRes, serverCatsRes, serverSubcatsRes, serverCatsLogRes, serverFaqsRes] = await Promise.all([
+    const [serverProdsRes, serverCatsRes, serverSubcatsRes, serverCatsLogRes, serverFaqsRes, serverMfgRes] = await Promise.all([
       fetch('/api/products', { cache: 'no-store' }).catch(() => null),
       fetch('/api/categories', { cache: 'no-store' }).catch(() => null),
       fetch('/api/subcategories', { cache: 'no-store' }).catch(() => null),
       fetch('/api/catalogues', { cache: 'no-store' }).catch(() => null),
       fetch('/api/faqs', { cache: 'no-store' }).catch(() => null),
+      fetch('/api/manufacturing', { cache: 'no-store' }).catch(() => null),
     ])
 
     let hasAnyChanges = false
 
-    // 1. Sync Categories across all devices
+    // 1. Sync Categories across all devices + auto-upload local to server
     if (serverCatsRes && serverCatsRes.ok) {
       const serverCats = await serverCatsRes.json()
       if (Array.isArray(serverCats) && serverCats.length > 0) {
         const localCats = getFromStorage<CategoryItem[]>(STORAGE_KEYS.CATEGORIES, [])
-        // Find any unsynced local categories created offline
         const serverCatIds = new Set(serverCats.map((c) => c.id))
         const unsyncedLocal = localCats.filter((c) => !serverCatIds.has(c.id))
-        const unifiedCats = [...serverCats, ...unsyncedLocal]
 
-        // Only update if changed
+        // Auto-upload local categories to server so they never get lost
+        if (unsyncedLocal.length > 0) {
+          for (const cat of unsyncedLocal) {
+            fetch('/api/categories', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ action: 'save', category: cat }),
+            }).catch(() => {})
+          }
+        }
+
+        const unifiedCats = [...serverCats, ...unsyncedLocal]
         if (JSON.stringify(unifiedCats) !== JSON.stringify(localCats)) {
           memoryCategories = unifiedCats
           saveToStorage(STORAGE_KEYS.CATEGORIES, unifiedCats)
@@ -123,15 +133,25 @@ export async function syncServerData(): Promise<void> {
       }
     }
 
-    // 2. Sync Subcategories across all devices
+    // 2. Sync Subcategories across all devices + auto-upload local to server
     if (serverSubcatsRes && serverSubcatsRes.ok) {
       const serverSubcats = await serverSubcatsRes.json()
       if (Array.isArray(serverSubcats) && serverSubcats.length > 0) {
         const localSubcats = getFromStorage<SubcategoryItem[]>(STORAGE_KEYS.SUBCATEGORIES, [])
         const serverSubIds = new Set(serverSubcats.map((s) => s.id))
         const unsyncedLocal = localSubcats.filter((s) => !serverSubIds.has(s.id))
-        const unifiedSubcats = [...serverSubcats, ...unsyncedLocal]
 
+        if (unsyncedLocal.length > 0) {
+          for (const sub of unsyncedLocal) {
+            fetch('/api/subcategories', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ action: 'save', subcategory: sub }),
+            }).catch(() => {})
+          }
+        }
+
+        const unifiedSubcats = [...serverSubcats, ...unsyncedLocal]
         if (JSON.stringify(unifiedSubcats) !== JSON.stringify(localSubcats)) {
           memorySubcategories = unifiedSubcats
           saveToStorage(STORAGE_KEYS.SUBCATEGORIES, unifiedSubcats)
@@ -140,15 +160,25 @@ export async function syncServerData(): Promise<void> {
       }
     }
 
-    // 3. Sync Products across all devices
+    // 3. Sync Products across all devices + auto-upload local to server
     if (serverProdsRes && serverProdsRes.ok) {
       const serverProds = await serverProdsRes.json()
       if (Array.isArray(serverProds) && serverProds.length > 0) {
         const localProds = getFromStorage<ProductItem[]>(STORAGE_KEYS.PRODUCTS, [])
         const serverProdIds = new Set(serverProds.map((p) => p.id))
         const unsyncedLocal = localProds.filter((p) => !serverProdIds.has(p.id))
-        const unifiedProds = [...serverProds, ...unsyncedLocal]
 
+        if (unsyncedLocal.length > 0) {
+          for (const prod of unsyncedLocal) {
+            fetch('/api/products', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ action: 'save', product: prod }),
+            }).catch(() => {})
+          }
+        }
+
+        const unifiedProds = [...serverProds, ...unsyncedLocal]
         if (JSON.stringify(unifiedProds) !== JSON.stringify(localProds)) {
           memoryProducts = unifiedProds
           saveToStorage(STORAGE_KEYS.PRODUCTS, unifiedProds)
@@ -178,6 +208,18 @@ export async function syncServerData(): Promise<void> {
         if (JSON.stringify(faqs) !== JSON.stringify(localFaqs)) {
           memoryFaqs = faqs
           saveToStorage(STORAGE_KEYS.FAQS, faqs)
+          hasAnyChanges = true
+        }
+      }
+    }
+
+    // 6. Sync Manufacturing Process data
+    if (serverMfgRes && serverMfgRes.ok) {
+      const mfg = await serverMfgRes.json()
+      if (mfg && mfg.hero) {
+        const localMfg = getFromStorage<any>(STORAGE_KEYS.PRECISION_MFG, null)
+        if (JSON.stringify(mfg) !== JSON.stringify(localMfg)) {
+          saveToStorage(STORAGE_KEYS.PRECISION_MFG, mfg)
           hasAnyChanges = true
         }
       }
@@ -1357,6 +1399,13 @@ export function getStoredPrecisionMfg(): PrecisionManufacturingSection {
 
 export function savePrecisionMfg(data: PrecisionManufacturingSection): PrecisionManufacturingSection {
   saveToStorage(STORAGE_KEYS.PRECISION_MFG, data)
+  if (isBrowser()) {
+    fetch('/api/manufacturing', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    }).catch((err) => console.warn('Failed to save manufacturing to server API:', err))
+  }
   return data
 }
 

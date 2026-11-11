@@ -163,7 +163,7 @@ export default function FaqPage() {
                       </button>
 
                       {isOpen && (
-                        <div className="px-5 pb-5 pt-1 text-xs text-[#4B5D71] leading-relaxed border-t border-zinc-100 animate-in fade-in duration-150">
+                        <div className="px-5 sm:px-6 pb-6 pt-3 text-sm sm:text-base text-slate-700 font-normal leading-relaxed border-t border-zinc-100 animate-in fade-in duration-150">
                           {faq.answer}
                         </div>
                       )}
@@ -194,7 +194,7 @@ export default function FaqPage() {
                       </button>
 
                       {isOpen && (
-                        <div className="px-5 pb-5 pt-1 text-xs text-[#4B5D71] leading-relaxed border-t border-zinc-100 animate-in fade-in duration-150">
+                        <div className="px-5 sm:px-6 pb-6 pt-3 text-sm sm:text-base text-slate-700 font-normal leading-relaxed border-t border-zinc-100 animate-in fade-in duration-150">
                           {faq.answer}
                         </div>
                       )}

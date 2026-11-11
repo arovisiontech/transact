@@ -99,44 +99,44 @@
       {
         "id": "step-1",
         "step": "01",
-        "title": "CNC Machining",
+        "title": "Quality Checking",
         "description": "Precision machining of high-grade materials for consistent quality and accuracy.",
-        "image": "/images/manufacturing/step-1-cnc.png"
+        "image": "/images/manufacturing/process-01-cnc-machining.png"
       },
       {
         "id": "step-2",
         "step": "02",
-        "title": "Forging",
+        "title": "Laser Marking",
         "description": "Shaping raw materials with advanced forging techniques for superior strength and durability.",
-        "image": "/images/manufacturing/step-2-forging.png"
+        "image": "/images/manufacturing/process-02-forging.png"
       },
       {
         "id": "step-3",
         "step": "03",
         "title": "Turning & Grinding",
         "description": "Detailed grinding and finishing for smooth and precise surfaces.",
-        "image": "/images/manufacturing/step-3-turning.png"
+        "image": "/images/manufacturing/process-03-turning-grinding.png"
       },
       {
         "id": "step-4",
         "step": "04",
         "title": "QC Inspection",
         "description": "Every instrument is carefully checked for accuracy, function and quality.",
-        "image": "/images/manufacturing/step-4-qc.png"
+        "image": "/images/manufacturing/process-04-qc-inspection.png"
       },
       {
         "id": "step-5",
         "step": "05",
-        "title": "Laser Marking",
-        "description": "Permanent and precise branding for traceability and authenticity.",
-        "image": "/images/manufacturing/step-5-laser.png"
+        "title": "Laser Welding",
+        "description": "Focused laser welding enables precise joining of intricate surgical components.",
+        "image": "/images/manufacturing/process-05-laser-marking.png"
       },
       {
         "id": "step-6",
         "step": "06",
         "title": "Packaging",
         "description": "Secure and professional packaging for safe global delivery.",
-        "image": "/images/manufacturing/step-6-packaging.png"
+        "image": "/images/manufacturing/process-06-packaging.png"
       }
     ]
   },

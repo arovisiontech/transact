@@ -87,10 +87,6 @@ export default function PublicHeader({ onOpenSearch, onOpenQuote }: PublicHeader
         { name: 'Manufacturing Process', href: '/production' },
         { name: 'Product Catalogues', href: '/catalogues' },
         { name: 'Frequently Asked Questions (FAQ)', href: '/faq' },
-        { name: 'OEM & Contract Manufacturing', href: '/production' },
-        { name: 'Custom Precision Tooling', href: '/production#process' },
-        { name: 'Cleanroom Packaging & Sterilization', href: '/production#quality' },
-        { name: 'Private Label Solutions', href: '/production' },
       ],
     },
     {

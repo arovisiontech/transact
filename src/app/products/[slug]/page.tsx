@@ -169,17 +169,19 @@ function ProductDetailContent() {
       {/* ─────────────────────────────────────────────────────────── */}
       {/* 1. HERO SECTION (Matching Transact INTL Large Page.svg)   */}
       {/* ─────────────────────────────────────────────────────────── */}
-      <section className="relative w-full bg-[#EBF3F8] overflow-hidden border-b border-[#D8E6F0]">
-        {/* Background visual image 431.svg positioned on the right */}
-        <div className="absolute right-0 top-0 bottom-0 w-full md:w-3/5 lg:w-1/2 pointer-events-none select-none overflow-hidden">
+      <section className="relative w-full bg-[#EBF3F8] overflow-hidden border-b border-[#D8E6F0] min-h-[340px]">
+        {/* Full Hero Background Banner */}
+        <div className="absolute inset-0 w-full h-full pointer-events-none select-none overflow-hidden">
           <Image
-            src="/image 431.svg"
-            alt="Reusable Laryngoscope Instruments"
+            src={product.featured_image || '/image 431.svg'}
+            alt={product.title}
             fill
             priority
             unoptimized
-            className="object-cover object-right opacity-95"
+            className="object-cover object-center"
           />
+          {/* Subtle overlay so text remains 100% crisp and readable */}
+          <div className="absolute inset-0 bg-gradient-to-r from-[#EBF3F8]/95 via-[#EBF3F8]/85 to-[#EBF3F8]/40 sm:to-transparent" />
         </div>
 
         {/* Content Container */}
