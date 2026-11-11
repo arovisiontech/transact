@@ -5,6 +5,19 @@ import Image from 'next/image'
 import Link from 'next/link'
 import PublicShell from '@/src/components/public/PublicShell'
 import initialAboutData from '@/src/data/about.json'
+import {
+  ChevronLeft,
+  ChevronRight,
+  Target,
+  Wrench,
+  Award,
+  Cog,
+  Globe2,
+  Brain,
+  Microscope,
+  Sparkles,
+  Shield,
+} from 'lucide-react'
 
 export default function AboutPage() {
   const [data, setData] = useState(initialAboutData)
@@ -25,6 +38,44 @@ export default function AboutPage() {
   }, [])
 
   const { hero, story, timeline, manufacturing, standards, productLine } = data
+  const milestones = timeline?.milestones || []
+  const totalMilestones = milestones.length
+
+  const nextMilestone = () => {
+    if (totalMilestones === 0) return
+    setActiveTimelineIdx((prev) => (prev + 1) % totalMilestones)
+  }
+
+  const prevMilestone = () => {
+    if (totalMilestones === 0) return
+    setActiveTimelineIdx((prev) => (prev - 1 + totalMilestones) % totalMilestones)
+  }
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowLeft') prevMilestone()
+      if (e.key === 'ArrowRight') nextMilestone()
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [totalMilestones])
+
+  const getMilestoneIcon = (idx: number, title: string = '') => {
+    const t = (title || '').toLowerCase()
+    if (t.includes('vision') || t.includes('found')) return <Target className="w-5 h-5 text-white" />
+    if (t.includes('expansion') || t.includes('product')) return <Sparkles className="w-5 h-5 text-white" />
+    if (t.includes('standard') || t.includes('iso') || t.includes('quality')) return <Shield className="w-5 h-5 text-white" />
+    if (t.includes('cnc') || t.includes('precision') || t.includes('machin')) return <Wrench className="w-5 h-5 text-white" />
+    if (t.includes('oem') || t.includes('world') || t.includes('global')) return <Globe2 className="w-5 h-5 text-white" />
+    const fallbacks = [
+      <Brain className="w-5 h-5 text-white" key="1" />,
+      <Wrench className="w-5 h-5 text-white" key="2" />,
+      <Shield className="w-5 h-5 text-white" key="3" />,
+      <Cog className="w-5 h-5 text-white" key="4" />,
+      <Award className="w-5 h-5 text-white" key="5" />,
+    ]
+    return fallbacks[idx % fallbacks.length]
+  }
 
   return (
     <PublicShell>
@@ -145,7 +196,7 @@ export default function AboutPage() {
       </section>
 
       {/* ======================================================== */}
-      {/* 3. TIMELINE: "Where It All Began"                        */}
+      {/* 3. TIMELINE: "Where It All Began" (Interactive Slider)    */}
       {/* ======================================================== */}
       <section className="bg-[#EFEEEC] py-14 sm:py-20 lg:py-24 px-4 sm:px-8 border-b border-zinc-200">
         <div className="max-w-[1400px] 2xl:max-w-[1600px] mx-auto space-y-8 sm:space-y-10">
@@ -156,10 +207,10 @@ export default function AboutPage() {
             </h3>
           </div>
 
-          {/* Dark Timeline Card with image 421.svg background */}
+          {/* Dark Timeline Card with image 421.svg background & Micromar Style Slider */}
           <div className="relative max-w-5xl mx-auto rounded-[28px] sm:rounded-[34px] overflow-hidden shadow-2xl border border-zinc-800 bg-[#0A0E17]">
             {/* Background image 421.svg with dark overlay */}
-            <div className="absolute inset-0 z-0">
+            <div className="absolute inset-0 z-0 pointer-events-none">
               <Image
                 src="/image 421.svg"
                 alt="Transact Cleanroom Heritage"
@@ -167,7 +218,7 @@ export default function AboutPage() {
                 unoptimized
                 className="object-cover object-center filter blur-[2px] opacity-80"
               />
-              <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/75 to-black/85" />
+              <div className="absolute inset-0 bg-gradient-to-b from-black/85 via-black/80 to-black/90" />
             </div>
 
             {/* Inner Content */}
@@ -176,63 +227,79 @@ export default function AboutPage() {
                 {timeline.heading || 'Where It All Began'}
               </h2>
 
-              {/* 2-Column Milestones side-by-side */}
+              {/* Milestones Horizontal Slider Viewport */}
               {(() => {
-                const milestones = timeline.milestones || []
-                const m1 = milestones[activeTimelineIdx % milestones.length] || {}
-                const m2 = milestones[(activeTimelineIdx + 1) % milestones.length] || {}
+                if (totalMilestones === 0) return null
+                const m1 = milestones[activeTimelineIdx % totalMilestones] || {}
+                const m2 = milestones[(activeTimelineIdx + 1) % totalMilestones] || {}
+                const m1Idx = activeTimelineIdx % totalMilestones
+                const m2Idx = (activeTimelineIdx + 1) % totalMilestones
 
                 return (
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-14 relative items-start">
-                    {/* Horizontal connecting dashed line between badges on desktop */}
-                    <div className="hidden md:block absolute bottom-[24px] left-[26%] right-[26%] border-t-2 border-dashed border-white/35 z-0" />
+                  <div className="relative">
+                    {/* Desktop View: 2 Milestones side-by-side with connecting dashed track */}
+                    <div className="hidden md:grid grid-cols-2 gap-8 md:gap-14 relative items-start transition-opacity duration-300">
+                      {/* Horizontal connecting dashed line across the track */}
+                      <div className="absolute bottom-[24px] left-[26%] right-[26%] border-t-2 border-dashed border-white/30 z-0 pointer-events-none" />
 
-                    {/* Left Milestone (Active Primary) */}
-                    <div className="relative z-10 space-y-2 max-w-sm mx-auto">
-                      <span className="text-5xl sm:text-6xl font-black text-white font-sans tracking-tight block">
-                        {m1.year}
-                      </span>
-                      <h4 className="text-base sm:text-lg font-bold text-white tracking-tight">
-                        {m1.title}
-                      </h4>
-                      <p className="text-xs sm:text-[13px] text-zinc-300 leading-relaxed min-h-[72px]">
-                        {m1.description}
-                      </p>
-                      <div className="pt-4 flex justify-center">
-                        <div className="w-12 h-12 rounded-full bg-[#F6851F] flex items-center justify-center shadow-lg shadow-orange-500/40 p-2.5">
-                          <Image
-                            src="/image 422.png"
-                            alt="Accuracy Goal"
-                            width={26}
-                            height={26}
-                            unoptimized
-                            className="object-contain"
-                          />
+                      {/* Left Milestone (Active Primary) */}
+                      <div
+                        onClick={() => setActiveTimelineIdx(m1Idx)}
+                        className="relative z-10 space-y-2 max-w-sm mx-auto cursor-pointer group text-center"
+                      >
+                        <span className="text-5xl sm:text-6xl font-black text-white font-sans tracking-tight block group-hover:scale-105 transition-transform">
+                          {m1.year}
+                        </span>
+                        <h4 className="text-base sm:text-lg font-bold text-white tracking-tight">
+                          {m1.title}
+                        </h4>
+                        <p className="text-xs sm:text-[13px] text-zinc-300 leading-relaxed min-h-[72px]">
+                          {m1.description}
+                        </p>
+                        <div className="pt-4 flex justify-center">
+                          <div className="w-12 h-12 rounded-full bg-[#F6851F] flex items-center justify-center shadow-lg shadow-orange-500/50 p-2.5 ring-4 ring-orange-500/20 group-hover:scale-110 transition-transform">
+                            {getMilestoneIcon(m1Idx, m1.title)}
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Right Milestone (Secondary Preview) */}
+                      <div
+                        onClick={() => setActiveTimelineIdx(m2Idx)}
+                        className="relative z-10 space-y-2 max-w-sm mx-auto cursor-pointer group text-center opacity-70 hover:opacity-100 transition-opacity"
+                      >
+                        <span className="text-5xl sm:text-6xl font-black text-white/50 font-sans tracking-tight block group-hover:scale-105 transition-transform">
+                          {m2.year}
+                        </span>
+                        <h4 className="text-base sm:text-lg font-bold text-white/70 tracking-tight">
+                          {m2.title}
+                        </h4>
+                        <p className="text-xs sm:text-[13px] text-zinc-400/80 leading-relaxed min-h-[72px]">
+                          {m2.description}
+                        </p>
+                        <div className="pt-4 flex justify-center">
+                          <div className="w-12 h-12 rounded-full bg-[#F6851F]/80 flex items-center justify-center shadow-lg shadow-orange-500/30 p-2.5 group-hover:scale-110 group-hover:bg-[#F6851F] transition-all">
+                            {getMilestoneIcon(m2Idx, m2.title)}
+                          </div>
                         </div>
                       </div>
                     </div>
 
-                    {/* Right Milestone (Secondary Preview) */}
-                    <div className="relative z-10 space-y-2 max-w-sm mx-auto">
-                      <span className="text-5xl sm:text-6xl font-black text-white/40 font-sans tracking-tight block">
-                        {m2.year}
+                    {/* Mobile View: Single Active Milestone with connecting dashed line */}
+                    <div className="md:hidden relative max-w-sm mx-auto space-y-2 text-center">
+                      <div className="absolute bottom-[24px] left-0 right-0 border-t-2 border-dashed border-white/30 z-0 pointer-events-none" />
+                      <span className="text-5xl font-black text-white font-sans tracking-tight block">
+                        {m1.year}
                       </span>
-                      <h4 className="text-base sm:text-lg font-bold text-white/50 tracking-tight">
-                        {m2.title}
+                      <h4 className="text-base font-bold text-white tracking-tight">
+                        {m1.title}
                       </h4>
-                      <p className="text-xs sm:text-[13px] text-zinc-400/60 leading-relaxed min-h-[72px]">
-                        {m2.description}
+                      <p className="text-xs text-zinc-300 leading-relaxed min-h-[72px]">
+                        {m1.description}
                       </p>
-                      <div className="pt-4 flex justify-center">
-                        <div className="w-12 h-12 rounded-full bg-[#F6851F] flex items-center justify-center shadow-lg shadow-orange-500/40 p-2.5">
-                          <Image
-                            src="/image 425.png"
-                            alt="Engineering Gears"
-                            width={26}
-                            height={26}
-                            unoptimized
-                            className="object-contain"
-                          />
+                      <div className="pt-4 flex justify-center relative z-10">
+                        <div className="w-12 h-12 rounded-full bg-[#F6851F] flex items-center justify-center shadow-lg shadow-orange-500/50 p-2.5 ring-4 ring-orange-500/20">
+                          {getMilestoneIcon(m1Idx, m1.title)}
                         </div>
                       </div>
                     </div>
@@ -240,20 +307,41 @@ export default function AboutPage() {
                 )
               })()}
 
-              {/* 5 Bottom Dashes Pagination Indicator */}
-              <div className="flex items-center justify-center gap-2 pt-10">
-                {(timeline.milestones || []).map((_: any, idx: number) => (
+              {/* Slider Pagination Indicators + Circular Arrow Buttons matching Micromar */}
+              <div className="flex flex-col items-center justify-center gap-4 pt-10">
+                {/* Horizontal Dashes */}
+                <div className="flex items-center justify-center gap-2">
+                  {milestones.map((_: any, idx: number) => (
+                    <button
+                      key={idx}
+                      onClick={() => setActiveTimelineIdx(idx)}
+                      className={`h-1.5 rounded-full transition-all duration-300 cursor-pointer ${
+                        activeTimelineIdx === idx
+                          ? 'w-10 bg-white shadow-sm'
+                          : 'w-4 bg-white/30 hover:bg-white/60'
+                      }`}
+                      aria-label={`Milestone ${idx + 1}`}
+                    />
+                  ))}
+                </div>
+
+                {/* Left & Right Circular Arrow Buttons */}
+                <div className="flex items-center justify-center gap-3 pt-2">
                   <button
-                    key={idx}
-                    onClick={() => setActiveTimelineIdx(idx)}
-                    className={`h-1 rounded-full transition-all duration-300 ${
-                      activeTimelineIdx === idx
-                        ? 'w-8 bg-white'
-                        : 'w-4 bg-white/30 hover:bg-white/60'
-                    }`}
-                    aria-label={`Milestone ${idx + 1}`}
-                  />
-                ))}
+                    onClick={prevMilestone}
+                    aria-label="Previous milestone"
+                    className="w-10 h-10 rounded-full bg-white/15 hover:bg-white/30 active:scale-95 text-white flex items-center justify-center backdrop-blur-md border border-white/20 transition-all shadow-md group cursor-pointer"
+                  >
+                    <ChevronLeft className="w-5 h-5 group-hover:-translate-x-0.5 transition-transform" />
+                  </button>
+                  <button
+                    onClick={nextMilestone}
+                    aria-label="Next milestone"
+                    className="w-10 h-10 rounded-full bg-white/15 hover:bg-white/30 active:scale-95 text-white flex items-center justify-center backdrop-blur-md border border-white/20 transition-all shadow-md group cursor-pointer"
+                  >
+                    <ChevronRight className="w-5 h-5 group-hover:translate-x-0.5 transition-transform" />
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -448,44 +536,59 @@ export default function AboutPage() {
             </p>
           </div>
 
-          {/* 4 Category Cards using Rectangle 819 (1).svg */}
+          {/* 4 Category Cards */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {productLine.categories.map((cat: any, idx: number) => (
-              <div
-                key={idx}
-                className="bg-white rounded-2xl overflow-hidden border border-zinc-200/90 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between group"
-              >
-                {/* Image using Rectangle 819 (1).svg */}
-                <div className="relative w-full aspect-[4/3] bg-zinc-100 overflow-hidden">
-                  <Image
-                    src={cat.image || '/Rectangle 819 (1).svg'}
-                    alt={cat.name}
-                    fill
-                    unoptimized
-                    className="object-cover object-center group-hover:scale-105 transition-transform duration-500"
-                  />
-                </div>
+            {productLine.categories.map((cat: any, idx: number) => {
+              const defaultCategoryImages = [
+                '/images/products/integrated-macintosh-fiber-optic-blade.png',
+                '/images/products/laryngoscope-attachment-1.png',
+                '/images/products/laryngoscope-attachment-2.png',
+                '/images/catalogues/laryngoscope-cover.webp',
+              ]
+              const fallbackImg = defaultCategoryImages[idx % defaultCategoryImages.length]
+              const rawImg = cat.image || fallbackImg
+              const cleanImg =
+                rawImg.includes('Rectangle 819 (1)') || rawImg.startsWith('blob:')
+                  ? fallbackImg
+                  : rawImg
 
-                {/* Footer and Button */}
-                <div className="p-5 space-y-4 flex flex-col justify-between flex-1">
-                  <h4 className="text-sm sm:text-base font-bold text-[#081022] leading-snug group-hover:text-[#F6851F] transition-colors">
-                    {cat.name}
-                  </h4>
+              return (
+                <div
+                  key={idx}
+                  className="bg-white rounded-2xl overflow-hidden border border-zinc-200/90 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between group"
+                >
+                  {/* Image with robust fallback */}
+                  <div className="relative w-full aspect-[4/3] bg-zinc-50 overflow-hidden flex items-center justify-center p-3">
+                    <Image
+                      src={cleanImg}
+                      alt={cat.name}
+                      fill
+                      unoptimized
+                      className="object-contain p-2 group-hover:scale-105 transition-transform duration-500"
+                    />
+                  </div>
 
-                  <div>
-                    <Link
-                      href={cat.link || '/products'}
-                      className="inline-flex items-center justify-between w-full px-4 py-2.5 rounded-xl bg-[#F6851F] hover:bg-[#E07312] text-white text-xs sm:text-sm font-bold shadow-md shadow-orange-500/20 transition-all duration-200"
-                    >
-                      <span>Our Collection</span>
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                      </svg>
-                    </Link>
+                  {/* Footer and Button */}
+                  <div className="p-5 space-y-4 flex flex-col justify-between flex-1">
+                    <h4 className="text-sm sm:text-base font-bold text-[#081022] leading-snug group-hover:text-[#F6851F] transition-colors">
+                      {cat.name}
+                    </h4>
+
+                    <div>
+                      <Link
+                        href={cat.link || '/products'}
+                        className="inline-flex items-center justify-between w-full px-4 py-2.5 rounded-xl bg-[#F6851F] hover:bg-[#E07312] text-white text-xs sm:text-sm font-bold shadow-md shadow-orange-500/20 transition-all duration-200"
+                      >
+                        <span>Our Collection</span>
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                        </svg>
+                      </Link>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              )
+            })}
           </div>
         </div>
       </section>

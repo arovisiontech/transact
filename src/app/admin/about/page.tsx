@@ -23,6 +23,7 @@ export default function AdminAboutPage() {
   const [loading, setLoading] = useState(false)
   const [savedSuccess, setSavedSuccess] = useState(false)
   const [uploadingStoryImg, setUploadingStoryImg] = useState(false)
+  const [uploadingCategoryIdx, setUploadingCategoryIdx] = useState<number | null>(null)
 
   const handleStoryImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -47,6 +48,34 @@ export default function AdminAboutPage() {
       alert('Failed to upload image')
     } finally {
       setUploadingStoryImg(false)
+    }
+  }
+
+  const handleCategoryCardImageUpload = async (e: React.ChangeEvent<HTMLInputElement>, idx: number) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    setUploadingCategoryIdx(idx)
+    try {
+      const fd = new FormData()
+      fd.append('file', file)
+      fd.append('folder', 'images/categories')
+      const res = await fetch('/api/upload', {
+        method: 'POST',
+        body: fd,
+      })
+      if (res.ok) {
+        const json = await res.json()
+        if (json.url) {
+          const categories = [...(data.productLine?.categories || [])]
+          categories[idx] = { ...categories[idx], image: json.url }
+          updateField('productLine', 'categories', categories)
+        }
+      }
+    } catch (err) {
+      console.error(err)
+      alert('Failed to upload category image')
+    } finally {
+      setUploadingCategoryIdx(null)
     }
   }
 
@@ -572,52 +601,109 @@ export default function AdminAboutPage() {
           </div>
         </div>
 
-        {/* 4 Category Cards */}
+        {/* 4 Category Cards Image Uploaders */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-2">
-          {data.productLine?.categories?.map((cat: any, idx: number) => (
-            <div key={idx} className="p-4 rounded-xl border border-zinc-200 bg-[#FAFAFC] space-y-2.5">
-              <span className="text-xs font-black text-[#F6851F]">Category #{idx + 1}</span>
-              <div>
-                <label className="block text-[10px] font-bold text-zinc-500 uppercase">Name</label>
-                <input
-                  type="text"
-                  value={cat.name}
-                  onChange={(e) => {
-                    const categories = [...data.productLine.categories]
-                    categories[idx].name = e.target.value
-                    updateField('productLine', 'categories', categories)
-                  }}
-                  className="w-full px-3 py-1.5 rounded-lg border border-zinc-200 text-xs font-bold"
-                />
+          {data.productLine?.categories?.map((cat: any, idx: number) => {
+            const defaultImages = [
+              '/images/products/integrated-macintosh-fiber-optic-blade.png',
+              '/images/products/laryngoscope-attachment-1.png',
+              '/images/products/laryngoscope-attachment-2.png',
+              '/images/catalogues/laryngoscope-cover.webp',
+            ]
+            const fallback = defaultImages[idx % defaultImages.length]
+            const previewUrl = cat.image || fallback
+            const isUploading = uploadingCategoryIdx === idx
+
+            return (
+              <div key={idx} className="p-4 rounded-xl border border-zinc-200 bg-[#FAFAFC] space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-black text-[#F6851F]">Category #{idx + 1}</span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const categories = [...(data.productLine?.categories || [])]
+                      categories[idx].image = fallback
+                      updateField('productLine', 'categories', categories)
+                    }}
+                    className="text-[10px] font-bold text-red-500 hover:text-red-700"
+                  >
+                    Reset Image
+                  </button>
+                </div>
+
+                {/* Live Image Preview */}
+                <div className="relative aspect-[4/3] rounded-lg overflow-hidden border border-zinc-200 bg-white flex items-center justify-center p-2">
+                  <Image
+                    src={previewUrl}
+                    alt={cat.name || 'Category'}
+                    fill
+                    unoptimized
+                    className="object-contain p-2"
+                  />
+                </div>
+
+                {/* File Upload Button */}
+                <div>
+                  <label className="cursor-pointer flex items-center justify-center gap-1.5 w-full px-3 py-2 rounded-lg bg-[#F6851F] hover:bg-[#E07314] text-white text-xs font-bold shadow-xs transition">
+                    <UploadCloud className="w-3.5 h-3.5" />
+                    <span>{isUploading ? 'Uploading...' : 'Upload Image'}</span>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => handleCategoryCardImageUpload(e, idx)}
+                      className="hidden"
+                      disabled={isUploading}
+                    />
+                  </label>
+                </div>
+
+                {/* Name */}
+                <div>
+                  <label className="block text-[10px] font-bold text-zinc-500 uppercase mb-1">Name</label>
+                  <input
+                    type="text"
+                    value={cat.name}
+                    onChange={(e) => {
+                      const categories = [...data.productLine.categories]
+                      categories[idx].name = e.target.value
+                      updateField('productLine', 'categories', categories)
+                    }}
+                    className="w-full px-2.5 py-1.5 rounded-lg border border-zinc-200 text-xs font-bold bg-white"
+                  />
+                </div>
+
+                {/* Direct Image URL */}
+                <div>
+                  <label className="block text-[10px] font-bold text-zinc-500 uppercase mb-1">Image URL / Path</label>
+                  <input
+                    type="text"
+                    value={cat.image}
+                    onChange={(e) => {
+                      const categories = [...data.productLine.categories]
+                      categories[idx].image = e.target.value
+                      updateField('productLine', 'categories', categories)
+                    }}
+                    className="w-full px-2.5 py-1.5 rounded-lg border border-zinc-200 text-xs font-mono bg-white"
+                  />
+                </div>
+
+                {/* Link */}
+                <div>
+                  <label className="block text-[10px] font-bold text-zinc-500 uppercase mb-1">Link</label>
+                  <input
+                    type="text"
+                    value={cat.link}
+                    onChange={(e) => {
+                      const categories = [...data.productLine.categories]
+                      categories[idx].link = e.target.value
+                      updateField('productLine', 'categories', categories)
+                    }}
+                    className="w-full px-2.5 py-1.5 rounded-lg border border-zinc-200 text-xs font-mono bg-white"
+                  />
+                </div>
               </div>
-              <div>
-                <label className="block text-[10px] font-bold text-zinc-500 uppercase">Image</label>
-                <input
-                  type="text"
-                  value={cat.image}
-                  onChange={(e) => {
-                    const categories = [...data.productLine.categories]
-                    categories[idx].image = e.target.value
-                    updateField('productLine', 'categories', categories)
-                  }}
-                  className="w-full px-3 py-1.5 rounded-lg border border-zinc-200 text-xs font-mono"
-                />
-              </div>
-              <div>
-                <label className="block text-[10px] font-bold text-zinc-500 uppercase">Link</label>
-                <input
-                  type="text"
-                  value={cat.link}
-                  onChange={(e) => {
-                    const categories = [...data.productLine.categories]
-                    categories[idx].link = e.target.value
-                    updateField('productLine', 'categories', categories)
-                  }}
-                  className="w-full px-3 py-1.5 rounded-lg border border-zinc-200 text-xs font-mono"
-                />
-              </div>
-            </div>
-          ))}
+            )
+          })}
         </div>
       </div>
 

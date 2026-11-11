@@ -33,6 +33,59 @@ import initialSubcategories from '@/src/data/subcategories.json'
 import { ProductItem, CategoryItem, SubcategoryItem } from '@/src/types'
 import InquiryModal from '@/src/components/public/InquiryModal'
 
+function cleanProductTitle(title: string | undefined): string {
+  if (!title) return ''
+  const trimmed = title.trim()
+  const len = trimmed.length
+  if (len > 10) {
+    const half = Math.floor(len / 2)
+    const firstHalf = trimmed.slice(0, half).trim()
+    const secondHalf = trimmed.slice(half).trim()
+    if (firstHalf.toLowerCase() === secondHalf.toLowerCase()) {
+      return firstHalf
+    }
+  }
+  return trimmed
+}
+
+function ProductCardImage({
+  src,
+  alt,
+  className = 'object-contain p-4 group-hover:scale-105 transition-transform duration-300',
+}: {
+  src: string | null | undefined
+  alt: string
+  className?: string
+}) {
+  const fallback = '/images/products/integrated-macintosh-fiber-optic-blade.png'
+  const cleanInitial =
+    src &&
+    !src.includes('Rectangle 819 (1)') &&
+    !src.includes('Rectangle-819-1') &&
+    !src.startsWith('blob:')
+      ? src
+      : fallback
+
+  const [imgUrl, setImgUrl] = useState(cleanInitial)
+  const [hasError, setHasError] = useState(false)
+
+  return (
+    <Image
+      src={hasError ? fallback : imgUrl}
+      alt={alt}
+      fill
+      unoptimized
+      onError={() => {
+        if (!hasError) {
+          setHasError(true)
+          setImgUrl(fallback)
+        }
+      }}
+      className={className}
+    />
+  )
+}
+
 function ProductsCatalogContent() {
   const searchParams = useSearchParams()
   const categoryParam = searchParams.get('category') || searchParams.get('cat')
@@ -664,11 +717,9 @@ function ProductsCatalogContent() {
                         className="relative w-full aspect-[4/3] bg-white rounded-none rounded-bl-[10px] overflow-hidden flex items-center justify-center p-6 border border-slate-200/60 cursor-pointer"
                         style={{ borderRadius: '0px 0px 0px 10px' }}
                       >
-                        <Image
-                          src={prod.featured_image || '/images/products/integrated-macintosh-fiber-optic-blade.png'}
+                        <ProductCardImage
+                          src={prod.featured_image}
                           alt={prod.title}
-                          fill
-                          unoptimized
                           className="object-contain p-4 group-hover:scale-105 transition-transform duration-300"
                         />
                       </Link>
@@ -679,7 +730,7 @@ function ProductsCatalogContent() {
                           href={`/products/${prod.slug}`}
                           className="block text-sm sm:text-base font-bold text-[#F36C21] hover:text-[#D95510] uppercase tracking-wide leading-snug transition-colors line-clamp-2"
                         >
-                          {prod.title}
+                          {cleanProductTitle(prod.title)}
                         </Link>
                         <div className="flex items-center justify-between text-xs text-slate-500 font-medium">
                           <span>{prod.sku || 'TI-RL-100'}</span>
@@ -707,11 +758,9 @@ function ProductsCatalogContent() {
                         className="relative w-full sm:w-48 aspect-[4/3] bg-white rounded-none rounded-bl-[10px] overflow-hidden shrink-0 flex items-center justify-center p-3 cursor-pointer"
                         style={{ borderRadius: '0px 0px 0px 10px' }}
                       >
-                        <Image
-                          src={prod.featured_image || '/images/products/integrated-macintosh-fiber-optic-blade.png'}
+                        <ProductCardImage
+                          src={prod.featured_image}
                           alt={prod.title}
-                          fill
-                          unoptimized
                           className="object-contain p-2"
                         />
                       </Link>
@@ -735,7 +784,7 @@ function ProductsCatalogContent() {
                           href={`/products/${prod.slug}`}
                           className="block text-base sm:text-lg font-bold text-[#F36C21] hover:text-[#D95510] uppercase transition"
                         >
-                          {prod.title}
+                          {cleanProductTitle(prod.title)}
                         </Link>
                         <p className="text-xs font-semibold text-slate-500">
                           SKU: {prod.sku || 'TI-RL-100'}

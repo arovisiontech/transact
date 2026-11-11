@@ -26,6 +26,21 @@ import initialProducts from '@/src/data/products.json'
 import { ProductItem } from '@/src/types'
 import InquiryModal from '@/src/components/public/InquiryModal'
 
+function cleanProductTitle(title: string | undefined): string {
+  if (!title) return ''
+  const trimmed = title.trim()
+  const len = trimmed.length
+  if (len > 10) {
+    const half = Math.floor(len / 2)
+    const firstHalf = trimmed.slice(0, half).trim()
+    const secondHalf = trimmed.slice(half).trim()
+    if (firstHalf.toLowerCase() === secondHalf.toLowerCase()) {
+      return firstHalf
+    }
+  }
+  return trimmed
+}
+
 // Rich formatted specifications renderer (supports **bold**, *italic*, bullets, next line)
 function FormattedSpecifications({ text }: { text: string }) {
   const lines = text.split('\n').filter((l) => l.trim().length > 0)
@@ -111,7 +126,14 @@ function ProductDetailContent() {
       setAllProducts(prods)
       const found = prods.find((p) => p.slug === slug || p.id === slug) || prods[0] || (initialProducts[0] as unknown as ProductItem)
       setProduct(found)
-      setSelectedImage(found.featured_image || '/images/products/integrated-macintosh-fiber-optic-blade.png')
+      const cleanImg =
+        found.featured_image &&
+        !found.featured_image.includes('Rectangle 819 (1)') &&
+        !found.featured_image.includes('Rectangle-819-1') &&
+        !found.featured_image.startsWith('blob:')
+          ? found.featured_image
+          : '/images/products/integrated-macintosh-fiber-optic-blade.png'
+      setSelectedImage(cleanImg)
 
       // Initialize row quantities
       const initialQty: { [key: string]: number } = {}
@@ -271,7 +293,7 @@ function ProductDetailContent() {
             <div className="lg:col-span-6 space-y-6">
               <div className="space-y-1">
                 <h2 className="text-2xl sm:text-3xl lg:text-[32px] font-black text-[#F36C21] uppercase tracking-wide leading-tight">
-                  {product.title}
+                  {cleanProductTitle(product.title)}
                 </h2>
                 <p className="text-xs sm:text-sm text-slate-500 font-semibold tracking-wider">
                   {product.sku || 'TI-RL-100'}
@@ -340,6 +362,7 @@ function ProductDetailContent() {
                   fill
                   priority
                   unoptimized
+                  onError={() => setSelectedImage('/images/products/integrated-macintosh-fiber-optic-blade.png')}
                   className="object-contain p-6 hover:scale-105 transition-transform duration-500"
                 />
               </div>

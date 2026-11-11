@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { ArrowRight } from 'lucide-react'
+import { ArrowRight, Shield } from 'lucide-react'
 import {
   getStoredProductLine,
   getStoredProductLineCards,
@@ -21,12 +21,21 @@ function ShowcaseCardItem({
   index: number
   total: number
 }) {
-  const [imgSrc, setImgSrc] = useState(card.image || '/Rectangle-819-1.svg')
+  const sanitizeImg = (url: string | undefined) => {
+    if (!url || url.startsWith('blob:')) return '/images/catalogues/laryngoscope-cover.webp'
+    return url.replace(/ /g, '%20')
+  }
+
+  const [imgSrc, setImgSrc] = useState(sanitizeImg(card.image))
   const [badgeSrc, setBadgeSrc] = useState(card.badgeIcon || '/laryngoscope-2.svg')
+  const [badgeFailed, setBadgeFailed] = useState(false)
+  const [imgFailed, setImgFailed] = useState(false)
 
   useEffect(() => {
-    setImgSrc(card.image || '/Rectangle-819-1.svg')
+    setImgSrc(sanitizeImg(card.image))
     setBadgeSrc(card.badgeIcon || '/laryngoscope-2.svg')
+    setBadgeFailed(false)
+    setImgFailed(false)
   }, [card.image, card.badgeIcon])
 
   const stickyTop = 84 + index * 10
@@ -47,22 +56,30 @@ function ShowcaseCardItem({
       <Link
         href={card.buttonLink}
         title={`Open ${card.title}`}
-        className="relative w-full rounded-2xl sm:rounded-3xl overflow-hidden bg-[#F6F5F4] border border-zinc-200/90 shadow-[0_-12px_45px_rgba(0,0,0,0.12),0_25px_60px_rgba(0,0,0,0.18)] flex flex-col justify-between group cursor-pointer block"
+        className="relative w-full rounded-2xl sm:rounded-3xl overflow-hidden bg-[#0A0E17] border border-zinc-200/90 shadow-[0_-12px_45px_rgba(0,0,0,0.12),0_25px_60px_rgba(0,0,0,0.18)] flex flex-col justify-between group cursor-pointer block"
         style={{
           minHeight: 'clamp(440px, 62vh, 640px)',
         }}
       >
         {/* Background Image */}
-        <div className="absolute inset-0 z-0 overflow-hidden">
-          <Image
-            src={imgSrc}
-            alt={card.title}
-            fill
-            unoptimized
-            priority={index === 0}
-            onError={() => setImgSrc('/Rectangle-819-1.svg')}
-            className="object-cover object-center group-hover:scale-[1.03] transition-transform duration-700"
-          />
+        <div className="absolute inset-0 z-0 overflow-hidden bg-gradient-to-br from-slate-900 via-zinc-900 to-black">
+          {!imgFailed && (
+            <Image
+              src={imgSrc}
+              alt={card.title}
+              fill
+              unoptimized
+              priority={index === 0}
+              onError={() => {
+                if (imgSrc !== '/images/catalogues/laryngoscope-cover.webp') {
+                  setImgSrc('/images/catalogues/laryngoscope-cover.webp')
+                } else {
+                  setImgFailed(true)
+                }
+              }}
+              className="object-cover object-center group-hover:scale-[1.03] transition-transform duration-700"
+            />
+          )}
           {/* Dark gradient for text readability and cinematic depth */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/35 to-black/10 pointer-events-none" />
         </div>
@@ -77,15 +94,21 @@ function ShowcaseCardItem({
                 : 'bg-[#F6851F] shadow-orange-500/30'
             }`}
           >
-            <Image
-              src={badgeSrc}
-              alt="Badge Icon"
-              width={28}
-              height={28}
-              unoptimized
-              onError={() => setBadgeSrc('/laryngoscope-2.svg')}
-              className={`object-contain ${isWhiteBadge ? '' : 'brightness-0 invert'}`}
-            />
+            {badgeFailed ? (
+              <Shield
+                className={`w-6 h-6 ${isWhiteBadge ? 'text-[#F6851F]' : 'text-white'}`}
+              />
+            ) : (
+              <Image
+                src={badgeSrc}
+                alt="Badge Icon"
+                width={28}
+                height={28}
+                unoptimized
+                onError={() => setBadgeFailed(true)}
+                className={`object-contain ${isWhiteBadge ? '' : 'brightness-0 invert'}`}
+              />
+            )}
           </div>
 
           {/* Right Index Pill */}
@@ -153,7 +176,12 @@ export default function ProductLineSection() {
           : 'Reusable Airway Management',
         title: cat.name,
         subtitle: cat.description || '',
-        image: cat.card_image || cat.image_url || '/Rectangle-819-1.svg',
+        image:
+          cat.card_image && !cat.card_image.startsWith('blob:')
+            ? cat.card_image
+            : cat.image_url && !cat.image_url.startsWith('blob:')
+            ? cat.image_url
+            : '/images/catalogues/laryngoscope-cover.webp',
         badgeIcon: '/laryngoscope-2.svg',
         badgeBg: cat.name.toLowerCase().includes('single') ? 'bg-[#F6851F]' : 'bg-white/95',
         buttonText: `Explore ${cat.name.replace(' Laryngoscopes', '')} Line`,

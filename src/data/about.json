@@ -92,25 +92,25 @@
       {
         "id": "reusable-laryngoscope",
         "name": "Reusable Laryngoscope",
-        "image": "/Rectangle 819 (1).svg",
+        "image": "/images/products/integrated-macintosh-fiber-optic-blade.png",
         "link": "/products?category=reusable-laryngoscopes"
       },
       {
         "id": "mccoy-reusable",
         "name": "Mccoy Reusable Laryngoscope",
-        "image": "/Rectangle 819 (1).svg",
+        "image": "/images/products/laryngoscope-attachment-1.png",
         "link": "/products?category=mccoy-reusable"
       },
       {
         "id": "mccoy-disposable",
         "name": "Mccoy Disposable Laryngoscope",
-        "image": "/Rectangle 819 (1).svg",
+        "image": "/images/products/laryngoscope-attachment-2.png",
         "link": "/products?category=mccoy-disposable"
       },
       {
         "id": "disposable-laryngoscope",
         "name": "Disposable Laryngoscope",
-        "image": "/Rectangle 819 (1).svg",
+        "image": "/images/catalogues/laryngoscope-cover.webp",
         "link": "/products?category=disposable-laryngoscopes"
       }
     ]
