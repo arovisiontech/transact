@@ -19,7 +19,7 @@ export default function InquiryModal({ product, isOpen, onClose }: InquiryModalP
     phone: '',
     company: '',
     country: '',
-    quantity: 10,
+    quantity: '',
     notes: '',
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -31,6 +31,8 @@ export default function InquiryModal({ product, isOpen, onClose }: InquiryModalP
     e.preventDefault()
     if (!formData.name || !formData.email) return
 
+    const parsedQty = formData.quantity ? parseInt(formData.quantity) || 1 : 1
+
     setIsSubmitting(true)
     try {
       await submitInquiry({
@@ -40,11 +42,11 @@ export default function InquiryModal({ product, isOpen, onClose }: InquiryModalP
         company_name: formData.company,
         country: formData.country,
         subject: `Direct Inquiry: ${product.title} (SKU: ${product.sku || 'N/A'})`,
-        message: `Quantity: ${formData.quantity}\nRequirements: ${formData.notes || 'Standard OEM Specifications'}`,
+        message: `Quantity Required: ${formData.quantity ? formData.quantity + ' units' : 'To be confirmed in discussion'}\nRequirements: ${formData.notes || 'Standard OEM Specifications'}`,
         product_id: product.id,
         product_title: product.title,
         product_sku: product.sku || undefined,
-        quantity: formData.quantity,
+        quantity: parsedQty,
       })
       setIsSuccess(true)
     } catch (err) {
@@ -140,8 +142,9 @@ export default function InquiryModal({ product, isOpen, onClose }: InquiryModalP
                   <input
                     type="number"
                     min="1"
+                    placeholder="Enter units e.g. 50, 100"
                     value={formData.quantity}
-                    onChange={(e) => setFormData({ ...formData, quantity: parseInt(e.target.value) || 1 })}
+                    onChange={(e) => setFormData({ ...formData, quantity: e.target.value })}
                     className="w-full text-xs px-3 py-2 bg-zinc-50 border border-zinc-200 rounded-lg focus:outline-none focus:border-[#F6851F]"
                   />
                 </div>

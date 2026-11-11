@@ -326,10 +326,10 @@ function ProductDetailContent() {
               </div>
             </div>
 
-            {/* Right Column: Large Product Image in Cool Gray Container */}
+            {/* Right Column: Large Product Image in Clean White Container */}
             <div className="lg:col-span-6 flex flex-col items-center">
               <div 
-                className="relative w-full aspect-[4/3] bg-[#EEF2F6] rounded-none rounded-bl-[10px] overflow-hidden flex items-center justify-center p-8 border border-slate-200 shadow-sm"
+                className="relative w-full aspect-[4/3] bg-white rounded-none rounded-bl-[10px] overflow-hidden flex items-center justify-center p-8 border border-slate-200/80 shadow-xs"
                 style={{ borderRadius: '0px 0px 0px 10px' }}
               >
                 <Image
@@ -423,7 +423,7 @@ function ProductDetailContent() {
             <div className="lg:col-span-4 grid grid-cols-2 gap-4">
               <button
                 onClick={() => setSelectedImage(galleryList[0])}
-                className={`relative aspect-[4/3] rounded-none rounded-bl-[10px] overflow-hidden bg-[#EEF2F6] border-2 transition p-4 flex items-center justify-center ${
+                className={`relative aspect-[4/3] rounded-none rounded-bl-[10px] overflow-hidden bg-white border-2 transition p-4 flex items-center justify-center ${
                   selectedImage === galleryList[0] ? 'border-[#F36C21] shadow-md' : 'border-slate-200 hover:border-slate-300'
                 }`}
                 style={{ borderRadius: '0px 0px 0px 10px' }}
@@ -439,7 +439,7 @@ function ProductDetailContent() {
 
               <button
                 onClick={() => setSelectedImage(galleryList[1])}
-                className={`relative aspect-[4/3] rounded-none rounded-bl-[10px] overflow-hidden bg-[#EEF2F6] border-2 transition p-4 flex items-center justify-center ${
+                className={`relative aspect-[4/3] rounded-none rounded-bl-[10px] overflow-hidden bg-white border-2 transition p-4 flex items-center justify-center ${
                   selectedImage === galleryList[1] ? 'border-[#F36C21] shadow-md' : 'border-slate-200 hover:border-slate-300'
                 }`}
                 style={{ borderRadius: '0px 0px 0px 10px' }}
@@ -455,7 +455,7 @@ function ProductDetailContent() {
 
               <button
                 onClick={() => setSelectedImage(galleryList[2])}
-                className={`relative col-span-2 aspect-[16/9] rounded-none rounded-bl-[10px] overflow-hidden bg-[#EEF2F6] border-2 transition p-4 flex items-center justify-center ${
+                className={`relative col-span-2 aspect-[16/9] rounded-none rounded-bl-[10px] overflow-hidden bg-white border-2 transition p-4 flex items-center justify-center ${
                   selectedImage === galleryList[2] ? 'border-[#F36C21] shadow-md' : 'border-slate-200 hover:border-slate-300'
                 }`}
                 style={{ borderRadius: '0px 0px 0px 10px' }}
@@ -593,7 +593,7 @@ function ProductDetailContent() {
                     >
                       <Link
                         href={href}
-                        className="relative w-full aspect-[4/3] bg-[#EEF2F6] rounded-none rounded-bl-[10px] overflow-hidden flex items-center justify-center p-6 border border-slate-200/60"
+                        className="relative w-full aspect-[4/3] bg-white rounded-none rounded-bl-[10px] overflow-hidden flex items-center justify-center p-6 border border-slate-200/60"
                         style={{ borderRadius: '0px 0px 0px 10px' }}
                       >
                         <Image

@@ -183,13 +183,27 @@ export default function CartQuoteModal({ isOpen, onClose }: CartQuoteModalProps)
                       <button
                         onClick={() => handleQuantity(item.id, -1)}
                         className="p-1 hover:bg-zinc-100 rounded text-zinc-500"
+                        title="Decrease"
                       >
                         <Minus className="w-3 h-3" />
                       </button>
-                      <span className="w-6 text-center text-xs font-bold text-[#081022]">{item.quantity}</span>
+                      <input
+                        type="number"
+                        min="1"
+                        value={item.quantity || ''}
+                        onChange={(e) => {
+                          const val = parseInt(e.target.value)
+                          if (!isNaN(val)) {
+                            const updated = updateQuoteCartQuantity(item.id, Math.max(1, val))
+                            setItems(updated)
+                          }
+                        }}
+                        className="w-12 text-center text-xs font-bold text-[#081022] bg-zinc-50 border border-zinc-200 rounded px-1 py-0.5 focus:outline-none focus:border-[#F6851F]"
+                      />
                       <button
                         onClick={() => handleQuantity(item.id, 1)}
                         className="p-1 hover:bg-zinc-100 rounded text-zinc-500"
+                        title="Increase"
                       >
                         <Plus className="w-3 h-3" />
                       </button>

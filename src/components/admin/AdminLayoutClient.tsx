@@ -1,9 +1,10 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { usePathname } from 'next/navigation'
 import AdminHeader from './AdminHeader'
 import AdminSidebar from './AdminSidebar'
+import { syncServerData } from '@/src/lib/dataStore'
 
 interface AdminLayoutClientProps {
   children: React.ReactNode
@@ -12,6 +13,10 @@ interface AdminLayoutClientProps {
 export default function AdminLayoutClient({ children }: AdminLayoutClientProps) {
   const pathname = usePathname()
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false)
+
+  useEffect(() => {
+    syncServerData()
+  }, [])
 
   if (pathname === '/admin/login') {
     return <>{children}</>

@@ -676,7 +676,7 @@ function ProductsCatalogContent() {
                       {/* Product Card Image Container */}
                       <Link
                         href={`/products/${prod.slug}`}
-                        className="relative w-full aspect-[4/3] bg-[#EEF2F6] rounded-none rounded-bl-[10px] overflow-hidden flex items-center justify-center p-6 border border-slate-200/60 cursor-pointer"
+                        className="relative w-full aspect-[4/3] bg-white rounded-none rounded-bl-[10px] overflow-hidden flex items-center justify-center p-6 border border-slate-200/60 cursor-pointer"
                         style={{ borderRadius: '0px 0px 0px 10px' }}
                       >
                         <Image
@@ -719,7 +719,7 @@ function ProductsCatalogContent() {
                     >
                       <Link
                         href={`/products/${prod.slug}`}
-                        className="relative w-full sm:w-48 aspect-[4/3] bg-[#EEF2F6] rounded-none rounded-bl-[10px] overflow-hidden shrink-0 flex items-center justify-center p-3 cursor-pointer"
+                        className="relative w-full sm:w-48 aspect-[4/3] bg-white rounded-none rounded-bl-[10px] overflow-hidden shrink-0 flex items-center justify-center p-3 cursor-pointer"
                         style={{ borderRadius: '0px 0px 0px 10px' }}
                       >
                         <Image

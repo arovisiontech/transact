@@ -1,12 +1,13 @@
 'use client'
 
-import React, { useState, Suspense } from 'react'
+import React, { useState, useEffect, Suspense } from 'react'
 import PublicHeader from './PublicHeader'
 import PublicFooter from './PublicFooter'
 import PublicSearchModal from './PublicSearchModal'
 import CartQuoteModal from './CartQuoteModal'
 import FloatingContactCTA from './FloatingContactCTA'
 import GeoBlockGuard from './GeoBlockGuard'
+import { syncServerData } from '@/src/lib/dataStore'
 
 interface PublicShellProps {
   children: React.ReactNode
@@ -15,6 +16,10 @@ interface PublicShellProps {
 export default function PublicShell({ children }: PublicShellProps) {
   const [isSearchOpen, setIsSearchOpen] = useState(false)
   const [isQuoteOpen, setIsQuoteOpen] = useState(false)
+
+  useEffect(() => {
+    syncServerData()
+  }, [])
 
   return (
     <div className="min-h-screen flex flex-col bg-white text-[#081022]">

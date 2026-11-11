@@ -87,88 +87,125 @@ function saveToStorage<T>(key: string, value: T): void {
 }
 
 let syncInitiated = false
+let isSyncing = false
+
+export async function syncServerData(): Promise<void> {
+  if (!isBrowser() || isSyncing) return
+  isSyncing = true
+
+  try {
+    const [serverProdsRes, serverCatsRes, serverSubcatsRes, serverCatsLogRes, serverFaqsRes] = await Promise.all([
+      fetch('/api/products', { cache: 'no-store' }).catch(() => null),
+      fetch('/api/categories', { cache: 'no-store' }).catch(() => null),
+      fetch('/api/subcategories', { cache: 'no-store' }).catch(() => null),
+      fetch('/api/catalogues', { cache: 'no-store' }).catch(() => null),
+      fetch('/api/faqs', { cache: 'no-store' }).catch(() => null),
+    ])
+
+    let hasAnyChanges = false
+
+    // 1. Sync Categories across all devices
+    if (serverCatsRes && serverCatsRes.ok) {
+      const serverCats = await serverCatsRes.json()
+      if (Array.isArray(serverCats) && serverCats.length > 0) {
+        const localCats = getFromStorage<CategoryItem[]>(STORAGE_KEYS.CATEGORIES, [])
+        // Find any unsynced local categories created offline
+        const serverCatIds = new Set(serverCats.map((c) => c.id))
+        const unsyncedLocal = localCats.filter((c) => !serverCatIds.has(c.id))
+        const unifiedCats = [...serverCats, ...unsyncedLocal]
+
+        // Only update if changed
+        if (JSON.stringify(unifiedCats) !== JSON.stringify(localCats)) {
+          memoryCategories = unifiedCats
+          saveToStorage(STORAGE_KEYS.CATEGORIES, unifiedCats)
+          hasAnyChanges = true
+        }
+      }
+    }
+
+    // 2. Sync Subcategories across all devices
+    if (serverSubcatsRes && serverSubcatsRes.ok) {
+      const serverSubcats = await serverSubcatsRes.json()
+      if (Array.isArray(serverSubcats) && serverSubcats.length > 0) {
+        const localSubcats = getFromStorage<SubcategoryItem[]>(STORAGE_KEYS.SUBCATEGORIES, [])
+        const serverSubIds = new Set(serverSubcats.map((s) => s.id))
+        const unsyncedLocal = localSubcats.filter((s) => !serverSubIds.has(s.id))
+        const unifiedSubcats = [...serverSubcats, ...unsyncedLocal]
+
+        if (JSON.stringify(unifiedSubcats) !== JSON.stringify(localSubcats)) {
+          memorySubcategories = unifiedSubcats
+          saveToStorage(STORAGE_KEYS.SUBCATEGORIES, unifiedSubcats)
+          hasAnyChanges = true
+        }
+      }
+    }
+
+    // 3. Sync Products across all devices
+    if (serverProdsRes && serverProdsRes.ok) {
+      const serverProds = await serverProdsRes.json()
+      if (Array.isArray(serverProds) && serverProds.length > 0) {
+        const localProds = getFromStorage<ProductItem[]>(STORAGE_KEYS.PRODUCTS, [])
+        const serverProdIds = new Set(serverProds.map((p) => p.id))
+        const unsyncedLocal = localProds.filter((p) => !serverProdIds.has(p.id))
+        const unifiedProds = [...serverProds, ...unsyncedLocal]
+
+        if (JSON.stringify(unifiedProds) !== JSON.stringify(localProds)) {
+          memoryProducts = unifiedProds
+          saveToStorage(STORAGE_KEYS.PRODUCTS, unifiedProds)
+          hasAnyChanges = true
+        }
+      }
+    }
+
+    // 4. Sync Catalogues
+    if (serverCatsLogRes && serverCatsLogRes.ok) {
+      const catlog = await serverCatsLogRes.json()
+      if (Array.isArray(catlog) && catlog.length > 0) {
+        const localCatsLog = getFromStorage<CatalogueItem[]>(STORAGE_KEYS.CATALOGUES, [])
+        if (JSON.stringify(catlog) !== JSON.stringify(localCatsLog)) {
+          memoryCatalogues = catlog
+          saveToStorage(STORAGE_KEYS.CATALOGUES, catlog)
+          hasAnyChanges = true
+        }
+      }
+    }
+
+    // 5. Sync FAQs
+    if (serverFaqsRes && serverFaqsRes.ok) {
+      const faqs = await serverFaqsRes.json()
+      if (Array.isArray(faqs) && faqs.length > 0) {
+        const localFaqs = getFromStorage<FaqItem[]>(STORAGE_KEYS.FAQS, [])
+        if (JSON.stringify(faqs) !== JSON.stringify(localFaqs)) {
+          memoryFaqs = faqs
+          saveToStorage(STORAGE_KEYS.FAQS, faqs)
+          hasAnyChanges = true
+        }
+      }
+    }
+
+    if (hasAnyChanges) {
+      window.dispatchEvent(new Event('transact_data_updated'))
+    }
+  } catch (err) {
+    console.warn('Cross-device background sync error:', err)
+  } finally {
+    isSyncing = false
+  }
+}
 
 export async function initLiveSupabase(): Promise<void> {
   if (!isBrowser() || syncInitiated) return
   syncInitiated = true
 
-  try {
-    // 1. First fetch latest data from server-side JSON API (works across all devices, survives refreshes)
-    try {
-      const [serverProdsRes, serverCatsRes, serverCatsLogRes, serverFaqsRes] = await Promise.all([
-        fetch('/api/products', { cache: 'no-store' }),
-        fetch('/api/categories', { cache: 'no-store' }),
-        fetch('/api/catalogues', { cache: 'no-store' }),
-        fetch('/api/faqs', { cache: 'no-store' }),
-      ])
-      if (serverProdsRes.ok) {
-        const p = await serverProdsRes.json()
-        if (Array.isArray(p) && p.length > 0) {
-          const localProds = getFromStorage<ProductItem[]>(STORAGE_KEYS.PRODUCTS, [])
-          const deletedProds = getFromStorage<string[]>(STORAGE_KEYS.DELETED_PRODUCTS, [])
-          if (localProds.length === 0) {
-            memoryProducts = p
-            saveToStorage(STORAGE_KEYS.PRODUCTS, p)
-          } else {
-            const merged = [...localProds]
-            let changed = false
-            for (const sp of p) {
-              if (!merged.some((m) => m.id === sp.id || m.sku === sp.sku) && !deletedProds.includes(sp.id)) {
-                merged.push(sp)
-                changed = true
-              }
-            }
-            if (changed) {
-              memoryProducts = merged
-              saveToStorage(STORAGE_KEYS.PRODUCTS, merged)
-            }
-          }
-        }
-      }
-      if (serverCatsRes.ok) {
-        const c = await serverCatsRes.json()
-        if (Array.isArray(c) && c.length > 0) {
-          const localCats = getFromStorage<CategoryItem[]>(STORAGE_KEYS.CATEGORIES, [])
-          const deletedCats = getFromStorage<string[]>(STORAGE_KEYS.DELETED_CATEGORIES, [])
-          if (localCats.length === 0) {
-            memoryCategories = c
-            saveToStorage(STORAGE_KEYS.CATEGORIES, c)
-          } else {
-            // CRITICAL: NEVER overwrite user-added categories!
-            // Preserve all locally added categories across browser refresh
-            const merged = [...localCats]
-            let changed = false
-            for (const sc of c) {
-              if (!merged.some((m) => m.id === sc.id || m.slug === sc.slug) && !deletedCats.includes(sc.id)) {
-                merged.push(sc)
-                changed = true
-              }
-            }
-            if (changed) {
-              memoryCategories = merged
-              saveToStorage(STORAGE_KEYS.CATEGORIES, merged)
-            }
-          }
-        }
-      }
-      if (serverCatsLogRes.ok) {
-        const catlog = await serverCatsLogRes.json()
-        if (Array.isArray(catlog) && catlog.length > 0) {
-          memoryCatalogues = catlog
-          saveToStorage(STORAGE_KEYS.CATALOGUES, catlog)
-        }
-      }
-      if (serverFaqsRes && serverFaqsRes.ok) {
-        const faqs = await serverFaqsRes.json()
-        if (Array.isArray(faqs) && faqs.length > 0) {
-          memoryFaqs = faqs
-          saveToStorage(STORAGE_KEYS.FAQS, faqs)
-        }
-      }
-    } catch (apiErr) {
-      console.warn('Server JSON API sync skipped:', apiErr)
-    }
+  // Immediately run server data sync
+  await syncServerData()
 
+  // Set up periodic & event-driven auto-sync across all tabs and devices
+  window.addEventListener('focus', () => syncServerData())
+  window.addEventListener('online', () => syncServerData())
+  setInterval(() => syncServerData(), 15000)
+
+  try {
     const {
       fetchLiveHeroSlides,
       fetchLiveProducts,
@@ -190,25 +227,8 @@ export async function initLiveSupabase(): Promise<void> {
     }
 
     if (cats && cats.length > 0) {
-      const localCats = getFromStorage<CategoryItem[]>(STORAGE_KEYS.CATEGORIES, [])
-      const deletedCats = getFromStorage<string[]>(STORAGE_KEYS.DELETED_CATEGORIES, [])
-      if (localCats.length === 0) {
-        memoryCategories = cats
-        saveToStorage(STORAGE_KEYS.CATEGORIES, cats)
-      } else {
-        const merged = [...localCats]
-        let changed = false
-        for (const sc of cats) {
-          if (!merged.some((m) => m.id === sc.id || m.slug === sc.slug) && !deletedCats.includes(sc.id)) {
-            merged.push(sc)
-            changed = true
-          }
-        }
-        if (changed) {
-          memoryCategories = merged
-          saveToStorage(STORAGE_KEYS.CATEGORIES, merged)
-        }
-      }
+      memoryCategories = cats
+      saveToStorage(STORAGE_KEYS.CATEGORIES, cats)
     }
 
     if (catalogues && catalogues.length > 0) {
@@ -218,36 +238,7 @@ export async function initLiveSupabase(): Promise<void> {
 
     // Setup listener so any other computer or mobile device updates in real time
     setupSupabaseRealtime(async () => {
-      const [freshSlides, freshProds, freshCats, freshCatalogues] = await Promise.all([
-        fetchLiveHeroSlides(),
-        fetchLiveProducts(),
-        fetchLiveCategories(),
-        fetchLiveCatalogues(),
-      ])
-      if (freshSlides.length) {
-        memoryHeroSlides = freshSlides
-        saveToStorage(STORAGE_KEYS.HERO_SLIDES, freshSlides)
-      }
-      if (freshCats.length) {
-        const localCats = getFromStorage<CategoryItem[]>(STORAGE_KEYS.CATEGORIES, [])
-        const deletedCats = getFromStorage<string[]>(STORAGE_KEYS.DELETED_CATEGORIES, [])
-        const merged = [...localCats]
-        let changed = false
-        for (const sc of freshCats) {
-          if (!merged.some((m) => m.id === sc.id || m.slug === sc.slug) && !deletedCats.includes(sc.id)) {
-            merged.push(sc)
-            changed = true
-          }
-        }
-        if (changed) {
-          memoryCategories = merged
-          saveToStorage(STORAGE_KEYS.CATEGORIES, merged)
-        }
-      }
-      if (freshCatalogues.length) {
-        memoryCatalogues = freshCatalogues
-        saveToStorage(STORAGE_KEYS.CATALOGUES, freshCatalogues)
-      }
+      await syncServerData()
     })
   } catch (err) {
     console.warn('Initial Supabase live sync skipped or offline:', err)
@@ -1024,8 +1015,8 @@ export function getStoredProductLineCards(): PortfolioShowcaseCard[] {
         : 'Reusable Airway Management',
       title: cat.name,
       subtitle: cat.description || '',
-      image: cat.card_image || cat.image_url || '/Rectangle 819 (1).svg',
-      badgeIcon: '/laryngoscope 2.svg',
+      image: cat.card_image || cat.image_url || '/Rectangle-819-1.svg',
+      badgeIcon: '/laryngoscope-2.svg',
       badgeBg: cat.name.toLowerCase().includes('single') ? 'bg-[#F6851F]' : 'bg-white/95',
       buttonText: `Explore ${cat.name.replace(' Laryngoscopes', '')} Line`,
       buttonLink: `/products?category=${cat.slug}`,
