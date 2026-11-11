@@ -4,10 +4,10 @@ import path from 'path'
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: Promise<{ file: string[] }> | { file: string[] } }
+  { params }: { params: Promise<{ file: string[] }> }
 ) {
   try {
-    const resolvedParams = await Promise.resolve(params)
+    const resolvedParams = await params
     const fileSegments = resolvedParams.file || []
     const relativePath = fileSegments.join('/')
     const fullPath = path.join(process.cwd(), 'public', 'catalogues', relativePath)
