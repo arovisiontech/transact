@@ -92,42 +92,34 @@ export default function OtoscopeShowcaseSection() {
         {/* ── Stacking Cards Container (Clickable Anywhere) ── */}
         <div className="relative pb-24">
           {cards.map((card, index) => {
-            const stickyTop = 84 + index * 10
-            const isLast = index === cards.length - 1
-            const marginBottom = isLast ? '0' : '50vh'
             const isWhiteBadge = card.badgeBg.includes('white')
 
             return (
               <div
                 key={card.id}
-                className="sticky w-full transition-all duration-300"
-                style={{
-                  top: `${stickyTop}px`,
-                  zIndex: index + 10,
-                  marginBottom: marginBottom,
-                }}
+                className="relative w-full mb-8 sm:mb-12 last:mb-0 transition-all duration-300"
               >
                 {/* ── Visual Card Surface Wrapped in Link (Clickable Anywhere) ── */}
                 <Link
                   href={card.buttonLink}
                   title={`Open ${card.title}`}
-                  className="relative w-full rounded-2xl sm:rounded-3xl overflow-hidden bg-[#F6F5F4] border border-zinc-200/90 shadow-[0_-12px_45px_rgba(0,0,0,0.12),0_25px_60px_rgba(0,0,0,0.18)] flex flex-col justify-between group cursor-pointer block"
+                  className="relative w-full rounded-2xl sm:rounded-3xl overflow-hidden bg-[#0A0E17] border border-zinc-200/90 shadow-xl hover:shadow-2xl flex flex-col justify-between group cursor-pointer block transition-all duration-300"
                   style={{
-                    minHeight: 'clamp(440px, 62vh, 640px)',
+                    minHeight: 'clamp(420px, 55vh, 580px)',
                   }}
                 >
                   {/* Background Image */}
-                  <div className="absolute inset-0 z-0 overflow-hidden">
+                  <div className="absolute inset-0 z-0 overflow-hidden bg-[#0A0E17]">
                     <Image
                       src={card.image}
                       alt={card.title}
                       fill
                       unoptimized
                       priority={index === 0}
-                      className="object-cover object-center group-hover:scale-[1.03] transition-transform duration-700"
+                      className="object-cover object-right sm:object-center group-hover:scale-105 transition-transform duration-700"
                     />
-                    {/* Dark gradient for text readability and cinematic depth */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/35 to-black/10 pointer-events-none" />
+                    {/* Balanced gradient: darkens left side for text while leaving diagnostic instrument bright */}
+                    <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/55 to-transparent pointer-events-none" />
                   </div>
 
                   {/* Top Bar: Left circular badge + Right index pill */}

@@ -38,31 +38,21 @@ function ShowcaseCardItem({
     setImgFailed(false)
   }, [card.image, card.badgeIcon])
 
-  const stickyTop = 84 + index * 10
-  const isLast = index === total - 1
-  const marginBottom = isLast ? '0' : '50vh'
   const isWhiteBadge = card.badgeBg ? card.badgeBg.includes('white') : true
 
   return (
-    <div
-      className="sticky w-full transition-all duration-300"
-      style={{
-        top: `${stickyTop}px`,
-        zIndex: index + 10,
-        marginBottom: marginBottom,
-      }}
-    >
+    <div className="relative w-full mb-8 sm:mb-12 last:mb-0 group">
       {/* ── Visual Card Surface Wrapped in Link (Clickable Anywhere) ── */}
       <Link
         href={card.buttonLink}
         title={`Open ${card.title}`}
-        className="relative w-full rounded-2xl sm:rounded-3xl overflow-hidden bg-[#0A0E17] border border-zinc-200/90 shadow-[0_-12px_45px_rgba(0,0,0,0.12),0_25px_60px_rgba(0,0,0,0.18)] flex flex-col justify-between group cursor-pointer block"
+        className="relative w-full rounded-2xl sm:rounded-3xl overflow-hidden bg-[#0A0E17] border border-zinc-200/90 shadow-xl hover:shadow-2xl flex flex-col justify-between group cursor-pointer block transition-all duration-300"
         style={{
-          minHeight: 'clamp(440px, 62vh, 640px)',
+          minHeight: 'clamp(420px, 55vh, 580px)',
         }}
       >
         {/* Background Image */}
-        <div className="absolute inset-0 z-0 overflow-hidden bg-gradient-to-br from-slate-900 via-zinc-900 to-black">
+        <div className="absolute inset-0 z-0 overflow-hidden bg-[#0A0E17]">
           {!imgFailed && (
             <Image
               src={imgSrc}
@@ -77,11 +67,11 @@ function ShowcaseCardItem({
                   setImgFailed(true)
                 }
               }}
-              className="object-cover object-center group-hover:scale-[1.03] transition-transform duration-700"
+              className="object-cover object-right sm:object-center group-hover:scale-105 transition-transform duration-700"
             />
           )}
-          {/* Dark gradient for text readability and cinematic depth */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/35 to-black/10 pointer-events-none" />
+          {/* Refined gradient: darkens left side for text readability while keeping the surgical instrument crisp and bright */}
+          <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/55 to-transparent pointer-events-none" />
         </div>
 
         {/* Top Bar: Left circular badge + Right index pill */}
@@ -112,16 +102,16 @@ function ShowcaseCardItem({
           </div>
 
           {/* Right Index Pill */}
-          <span className="px-3.5 py-1 rounded-full text-[11px] sm:text-xs font-bold text-white bg-black/45 backdrop-blur-md border border-white/20 tracking-wider shadow">
+          <span className="px-3.5 py-1 rounded-full text-[11px] sm:text-xs font-bold text-white bg-black/50 backdrop-blur-md border border-white/20 tracking-wider shadow">
             {card.indexLabel}
           </span>
         </div>
 
-        {/* Middle Spacer to allow large card visuals */}
-        <div className="h-32 sm:h-48 md:h-56" />
+        {/* Middle Spacer */}
+        <div className="h-16 sm:h-28" />
 
         {/* Bottom Content Area */}
-        <div className="relative z-10 p-6 sm:p-10 flex flex-col sm:flex-row sm:items-end justify-between gap-6 bg-gradient-to-t from-black/90 via-black/60 to-transparent pt-12">
+        <div className="relative z-10 p-6 sm:p-10 flex flex-col sm:flex-row sm:items-end justify-between gap-6 bg-gradient-to-t from-black/95 via-black/60 to-transparent pt-10">
           {/* Left Info Column */}
           <div className="space-y-3 max-w-2xl">
             {/* Pill Tag */}
@@ -132,7 +122,7 @@ function ShowcaseCardItem({
             </div>
 
             {/* Title */}
-            <h3 className="text-3xl sm:text-5xl lg:text-6xl font-light text-white tracking-tight leading-none drop-shadow-sm font-sans group-hover:text-orange-100 transition-colors">
+            <h3 className="text-2xl sm:text-4xl lg:text-5xl font-light text-white tracking-tight leading-tight drop-shadow-sm font-sans group-hover:text-orange-100 transition-colors">
               {card.title}
             </h3>
 

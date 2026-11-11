@@ -38,6 +38,11 @@ export default function AdminProductsPage() {
 
   const reloadData = async () => {
     try {
+      const deletedProdIds = new Set(
+        typeof window !== 'undefined'
+          ? JSON.parse(localStorage.getItem('transact_deleted_products_v3') || '[]')
+          : []
+      )
       const [pRes, cRes] = await Promise.all([
         fetch('/api/products', { cache: 'no-store' }),
         fetch('/api/categories', { cache: 'no-store' }),
@@ -45,12 +50,17 @@ export default function AdminProductsPage() {
       if (pRes.ok) {
         const liveProds = await pRes.json()
         if (Array.isArray(liveProds)) {
-          setProducts(liveProds)
+          const filteredLive = liveProds.filter((p: any) => !deletedProdIds.has(p.id))
+          const localProds = getStoredProducts().filter((p) => !deletedProdIds.has(p.id))
+          const map = new Map<string, ProductItem>()
+          filteredLive.forEach((p: any) => map.set(p.id, p))
+          localProds.forEach((p) => map.set(p.id, p))
+          setProducts(Array.from(map.values()))
         } else {
-          setProducts(getStoredProducts())
+          setProducts(getStoredProducts().filter((p) => !deletedProdIds.has(p.id)))
         }
       } else {
-        setProducts(getStoredProducts())
+        setProducts(getStoredProducts().filter((p) => !deletedProdIds.has(p.id)))
       }
       if (cRes.ok) {
         const liveCats = await cRes.json()
@@ -70,6 +80,9 @@ export default function AdminProductsPage() {
 
   useEffect(() => {
     reloadData()
+    const handleUpdate = () => reloadData()
+    window.addEventListener('transact_data_updated', handleUpdate)
+    return () => window.removeEventListener('transact_data_updated', handleUpdate)
   }, [])
 
   const showNotice = (msg: string) => {

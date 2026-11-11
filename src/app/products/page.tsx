@@ -143,26 +143,35 @@ function ProductsCatalogContent() {
       console.warn('Error reading stored categories/facets:', e)
     }
 
+    const deletedProdIds = new Set(
+      typeof window !== 'undefined'
+        ? JSON.parse(localStorage.getItem('transact_deleted_products_v3') || '[]')
+        : []
+    )
+
     try {
       const res = await fetch('/api/products', { cache: 'no-store' })
       if (res.ok) {
         const liveProds: ProductItem[] = await res.json()
-        if (Array.isArray(liveProds) && liveProds.length > 0) {
-          setProducts(liveProds)
-          if (typeof window !== 'undefined') {
-            try {
-              localStorage.setItem('transact_products_v4', JSON.stringify(liveProds))
-            } catch (e) {}
+        if (Array.isArray(liveProds)) {
+          const filteredLive = liveProds.filter((p) => !deletedProdIds.has(p.id) && p.is_published !== false)
+          const localProds = getStoredProducts().filter((p) => !deletedProdIds.has(p.id) && p.is_published !== false)
+          const map = new Map<string, ProductItem>()
+          filteredLive.forEach((p) => map.set(p.id, p))
+          localProds.forEach((p) => map.set(p.id, p))
+          const unified = Array.from(map.values())
+          if (unified.length > 0) {
+            setProducts(unified)
+            setLoading(false)
+            return
           }
-          setLoading(false)
-          return
         }
       }
     } catch (err) {
       console.warn('Live fetch error, falling back to dataStore:', err)
     }
 
-    const localProds = getStoredProducts().filter((p) => p.is_published)
+    const localProds = getStoredProducts().filter((p) => !deletedProdIds.has(p.id) && p.is_published !== false)
     if (localProds.length > 0) {
       setProducts(localProds)
     }

@@ -106,31 +106,77 @@ export async function syncServerData(): Promise<void> {
 
     let hasAnyChanges = false
 
-    // 1. Sync Categories across all devices + auto-upload local to server
+    // Helper to identify old placeholder SVGs so they never override real client photos
+    const isPlaceholderImage = (img?: string | null) =>
+      !img ||
+      img === '/image-352.svg' ||
+      img === '/image 352.svg' ||
+      img === '/Rectangle-819-1.svg' ||
+      img === '/Rectangle 819 (1).svg' ||
+      img === '/image-351-1.svg'
+
+    // 1. Sync Categories across all devices
     if (serverCatsRes && serverCatsRes.ok) {
       const serverCats = await serverCatsRes.json()
-      if (Array.isArray(serverCats) && serverCats.length > 0) {
+      if (Array.isArray(serverCats)) {
         const localCats = getFromStorage<CategoryItem[]>(STORAGE_KEYS.CATEGORIES, [])
-        const serverCatIds = new Set(serverCats.map((c) => c.id))
-        const unsyncedLocal = localCats.filter((c) => !serverCatIds.has(c.id))
+        const deletedCatIds = new Set(getFromStorage<string[]>(STORAGE_KEYS.DELETED_CATEGORIES, []))
 
-        // Auto-upload local categories to server so they never get lost
-        if (unsyncedLocal.length > 0) {
-          for (const cat of unsyncedLocal) {
-            fetch('/api/categories', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ action: 'save', category: cat }),
-            }).catch(() => {})
+        const localMap = new Map<string, CategoryItem>()
+        for (const cat of localCats) {
+          if (!deletedCatIds.has(cat.id)) {
+            localMap.set(cat.id, cat)
           }
         }
 
-        const unifiedCats = [...serverCats, ...unsyncedLocal]
+        const mergedMap = new Map<string, CategoryItem>()
+
+        // Process server categories
+        for (const sCat of serverCats) {
+          if (deletedCatIds.has(sCat.id)) continue // Strictly exclude deleted categories
+
+          const lCat = localMap.get(sCat.id)
+          if (!lCat) {
+            mergedMap.set(sCat.id, sCat)
+          } else {
+            // Local exists: preserve client's uploaded image and customizations
+            const localHasCustom = !isPlaceholderImage(lCat.card_image) || !isPlaceholderImage(lCat.image_url)
+            const localTime = new Date(lCat.updated_at || 0).getTime()
+            const serverTime = new Date(sCat.updated_at || 0).getTime()
+
+            if (localHasCustom || localTime >= serverTime) {
+              mergedMap.set(sCat.id, {
+                ...sCat,
+                ...lCat,
+                card_image: lCat.card_image && !isPlaceholderImage(lCat.card_image) ? lCat.card_image : lCat.image_url || sCat.card_image,
+                image_url: lCat.image_url && !isPlaceholderImage(lCat.image_url) ? lCat.image_url : lCat.card_image || sCat.image_url,
+              })
+            } else {
+              mergedMap.set(sCat.id, sCat)
+            }
+          }
+        }
+
+        // Add any newly created local categories
+        for (const [id, lCat] of localMap.entries()) {
+          if (!mergedMap.has(id)) {
+            mergedMap.set(id, lCat)
+          }
+        }
+
+        const unifiedCats = Array.from(mergedMap.values())
         if (JSON.stringify(unifiedCats) !== JSON.stringify(localCats)) {
           memoryCategories = unifiedCats
           saveToStorage(STORAGE_KEYS.CATEGORIES, unifiedCats)
           hasAnyChanges = true
         }
+
+        // Auto-save full list to server JSON so server is always synchronized with client uploads
+        fetch('/api/categories', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'setAll', categories: unifiedCats }),
+        }).catch(() => {})
       }
     }
 
@@ -161,30 +207,60 @@ export async function syncServerData(): Promise<void> {
       }
     }
 
-    // 3. Sync Products across all devices + auto-upload local to server
+    // 3. Sync Products across all devices
     if (serverProdsRes && serverProdsRes.ok) {
       const serverProds = await serverProdsRes.json()
-      if (Array.isArray(serverProds) && serverProds.length > 0) {
+      if (Array.isArray(serverProds)) {
         const localProds = getFromStorage<ProductItem[]>(STORAGE_KEYS.PRODUCTS, [])
-        const serverProdIds = new Set(serverProds.map((p) => p.id))
-        const unsyncedLocal = localProds.filter((p) => !serverProdIds.has(p.id))
+        const deletedProdIds = new Set(getFromStorage<string[]>(STORAGE_KEYS.DELETED_PRODUCTS, []))
 
-        if (unsyncedLocal.length > 0) {
-          for (const prod of unsyncedLocal) {
-            fetch('/api/products', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ action: 'save', product: prod }),
-            }).catch(() => {})
+        const localMap = new Map<string, ProductItem>()
+        for (const prod of localProds) {
+          if (!deletedProdIds.has(prod.id)) {
+            localMap.set(prod.id, prod)
           }
         }
 
-        const unifiedProds = [...serverProds, ...unsyncedLocal]
+        const mergedMap = new Map<string, ProductItem>()
+
+        // 1. Process server products (strictly filter out deleted ones!)
+        for (const sProd of serverProds) {
+          if (deletedProdIds.has(sProd.id)) continue // STRICTLY PREVENT RESURRECTION!
+
+          const lProd = localMap.get(sProd.id)
+          if (!lProd) {
+            mergedMap.set(sProd.id, sProd)
+          } else {
+            const localTime = new Date(lProd.updated_at || 0).getTime()
+            const serverTime = new Date(sProd.updated_at || 0).getTime()
+            if (localTime >= serverTime) {
+              mergedMap.set(sProd.id, lProd)
+            } else {
+              mergedMap.set(sProd.id, sProd)
+            }
+          }
+        }
+
+        // 2. Add local products (client uploads)
+        for (const [id, lProd] of localMap.entries()) {
+          if (!mergedMap.has(id)) {
+            mergedMap.set(id, lProd)
+          }
+        }
+
+        const unifiedProds = Array.from(mergedMap.values())
         if (JSON.stringify(unifiedProds) !== JSON.stringify(localProds)) {
           memoryProducts = unifiedProds
           saveToStorage(STORAGE_KEYS.PRODUCTS, unifiedProds)
           hasAnyChanges = true
         }
+
+        // Auto-save full list to server JSON so server is always synchronized with client uploads
+        fetch('/api/products', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'setAll', products: unifiedProds }),
+        }).catch(() => {})
       }
     }
 
@@ -301,10 +377,12 @@ if (isBrowser()) {
 // ============================================
 export function getStoredProducts(): ProductItem[] {
   if (isBrowser()) {
+    const deletedProdIds = new Set(getFromStorage<string[]>(STORAGE_KEYS.DELETED_PRODUCTS, []))
     const fromStorage = getFromStorage<ProductItem[]>(STORAGE_KEYS.PRODUCTS, [])
     if (fromStorage.length > 0) {
-      // Filter out any stale motorcycle products from previous sessions
+      // Filter out any deleted products or stale items
       const clean = fromStorage.filter((p) => {
+        if (deletedProdIds.has(p.id)) return false
         const text = `${p.title || ''} ${p.slug || ''} ${p.featured_image || ''}`.toLowerCase()
         return (
           !text.includes('motorcycle') &&
@@ -318,11 +396,13 @@ export function getStoredProducts(): ProductItem[] {
         )
       })
       if (clean.length !== fromStorage.length) {
-        saveToStorage(STORAGE_KEYS.PRODUCTS, clean.length > 0 ? clean : memoryProducts)
+        saveToStorage(STORAGE_KEYS.PRODUCTS, clean)
       }
-      if (clean.length > 0) return clean
+      return clean
     }
-    saveToStorage(STORAGE_KEYS.PRODUCTS, memoryProducts)
+    const cleanMemory = memoryProducts.filter((p) => !deletedProdIds.has(p.id))
+    saveToStorage(STORAGE_KEYS.PRODUCTS, cleanMemory)
+    return cleanMemory
   }
   return memoryProducts
 }
@@ -381,7 +461,7 @@ export async function saveProduct(product: ProductItem): Promise<ProductItem> {
       await fetch('/api/products', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'save', product: updatedProduct }),
+        body: JSON.stringify({ action: 'setAll', products: prods }),
       })
     } catch (err) {
       console.warn('Failed to persist product to server API:', err)
@@ -435,7 +515,7 @@ export async function deleteProduct(id: string): Promise<boolean> {
       await fetch('/api/products', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'delete', id }),
+        body: JSON.stringify({ action: 'setAll', products: prods }),
       })
     } catch (err) {
       console.warn('Failed to delete product from server API:', err)
@@ -499,9 +579,15 @@ export async function moveProductOrder(id: string, direction: 'up' | 'down'): Pr
 // ============================================
 export function getStoredCategories(): CategoryItem[] {
   if (isBrowser()) {
+    const deletedCatIds = new Set(getFromStorage<string[]>(STORAGE_KEYS.DELETED_CATEGORIES, []))
     const fromStorage = getFromStorage<CategoryItem[]>(STORAGE_KEYS.CATEGORIES, [])
-    if (fromStorage.length > 0) return fromStorage
-    saveToStorage(STORAGE_KEYS.CATEGORIES, memoryCategories)
+    if (fromStorage.length > 0) {
+      const clean = fromStorage.filter((c) => !deletedCatIds.has(c.id))
+      return clean
+    }
+    const cleanMemory = memoryCategories.filter((c) => !deletedCatIds.has(c.id))
+    saveToStorage(STORAGE_KEYS.CATEGORIES, cleanMemory)
+    return cleanMemory
   }
   return memoryCategories
 }
@@ -551,7 +637,7 @@ export async function saveCategory(category: CategoryItem): Promise<CategoryItem
       await fetch('/api/categories', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'save', category: updatedCategory }),
+        body: JSON.stringify({ action: 'setAll', categories: cats }),
       })
     } catch (err) {
       console.warn('Failed to persist category to server API:', err)
@@ -597,7 +683,7 @@ export async function deleteCategory(id: string): Promise<boolean> {
       await fetch('/api/categories', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'delete', id }),
+        body: JSON.stringify({ action: 'setAll', categories: cats }),
       })
     } catch (err) {
       console.warn('Failed to delete category from server API:', err)
