@@ -6,6 +6,14 @@ import Link from 'next/link'
 import { getStoredProjectDev } from '@/src/lib/dataStore'
 import { ProjectDevelopmentSection as ProjectDevType } from '@/src/types'
 
+const defaultFeatures = [
+  { icon: '/Design-icon 1 (1).svg', title: 'Design &\nEngineering' },
+  { icon: '/Prototyping-icon 1 (1).svg', title: 'Rapid\nPrototyping' },
+  { icon: '/Precision-icon 1 (1).svg', title: 'Precision\nTooling' },
+  { icon: '/Customization-icon 1 (1).svg', title: 'Custom OEM\nSolutions' },
+  { icon: '/Material-Selection-icon 1 (1).svg', title: 'Material\nExcellence' },
+]
+
 export default function ProjectDevelopmentSection() {
   const [data, setData] = useState<ProjectDevType>(getStoredProjectDev())
 
@@ -19,33 +27,45 @@ export default function ProjectDevelopmentSection() {
     return () => window.removeEventListener('transact_data_updated', reloadData)
   }, [])
 
+  const features =
+    Array.isArray(data?.features) && data.features.length > 0 && data.features[0]?.icon
+      ? data.features
+      : defaultFeatures
+
+  const paragraphs = Array.isArray(data?.paragraphs) ? data.paragraphs : []
+  const steps = Array.isArray(data?.steps) ? data.steps : []
+
   return (
     <section className="bg-white py-14 sm:py-20 px-4 sm:px-8 border-b border-zinc-100">
       <div className="max-w-[1380px] mx-auto space-y-12 sm:space-y-16">
         {/* ── Top 5-Feature Bar ── */}
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-6 sm:gap-2 items-center border-b border-zinc-200/80 pb-10">
-          {data.features.map((item, idx) => (
-            <div
-              key={idx}
-              className={`flex flex-col items-center text-center px-3 ${
-                idx > 0 ? 'lg:border-l lg:border-zinc-200' : ''
-              }`}
-            >
-              <div className="w-12 h-12 flex items-center justify-center mb-3">
-                <Image
-                  src={item.icon}
-                  alt={item.title.replace('\n', ' ')}
-                  width={44}
-                  height={44}
-                  unoptimized
-                  className="object-contain"
-                />
+          {features.map((item, idx) => {
+            const iconSrc = item?.icon || '/Design-icon 1 (1).svg'
+            const itemTitle = item?.title || `Feature ${idx + 1}`
+            return (
+              <div
+                key={idx}
+                className={`flex flex-col items-center text-center px-3 ${
+                  idx > 0 ? 'lg:border-l lg:border-zinc-200' : ''
+                }`}
+              >
+                <div className="w-12 h-12 flex items-center justify-center mb-3">
+                  <Image
+                    src={iconSrc}
+                    alt={itemTitle.replace('\n', ' ')}
+                    width={44}
+                    height={44}
+                    unoptimized
+                    className="object-contain"
+                  />
+                </div>
+                <h4 className="text-xs sm:text-sm font-bold text-[#081022] leading-tight whitespace-pre-line">
+                  {itemTitle}
+                </h4>
               </div>
-              <h4 className="text-xs sm:text-sm font-bold text-[#081022] leading-tight whitespace-pre-line">
-                {item.title}
-              </h4>
-            </div>
-          ))}
+            )
+          })}
         </div>
 
         {/* ── Main 3-Column Split ── */}
@@ -67,7 +87,7 @@ export default function ProjectDevelopmentSection() {
 
             {/* Paragraphs */}
             <div className="space-y-3 pt-1">
-              {data.paragraphs.map((p, i) => (
+              {paragraphs.map((p, i) => (
                 <p key={i} className="text-xs sm:text-sm text-[#4B5D71] leading-relaxed">
                   {p}
                 </p>
@@ -100,7 +120,7 @@ export default function ProjectDevelopmentSection() {
 
           {/* Right Column: 6-Step Process List */}
           <div className="lg:col-span-3 space-y-5 pl-0 lg:pl-2">
-            {data.steps.map((step, i) => (
+            {steps.map((step, i) => (
               <div key={i} className="flex items-center gap-3.5 group">
                 {/* Solid circular bullet */}
                 <span className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-[#D4D4D8] shrink-0 group-hover:bg-[#F6851F] transition-colors" />

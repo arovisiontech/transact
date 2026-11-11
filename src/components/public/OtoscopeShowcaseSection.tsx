@@ -12,26 +12,29 @@ export default function OtoscopeShowcaseSection() {
 
   const reloadData = () => {
     // Direct synchronization with Section 2 (Diagnostics) categories if defined
-    const cats = getStoredCategories().filter(
-      (c) => (c.section === 'diagnostics' || c.section === 'section_2') && c.is_published !== false
+    const cats = (getStoredCategories() || []).filter(
+      (c) => Boolean(c) && (c.section === 'diagnostics' || c.section === 'section_2') && c.is_published !== false
     )
     if (cats.length > 0) {
-      const mapped: PortfolioShowcaseCard[] = cats.map((cat, idx) => ({
-        id: `card-${cat.id}`,
-        tag: cat.name.toLowerCase().includes('pocket')
-          ? 'Pocket Diagnostic Airway Systems'
-          : 'Fiber-Optic & High-Resolution Optics',
-        title: cat.name,
-        subtitle: cat.description || '',
-        image: cat.card_image || cat.image_url || '/image 351 (1).svg',
-        badgeIcon: '/Diagnostics 2.svg',
-        badgeBg: 'bg-[#F6851F]',
-        buttonText: `Explore ${cat.name.replace(' Sets', '')} Line`,
-        buttonLink: `/products?category=${cat.slug}`,
-        indexLabel: `0${idx + 1} / 0${cats.length}`,
-        sort_order: cat.sort_order || idx + 1,
-        is_active: true,
-      }))
+      const mapped: PortfolioShowcaseCard[] = cats.map((cat, idx) => {
+        const catName = cat?.name || 'Diagnostic Instrument'
+        return {
+          id: `card-${cat?.id || idx}`,
+          tag: catName.toLowerCase().includes('pocket')
+            ? 'Pocket Diagnostic Airway Systems'
+            : 'Fiber-Optic & High-Resolution Optics',
+          title: catName,
+          subtitle: cat?.description || '',
+          image: cat?.card_image || cat?.image_url || '/image 351 (1).svg',
+          badgeIcon: '/Diagnostics 2.svg',
+          badgeBg: 'bg-[#F6851F]',
+          buttonText: `Explore ${catName.replace(' Sets', '')} Line`,
+          buttonLink: `/products?category=${cat?.slug || ''}`,
+          indexLabel: `0${idx + 1} / 0${cats.length}`,
+          sort_order: cat?.sort_order || idx + 1,
+          is_active: true,
+        }
+      })
       setCards(mapped)
     } else {
       setCards(getStoredOtoscopeCards().filter((c) => c.is_active !== false))

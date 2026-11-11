@@ -54,7 +54,9 @@ export default function HomePage() {
       <LaryngoscopeExpertiseSection />
 
       {/* 10. Complete Product Line / Otoscope Showcase */}
-      <OtoscopeShowcaseSection />
+      <ClientOnly fallback={<div className="py-16 bg-white min-h-[450px]" />}>
+        <OtoscopeShowcaseSection />
+      </ClientOnly>
 
       {/* 11. Compliance & Quality + Latest Blogs */}
       <ComplianceAndBlogsSection />

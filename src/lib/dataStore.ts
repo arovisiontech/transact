@@ -41,6 +41,7 @@ const STORAGE_KEYS = {
   FILTER_FACETS: 'transact_filter_facets_v3',
   PROJECT_DEV: 'transact_project_dev_v3',
   PRECISION_MFG: 'transact_precision_mfg_v3',
+  MANUFACTURING_PROCESS: 'transact_manufacturing_process_v2',
   FAQS: 'transact_faqs_v3',
   IMPACT_NUMBERS: 'transact_impact_numbers_v2',
   ABOUT_FACILITY: 'transact_about_facility_v2',
@@ -217,9 +218,9 @@ export async function syncServerData(): Promise<void> {
     if (serverMfgRes && serverMfgRes.ok) {
       const mfg = await serverMfgRes.json()
       if (mfg && mfg.hero) {
-        const localMfg = getFromStorage<any>(STORAGE_KEYS.PRECISION_MFG, null)
+        const localMfg = getFromStorage<any>(STORAGE_KEYS.MANUFACTURING_PROCESS, null)
         if (JSON.stringify(mfg) !== JSON.stringify(localMfg)) {
-          saveToStorage(STORAGE_KEYS.PRECISION_MFG, mfg)
+          saveToStorage(STORAGE_KEYS.MANUFACTURING_PROCESS, mfg)
           hasAnyChanges = true
         }
       }
@@ -944,7 +945,8 @@ export function saveStoreSettings(settings: StoreSettings): StoreSettings {
 // QUOTE CART (RFQ DRAWER)
 // ============================================
 export function getQuoteCart(): QuoteCartItem[] {
-  return getFromStorage<QuoteCartItem[]>(STORAGE_KEYS.QUOTE_CART, memoryQuoteCart)
+  const cart = getFromStorage<QuoteCartItem[]>(STORAGE_KEYS.QUOTE_CART, memoryQuoteCart)
+  return Array.isArray(cart) ? cart : []
 }
 
 export function addToQuoteCart(product: ProductItem, quantity: number = 1): QuoteCartItem[] {
@@ -1045,27 +1047,30 @@ export const defaultPortfolioCards: PortfolioShowcaseCard[] = [
 ]
 
 export function getStoredProductLineCards(): PortfolioShowcaseCard[] {
-  const cats = getStoredCategories().filter(
-    (c) => (c.section === 'airway' || !c.section || c.section === 'section_1') && c.is_published !== false
+  const cats = (getStoredCategories() || []).filter(
+    (c) => Boolean(c) && (c.section === 'airway' || !c.section || c.section === 'section_1') && c.is_published !== false
   )
   if (cats.length > 0) {
     const total = cats.length
-    return cats.map((cat, idx) => ({
-      id: `card-${cat.id}`,
-      tag: cat.name.toLowerCase().includes('single')
-        ? 'Sterile Disposable Solutions'
-        : 'Reusable Airway Management',
-      title: cat.name,
-      subtitle: cat.description || '',
-      image: cat.card_image || cat.image_url || '/Rectangle-819-1.svg',
-      badgeIcon: '/laryngoscope-2.svg',
-      badgeBg: cat.name.toLowerCase().includes('single') ? 'bg-[#F6851F]' : 'bg-white/95',
-      buttonText: `Explore ${cat.name.replace(' Laryngoscopes', '')} Line`,
-      buttonLink: `/products?category=${cat.slug}`,
-      indexLabel: `0${idx + 1} / 0${total}`,
-      sort_order: cat.sort_order || idx + 1,
-      is_active: true,
-    }))
+    return cats.map((cat, idx) => {
+      const catName = cat?.name || 'Airway Product'
+      return {
+        id: `card-${cat?.id || idx}`,
+        tag: catName.toLowerCase().includes('single')
+          ? 'Sterile Disposable Solutions'
+          : 'Reusable Airway Management',
+        title: catName,
+        subtitle: cat?.description || '',
+        image: cat?.card_image || cat?.image_url || '/Rectangle-819-1.svg',
+        badgeIcon: '/laryngoscope-2.svg',
+        badgeBg: catName.toLowerCase().includes('single') ? 'bg-[#F6851F]' : 'bg-white/95',
+        buttonText: `Explore ${catName.replace(' Laryngoscopes', '')} Line`,
+        buttonLink: `/products?category=${cat?.slug || ''}`,
+        indexLabel: `0${idx + 1} / 0${total}`,
+        sort_order: cat?.sort_order || idx + 1,
+        is_active: true,
+      }
+    })
   }
   const cards = getFromStorage<PortfolioShowcaseCard[]>(STORAGE_KEYS.PORTFOLIO_CARDS, defaultPortfolioCards)
   return cards && cards.length > 0 ? cards : defaultPortfolioCards
@@ -1152,27 +1157,30 @@ export const defaultOtoscopeCards: PortfolioShowcaseCard[] = [
 ]
 
 export function getStoredOtoscopeCards(): PortfolioShowcaseCard[] {
-  const cats = getStoredCategories().filter(
-    (c) => (c.section === 'diagnostics' || c.section === 'section_2') && c.is_published !== false
+  const cats = (getStoredCategories() || []).filter(
+    (c) => Boolean(c) && (c.section === 'diagnostics' || c.section === 'section_2') && c.is_published !== false
   )
   if (cats.length > 0) {
     const total = cats.length
-    return cats.map((cat, idx) => ({
-      id: `card-${cat.id}`,
-      tag: cat.name.toLowerCase().includes('pocket')
-        ? 'Pocket Diagnostic Airway Systems'
-        : 'Fiber-Optic & High-Resolution Optics',
-      title: cat.name,
-      subtitle: cat.description || '',
-      image: cat.card_image || cat.image_url || '/image 351 (1).svg',
-      badgeIcon: '/Diagnostics 2.svg',
-      badgeBg: 'bg-[#F6851F]',
-      buttonText: `Explore ${cat.name.replace(' Sets', '')} Line`,
-      buttonLink: `/products?category=${cat.slug}`,
-      indexLabel: `0${idx + 1} / 0${total}`,
-      sort_order: cat.sort_order || idx + 1,
-      is_active: true,
-    }))
+    return cats.map((cat, idx) => {
+      const catName = cat?.name || 'Diagnostic Instrument'
+      return {
+        id: `card-${cat?.id || idx}`,
+        tag: catName.toLowerCase().includes('pocket')
+          ? 'Pocket Diagnostic Airway Systems'
+          : 'Fiber-Optic & High-Resolution Optics',
+        title: catName,
+        subtitle: cat?.description || '',
+        image: cat?.card_image || cat?.image_url || '/image 351 (1).svg',
+        badgeIcon: '/Diagnostics 2.svg',
+        badgeBg: 'bg-[#F6851F]',
+        buttonText: `Explore ${catName.replace(' Sets', '')} Line`,
+        buttonLink: `/products?category=${cat?.slug || ''}`,
+        indexLabel: `0${idx + 1} / 0${total}`,
+        sort_order: cat?.sort_order || idx + 1,
+        is_active: true,
+      }
+    })
   }
   const cards = getFromStorage<PortfolioShowcaseCard[]>(STORAGE_KEYS.OTOSCOPE_CARDS, defaultOtoscopeCards)
   return cards && cards.length > 0 ? cards : defaultOtoscopeCards
@@ -1394,18 +1402,27 @@ const defaultPrecisionMfg: PrecisionManufacturingSection = {
 }
 
 export function getStoredPrecisionMfg(): PrecisionManufacturingSection {
-  return getFromStorage<PrecisionManufacturingSection>(STORAGE_KEYS.PRECISION_MFG, defaultPrecisionMfg)
+  const stored = getFromStorage<any>(STORAGE_KEYS.PRECISION_MFG, null)
+  if (
+    stored &&
+    Array.isArray(stored.steps) &&
+    stored.steps.length > 0 &&
+    typeof stored.steps[0]?.icon === 'string' &&
+    stored.steps[0].icon.length > 0
+  ) {
+    return stored
+  }
+  // Self-heal corrupted localStorage entry from previous bug
+  if (isBrowser() && stored) {
+    try {
+      localStorage.removeItem(STORAGE_KEYS.PRECISION_MFG)
+    } catch {}
+  }
+  return defaultPrecisionMfg
 }
 
 export function savePrecisionMfg(data: PrecisionManufacturingSection): PrecisionManufacturingSection {
   saveToStorage(STORAGE_KEYS.PRECISION_MFG, data)
-  if (isBrowser()) {
-    fetch('/api/manufacturing', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data),
-    }).catch((err) => console.warn('Failed to save manufacturing to server API:', err))
-  }
   return data
 }
 

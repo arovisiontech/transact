@@ -165,31 +165,34 @@ export default function ProductLineSection() {
     setData(getStoredProductLine())
 
     // Direct synchronization with Section 1 (Airway) categories if defined
-    const cats = getStoredCategories().filter(
-      (c) => (c.section === 'airway' || !c.section || c.section === 'section_1') && c.is_published !== false
+    const cats = (getStoredCategories() || []).filter(
+      (c) => Boolean(c) && (c.section === 'airway' || !c.section || c.section === 'section_1') && c.is_published !== false
     )
     if (cats.length > 0) {
-      const mapped: PortfolioShowcaseCard[] = cats.map((cat, idx) => ({
-        id: `card-${cat.id}`,
-        tag: cat.name.toLowerCase().includes('single')
-          ? 'Sterile Disposable Solutions'
-          : 'Reusable Airway Management',
-        title: cat.name,
-        subtitle: cat.description || '',
-        image:
-          cat.card_image && !cat.card_image.startsWith('blob:')
-            ? cat.card_image
-            : cat.image_url && !cat.image_url.startsWith('blob:')
-            ? cat.image_url
-            : '/images/catalogues/laryngoscope-cover.webp',
-        badgeIcon: '/laryngoscope-2.svg',
-        badgeBg: cat.name.toLowerCase().includes('single') ? 'bg-[#F6851F]' : 'bg-white/95',
-        buttonText: `Explore ${cat.name.replace(' Laryngoscopes', '')} Line`,
-        buttonLink: `/products?category=${cat.slug}`,
-        indexLabel: `0${idx + 1} / 0${cats.length}`,
-        sort_order: cat.sort_order || idx + 1,
-        is_active: true,
-      }))
+      const mapped: PortfolioShowcaseCard[] = cats.map((cat, idx) => {
+        const catName = cat?.name || 'Airway Product'
+        return {
+          id: `card-${cat?.id || idx}`,
+          tag: catName.toLowerCase().includes('single')
+            ? 'Sterile Disposable Solutions'
+            : 'Reusable Airway Management',
+          title: catName,
+          subtitle: cat?.description || '',
+          image:
+            cat?.card_image && !cat.card_image.startsWith('blob:')
+              ? cat.card_image
+              : cat?.image_url && !cat.image_url.startsWith('blob:')
+              ? cat.image_url
+              : '/images/catalogues/laryngoscope-cover.webp',
+          badgeIcon: '/laryngoscope-2.svg',
+          badgeBg: catName.toLowerCase().includes('single') ? 'bg-[#F6851F]' : 'bg-white/95',
+          buttonText: `Explore ${catName.replace(' Laryngoscopes', '')} Line`,
+          buttonLink: `/products?category=${cat?.slug || ''}`,
+          indexLabel: `0${idx + 1} / 0${cats.length}`,
+          sort_order: cat?.sort_order || idx + 1,
+          is_active: true,
+        }
+      })
       setCards(mapped)
     } else {
       setCards(getStoredProductLineCards().filter((c) => c.is_active !== false))

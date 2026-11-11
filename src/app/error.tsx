@@ -13,6 +13,21 @@ export default function Error({
     console.error('App Error Boundary caught error:', error)
   }, [error])
 
+  const handleReset = () => {
+    if (typeof window !== 'undefined') {
+      try {
+        localStorage.removeItem('transact_precision_mfg_v3')
+        localStorage.removeItem('transact_project_dev_v3')
+        localStorage.removeItem('transact_portfolio_cards_v3')
+        localStorage.removeItem('transact_quote_cart_v3')
+        localStorage.removeItem('transact_manufacturing_process_v2')
+      } catch {}
+      window.location.reload()
+    } else {
+      reset()
+    }
+  }
+
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-white px-4 text-center">
       <div className="max-w-md space-y-4">
@@ -26,8 +41,8 @@ export default function Error({
           The page encountered a temporary issue. Click below to reload.
         </p>
         <button
-          onClick={() => reset()}
-          className="px-6 py-2.5 bg-[#F6851F] hover:bg-[#E07314] text-white text-sm font-bold rounded-xl shadow-md transition"
+          onClick={handleReset}
+          className="px-6 py-2.5 bg-[#F6851F] hover:bg-[#E07314] text-white text-sm font-bold rounded-xl shadow-md transition cursor-pointer"
         >
           Try Again
         </button>
@@ -35,3 +50,4 @@ export default function Error({
     </div>
   )
 }
+

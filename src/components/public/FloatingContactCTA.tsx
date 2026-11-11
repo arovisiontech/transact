@@ -22,8 +22,9 @@ export default function FloatingContactCTA({ onOpenQuote }: FloatingContactCTAPr
 
   useEffect(() => {
     const updateCount = () => {
-      const cart = getQuoteCart()
-      setCartCount(cart.reduce((sum, item) => sum + item.quantity, 0))
+      const cart = getQuoteCart() || []
+      const total = Array.isArray(cart) ? cart.reduce((sum, item) => sum + (item?.quantity || 1), 0) : 0
+      setCartCount(total)
     }
     updateCount()
     window.addEventListener('transact_data_updated', updateCount)

@@ -33,8 +33,9 @@ export default function PublicHeader({ onOpenSearch, onOpenQuote }: PublicHeader
 
   useEffect(() => {
     const updateQuote = () => {
-      const cart = getQuoteCart()
-      setQuoteCount(cart.reduce((sum, item) => sum + item.quantity, 0))
+      const cart = getQuoteCart() || []
+      const total = Array.isArray(cart) ? cart.reduce((sum, item) => sum + (item?.quantity || 1), 0) : 0
+      setQuoteCount(total)
     }
     updateQuote()
 
