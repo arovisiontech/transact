@@ -407,29 +407,7 @@ function ProductsCatalogContent() {
                 <div className="space-y-3">
                   <h4 className="text-sm font-bold text-slate-900">Product Category</h4>
                   <div className="space-y-2.5">
-                    {/* All Categories */}
-                    <label
-                      onClick={() => {
-                        setSelectedCategory('all')
-                        setSelectedSubcategory('all')
-                      }}
-                      className="flex items-center gap-3 cursor-pointer group"
-                    >
-                      <div
-                        className={`w-5 h-5 rounded flex items-center justify-center transition border ${
-                          selectedCategory === 'all'
-                            ? 'bg-[#F36C21] border-[#F36C21] text-white'
-                            : 'border-slate-300 bg-white group-hover:border-[#F36C21]'
-                        }`}
-                      >
-                        {selectedCategory === 'all' && <Check className="w-3.5 h-3.5 stroke-[3]" />}
-                      </div>
-                      <span className="text-sm text-slate-700 group-hover:text-slate-900 font-medium">
-                        All Categories
-                      </span>
-                    </label>
-
-                    {/* Dynamic 4 Categories */}
+                    {/* Dynamic Categories */}
                     {categoriesList.map((cat) => {
                       const isCatSelected =
                         selectedCategory === cat.slug ||
@@ -441,8 +419,13 @@ function ProductsCatalogContent() {
                         <label
                           key={cat.id}
                           onClick={() => {
-                            setSelectedCategory(cat.slug || cat.id)
-                            setSelectedSubcategory('all')
+                            if (isCatSelected) {
+                              setSelectedCategory('all')
+                              setSelectedSubcategory('all')
+                            } else {
+                              setSelectedCategory(cat.slug || cat.id)
+                              setSelectedSubcategory('all')
+                            }
                           }}
                           className="flex items-center gap-3 cursor-pointer group"
                         >

@@ -39,3 +39,4 @@ export async function GET(
     return new NextResponse('Error reading image: ' + err.message, { status: 500 })
   }
 }
+

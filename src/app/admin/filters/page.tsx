@@ -296,15 +296,11 @@ export default function AdminFiltersPage() {
             <div className="space-y-3">
               <h4 className="text-sm font-bold text-slate-900">Product Category</h4>
               <div className="space-y-2.5">
-                <div className="flex items-center gap-3">
-                  <div className="w-5 h-5 rounded bg-[#F36C21] text-white flex items-center justify-center">
-                    <Check className="w-3.5 h-3.5 stroke-[3]" />
-                  </div>
-                  <span className="text-sm text-slate-900 font-medium">All Categories</span>
-                </div>
-                {categories.map((cat) => (
+                {categories.map((cat, idx) => (
                   <div key={cat.id} className="flex items-center gap-3">
-                    <div className="w-5 h-5 rounded border border-slate-300 bg-white" />
+                    <div className={`w-5 h-5 rounded border ${idx === 0 ? 'bg-[#F36C21] border-[#F36C21] text-white' : 'border-slate-300 bg-white'} flex items-center justify-center`}>
+                      {idx === 0 && <Check className="w-3.5 h-3.5 stroke-[3]" />}
+                    </div>
                     <span className="text-sm text-slate-700 font-medium">{cat.name}</span>
                   </div>
                 ))}
