@@ -15,7 +15,7 @@
   "iso_certified": true,
   "ce_certified": true,
   "fda_registered": true,
-  "block_pakistan": true,
-  "blocked_countries": ["PK"],
+  "block_pakistan": false,
+  "blocked_countries": [],
   "geo_bypass_key": "transact"
 }
