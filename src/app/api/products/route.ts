@@ -5,18 +5,26 @@ import { ProductItem } from '@/src/types'
 
 const filePath = path.join(process.cwd(), 'src', 'data', 'products.json')
 
+let memoryProductsCache: ProductItem[] | null = null
+
 function readProducts(): ProductItem[] {
+  if (memoryProductsCache && memoryProductsCache.length > 0) {
+    return memoryProductsCache
+  }
   try {
     if (!fs.existsSync(filePath)) return []
     const content = fs.readFileSync(filePath, 'utf8')
-    return JSON.parse(content)
+    const parsed = JSON.parse(content)
+    memoryProductsCache = parsed
+    return parsed
   } catch (e) {
     console.error('Error reading products.json:', e)
-    return []
+    return memoryProductsCache || []
   }
 }
 
 function writeProducts(products: ProductItem[]) {
+  memoryProductsCache = products
   try {
     fs.writeFileSync(filePath, JSON.stringify(products, null, 2), 'utf8')
   } catch (err) {

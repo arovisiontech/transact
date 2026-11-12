@@ -483,24 +483,33 @@ function ProductDetailContent() {
             {/* Right 4 Cols: Only shown when client actually added other views */}
             {hasOtherViews && (
               <div className="lg:col-span-4 grid grid-cols-2 gap-4">
-                {galleryList.map((viewUrl, vIdx) => (
-                  <button
-                    key={vIdx}
-                    onClick={() => setSelectedImage(viewUrl)}
-                    className={`relative aspect-[4/3] rounded-none rounded-bl-[16px] overflow-hidden bg-[#EDF1F6] border-2 transition p-3 flex items-center justify-center cursor-pointer ${
-                      selectedImage === viewUrl ? 'border-[#F36C21] shadow-md' : 'border-slate-200 hover:border-slate-300'
-                    }`}
-                    style={{ borderRadius: '0px 0px 0px 16px' }}
-                  >
-                    <Image
-                      src={viewUrl}
-                      alt={`View ${vIdx + 1}`}
-                      fill
-                      unoptimized
-                      className="object-contain p-2"
-                    />
-                  </button>
-                ))}
+                {galleryList.map((viewUrl, vIdx) => {
+                  const isActive = (selectedImage || product?.featured_image) === viewUrl
+                  const angleLabel = vIdx === 0 ? 'Angle 1 (Main)' : `Angle ${vIdx + 1}`
+
+                  return (
+                    <button
+                      key={vIdx}
+                      type="button"
+                      onClick={() => setSelectedImage(viewUrl)}
+                      className={`relative aspect-[4/3] rounded-none rounded-bl-[16px] overflow-hidden bg-[#EDF1F6] border-2 transition p-3 flex flex-col items-center justify-center cursor-pointer group ${
+                        isActive ? 'border-[#F36C21] shadow-md ring-2 ring-[#F36C21]/20' : 'border-slate-200 hover:border-slate-300'
+                      }`}
+                      style={{ borderRadius: '0px 0px 0px 16px' }}
+                    >
+                      <Image
+                        src={viewUrl}
+                        alt={angleLabel}
+                        fill
+                        unoptimized
+                        className="object-contain p-2"
+                      />
+                      <span className="absolute bottom-1.5 left-1.5 right-1.5 px-1.5 py-0.5 rounded-md bg-slate-900/80 text-white text-[10px] font-bold text-center truncate">
+                        {angleLabel}
+                      </span>
+                    </button>
+                  )
+                })}
               </div>
             )}
           </div>

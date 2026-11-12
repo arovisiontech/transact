@@ -243,43 +243,70 @@ export default function ProductModal({ product, isOpen, onClose, onSaved }: Prod
     setShowNewCatInput(false)
   }
 
-  const processFile = async (file: File) => {
+  // Helper to read URL of any of the 4 angle slots
+  const getAngleUrl = (angle: 1 | 2 | 3 | 4): string => {
+    if (angle === 1) return formData.featured_image || ''
+    const gallery = Array.isArray(formData.gallery_images) ? formData.gallery_images : []
+    const raw = gallery[angle - 2]
+    return typeof raw === 'string' ? raw : (raw as any)?.image_url || ''
+  }
+
+  // Helper to update specific angle slot
+  const setAngleUrl = (angle: 1 | 2 | 3 | 4, url: string) => {
+    if (angle === 1) {
+      setFormData((prev) => ({ ...prev, featured_image: url }))
+    } else {
+      setFormData((prev) => {
+        const gallery = Array.isArray(prev.gallery_images)
+          ? [...prev.gallery_images.map((g) => (typeof g === 'string' ? g : (g as any)?.image_url || ''))]
+          : []
+        while (gallery.length < 3) gallery.push('')
+        gallery[angle - 2] = url
+        return {
+          ...prev,
+          gallery_images: gallery,
+        }
+      })
+    }
+  }
+
+  // Helper to remove specific angle slot
+  const removeAngleImage = (angle: 1 | 2 | 3 | 4) => {
+    if (angle === 1) {
+      setFormData((prev) => ({ ...prev, featured_image: '' }))
+    } else {
+      setFormData((prev) => {
+        const gallery = Array.isArray(prev.gallery_images)
+          ? [...prev.gallery_images.map((g) => (typeof g === 'string' ? g : (g as any)?.image_url || ''))]
+          : []
+        while (gallery.length < 3) gallery.push('')
+        gallery[angle - 2] = ''
+        return {
+          ...prev,
+          gallery_images: gallery,
+        }
+      })
+    }
+  }
+
+  // Upload handler for any of the 4 angles
+  const handleAngleUpload = async (angle: 1 | 2 | 3 | 4, file: File) => {
     if (!file) return
     setIsUploading(true)
     try {
-      // 1. Fast client-side compression to ~40-70KB
       const compressed = await compressImage(file, 1200, 0.82)
-      const dataUrl = compressed.dataUrl
-
-      // Immediately set preview with compressed dataUrl so user sees it right away
-      if (dataUrl) {
-        setFormData((prev) => ({ ...prev, featured_image: dataUrl }))
-      }
-
-      // 2. Also try uploading file to server
-      try {
-        const fd = new FormData()
-        fd.append('file', compressed.file)
-
-        const res = await fetch('/api/upload', {
-          method: 'POST',
-          body: fd,
-        })
-
-        if (res.ok) {
-          const data = await res.json()
-          if (data.url) {
-            setFormData((prev) => ({ ...prev, featured_image: data.url }))
-          }
-        }
-      } catch (uploadErr) {
-        console.warn('Server upload fallback to optimized dataUrl:', uploadErr)
+      if (compressed.dataUrl) {
+        setAngleUrl(angle, compressed.dataUrl)
       }
     } catch (err) {
-      console.error('Image compression error:', err)
+      console.error(`Angle ${angle} upload error:`, err)
     } finally {
       setIsUploading(false)
     }
+  }
+
+  const processFile = async (file: File) => {
+    handleAngleUpload(1, file)
   }
 
   const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
@@ -472,7 +499,9 @@ export default function ProductModal({ product, isOpen, onClose, onSaved }: Prod
         custom_related_products: formData.custom_related_products || [],
         related_product_ids: formData.related_product_ids || [],
         featured_image: formData.featured_image || '',
-        gallery_images: formData.gallery_images || [],
+        gallery_images: (formData.gallery_images || [])
+          .map((g) => (typeof g === 'string' ? g : (g as any)?.image_url || ''))
+          .filter((url): url is string => Boolean(url && url.trim() !== '')),
         sort_order: Number(formData.sort_order) || 1,
       }
 
@@ -485,13 +514,6 @@ export default function ProductModal({ product, isOpen, onClose, onSaved }: Prod
       setIsSaving(false)
     }
   }
-
-  const samplePresets = [
-    { label: 'Macintosh Blade', url: '/images/products/integrated-macintosh-fiber-optic-blade.png' },
-    { label: 'Blade Angle 1', url: '/images/products/laryngoscope-attachment-1.png' },
-    { label: 'Blade Angle 2', url: '/images/products/laryngoscope-attachment-2.png' },
-    { label: 'Laryngoscope Hero', url: '/image 431.svg' },
-  ]
 
   const chartRows = formData.chart_rows || defaultSizingRows
   const builtCards = formData.built_to_perform?.cards || defaultBuiltToPerform.cards
@@ -525,251 +547,153 @@ export default function ProductModal({ product, isOpen, onClose, onSaved }: Prod
         {/* Scrollable Form Body */}
         <form onSubmit={handleSubmit} className="p-6 space-y-6 overflow-y-auto flex-1 text-slate-800">
           {/* ──────────────────────────────────────────────────────── */}
-          {/* 1. PRODUCT IMAGE UPLOAD & PLACEHOLDER                    */}
           {/* ──────────────────────────────────────────────────────── */}
-          <div className="p-5 rounded-2xl bg-[#F8FAFC] border border-slate-200 space-y-3">
-            <div className="flex items-center justify-between">
-              <div>
-                <label className="block text-xs font-bold text-[#081022] uppercase tracking-wide">
-                  Product Image Placeholder & Upload *
-                </label>
-                <p className="text-[11px] text-slate-500">
-                  Upload an image directly from your device or pick a preset image.
-                </p>
-              </div>
-              <button
-                type="button"
-                onClick={() => setShowUrlInput(!showUrlInput)}
-                className="text-xs text-[#F6851F] font-bold hover:underline inline-flex items-center gap-1"
-              >
-                <Link2 className="w-3 h-3" />
-                {showUrlInput ? 'Hide URL Input' : 'Enter Image URL'}
-              </button>
-            </div>
-
-            {/* Direct URL Input fallback */}
-            {showUrlInput && (
-              <div className="pt-1">
-                <input
-                  type="text"
-                  placeholder="https://... or /images/..."
-                  value={formData.featured_image || ''}
-                  onChange={(e) => setFormData({ ...formData, featured_image: e.target.value })}
-                  className="w-full text-xs px-3.5 py-2.5 rounded-xl bg-white border border-zinc-200 focus:outline-none focus:border-[#F6851F]"
-                />
-              </div>
-            )}
-
-            {/* Drag & Drop Upload Zone + Live Preview */}
-            <div className="grid grid-cols-1 sm:grid-cols-12 gap-4 items-center">
-              {/* Preview Box */}
-              <div className="sm:col-span-4 relative aspect-[4/3] rounded-2xl bg-[#EDF1F6] border-2 border-dashed border-zinc-300 overflow-hidden flex items-center justify-center p-2 group shadow-inner">
-                {formData.featured_image ? (
-                  <div className="relative w-full h-full flex items-center justify-center">
-                    <Image
-                      src={formData.featured_image}
-                      alt="Product preview"
-                      fill
-                      unoptimized
-                      className="object-contain p-2"
-                    />
-                    <div className="absolute inset-x-0 bottom-0 bg-slate-900/85 text-white text-[10px] px-2.5 py-1.5 flex items-center justify-between">
-                      <span className="truncate max-w-[120px] font-mono">
-                        {formData.featured_image.startsWith('data:') ? 'Custom Upload' : formData.featured_image}
-                      </span>
-                      <button
-                        type="button"
-                        onClick={(e) => {
-                          e.stopPropagation()
-                          setFormData({ ...formData, featured_image: '' })
-                        }}
-                        className="text-rose-400 hover:text-rose-200 font-bold text-[10px] ml-2 shrink-0 cursor-pointer"
-                        title="Remove image"
-                      >
-                        Remove
-                      </button>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="text-center p-4 text-zinc-400">
-                    <ImageIcon className="w-8 h-8 mx-auto mb-1 stroke-1 text-slate-400" />
-                    <span className="text-[11px] font-bold text-slate-700 block">No Image Selected</span>
-                    <span className="text-[10px] text-zinc-400 block mt-0.5">Upload image on the right</span>
-                  </div>
-                )}
-              </div>
-
-              {/* Upload Drop Area */}
-              <div
-                onDragOver={(e) => {
-                  e.preventDefault()
-                  setIsDragOver(true)
-                }}
-                onDragLeave={() => setIsDragOver(false)}
-                onDrop={handleDrop}
-                onClick={() => fileInputRef.current?.click()}
-                className={`sm:col-span-8 border-2 border-dashed rounded-2xl p-6 text-center cursor-pointer transition flex flex-col items-center justify-center min-h-[140px] ${
-                  isDragOver
-                    ? 'border-[#F6851F] bg-orange-50/70'
-                    : 'border-zinc-300 hover:border-[#F6851F] bg-white'
-                }`}
-              >
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept="image/*"
-                  onChange={(e) => {
-                    if (e.target.files && e.target.files[0]) {
-                      processFile(e.target.files[0])
-                    }
-                  }}
-                  className="hidden"
-                />
-
-                <div className="w-10 h-10 rounded-full bg-[#F6851F]/10 flex items-center justify-center text-[#F6851F] mb-2">
-                  <UploadCloud className="w-5 h-5" />
+          {/* 1. PRODUCT PERSPECTIVES & ANGLES (4 DEDICATED SLOTS)    */}
+          {/* ──────────────────────────────────────────────────────── */}
+          <div className="p-5 rounded-2xl bg-[#F8FAFC] border border-slate-200 space-y-4">
+            <div className="flex items-center justify-between border-b border-slate-200/70 pb-3">
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-lg bg-[#F6851F]/15 flex items-center justify-center text-[#F6851F]">
+                  <ImageIcon className="w-4 h-4" />
                 </div>
-                <p className="text-xs font-bold text-zinc-800">
-                  {isUploading ? 'Compressing & Uploading...' : 'Click or Drag & Drop Product Image'}
-                </p>
-                <p className="text-[11px] text-zinc-500 mt-0.5">PNG, JPG, SVG, WebP (Auto-optimized for instant speed)</p>
+                <div>
+                  <h4 className="text-xs font-bold text-[#081022] uppercase tracking-wide">
+                    Product Angles & Views (4 Dedicated Slots)
+                  </h4>
+                  <p className="text-[11px] text-zinc-500">
+                    Upload each perspective separately. Angle 1 is the primary image. Angles 2, 3, and 4 appear on the Large View page.
+                  </p>
+                </div>
               </div>
             </div>
 
-            {/* Quick Preset Selector */}
-            <div className="pt-2">
-              <div className="flex items-center justify-between mb-1.5">
-                <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-wider block">
-                  Quick Surgical Presets (Optional):
-                </span>
-                {formData.featured_image && (
-                  <button
-                    type="button"
-                    onClick={() => setFormData({ ...formData, featured_image: '' })}
-                    className="text-[10px] text-rose-600 font-bold hover:underline cursor-pointer"
-                  >
-                    Clear Image
-                  </button>
-                )}
-              </div>
-              <div className="flex flex-wrap gap-2">
-                {samplePresets.map((preset, idx) => (
-                  <button
-                    key={idx}
-                    type="button"
-                    onClick={() => setFormData({ ...formData, featured_image: preset.url })}
-                    className={`px-3 py-1.5 rounded-xl text-xs font-medium border transition flex items-center gap-1.5 cursor-pointer ${
-                      formData.featured_image === preset.url
-                        ? 'border-[#F6851F] bg-[#F6851F]/10 text-[#F6851F] font-bold'
-                        : 'border-zinc-200 bg-white text-zinc-700 hover:border-zinc-300'
+            {/* 4 Angle Slots Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              {([
+                {
+                  slot: 1 as const,
+                  title: 'Angle 1 (Main View)',
+                  subtitle: 'Primary catalog & hero image',
+                  required: true,
+                },
+                {
+                  slot: 2 as const,
+                  title: 'Angle 2 (Side View)',
+                  subtitle: 'Side profile or angled view',
+                  required: false,
+                },
+                {
+                  slot: 3 as const,
+                  title: 'Angle 3 (Detail View)',
+                  subtitle: 'Close-up or flexible tip view',
+                  required: false,
+                },
+                {
+                  slot: 4 as const,
+                  title: 'Angle 4 (Extra View)',
+                  subtitle: 'Packaging or handle view',
+                  required: false,
+                },
+              ] as const).map(({ slot, title, subtitle, required }) => {
+                const imgUrl = getAngleUrl(slot)
+                const isPresent = Boolean(imgUrl && imgUrl.trim() !== '')
+
+                return (
+                  <div
+                    key={slot}
+                    className={`flex flex-col rounded-2xl border p-3.5 transition ${
+                      isPresent
+                        ? 'bg-white border-[#F6851F]/50 shadow-sm'
+                        : 'bg-white border-slate-200 hover:border-slate-300'
                     }`}
                   >
-                    <span>{preset.label}</span>
-                  </button>
-                ))}
-              </div>
-            </div>
-          </div>
+                    {/* Slot Header */}
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="min-w-0 pr-1">
+                        <span className="text-xs font-bold text-[#081022] block truncate">
+                          {title} {required && <span className="text-rose-500">*</span>}
+                        </span>
+                        <span className="text-[10px] text-zinc-400 block truncate">{subtitle}</span>
+                      </div>
+                      <span
+                        className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full shrink-0 ${
+                          isPresent
+                            ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                            : 'bg-zinc-100 text-zinc-500'
+                        }`}
+                      >
+                        {isPresent ? 'Active' : 'Empty'}
+                      </span>
+                    </div>
 
-          {/* ──────────────────────────────────────────────────────── */}
-          {/* 1.5 OTHER VIEWS / GALLERY IMAGES (OPTIONAL)            */}
-          {/* ──────────────────────────────────────────────────────── */}
-          <div className="p-5 rounded-2xl bg-white border border-slate-200 space-y-4">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-2">
-              <div className="flex items-center gap-2">
-                <ImageIcon className="w-4 h-4 text-[#F6851F]" />
-                <h4 className="text-xs font-bold text-[#081022] uppercase tracking-wide">
-                  Other Views / Gallery Images (Optional)
-                </h4>
-              </div>
-              <span className="text-[10px] px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 font-bold">
-                {formData.gallery_images?.length || 0} Added
-              </span>
-            </div>
+                    {/* Image Preview Box */}
+                    <div className="relative aspect-[4/3] rounded-xl bg-[#EDF1F6] border border-slate-200 overflow-hidden flex items-center justify-center p-2 mb-3 shadow-inner">
+                      {isPresent ? (
+                        <div className="relative w-full h-full">
+                          <Image
+                            src={imgUrl}
+                            alt={title}
+                            fill
+                            unoptimized
+                            className="object-contain p-1"
+                          />
+                        </div>
+                      ) : (
+                        <div className="text-center p-2 text-zinc-400">
+                          <ImageIcon className="w-7 h-7 mx-auto mb-1 stroke-1 text-slate-300" />
+                          <span className="text-[10px] text-zinc-400 font-medium block">
+                            No Image Added
+                          </span>
+                        </div>
+                      )}
+                    </div>
 
-            <p className="text-[11px] text-slate-500">
-              Only views added here will appear as thumbnails on the product page. If left empty, no extra view thumbnails will be shown.
-            </p>
+                    {/* Upload / Action Buttons */}
+                    <div className="mt-auto space-y-1.5">
+                      <div className="flex items-center gap-1.5">
+                        <label className="flex-1 inline-flex items-center justify-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-[#F6851F] hover:bg-[#E07314] text-white text-xs font-bold cursor-pointer transition shadow-xs text-center">
+                          <UploadCloud className="w-3.5 h-3.5" />
+                          <span>{isPresent ? 'Change' : 'Upload'}</span>
+                          <input
+                            type="file"
+                            accept="image/*"
+                            className="hidden"
+                            onChange={(e) => {
+                              const file = e.target.files?.[0]
+                              if (file) handleAngleUpload(slot, file)
+                            }}
+                          />
+                        </label>
 
-            {/* List of currently added gallery images */}
-            {formData.gallery_images && formData.gallery_images.length > 0 && (
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                {formData.gallery_images.map((rawImg, gIdx) => {
-                  const srcUrl = typeof rawImg === 'string' ? rawImg : rawImg?.image_url || ''
-                  if (!srcUrl) return null
-                  return (
-                    <div
-                      key={gIdx}
-                      className="relative group aspect-[4/3] rounded-xl overflow-hidden bg-[#EDF1F6] border border-slate-200 flex items-center justify-center p-2"
-                    >
-                      <Image
-                        src={srcUrl}
-                        alt={`View ${gIdx + 1}`}
-                        fill
-                        unoptimized
-                        className="object-contain p-1"
-                      />
+                        {isPresent && (
+                          <button
+                            type="button"
+                            onClick={() => removeAngleImage(slot)}
+                            className="p-1.5 rounded-lg bg-rose-50 text-rose-600 hover:bg-rose-100 transition cursor-pointer border border-rose-200"
+                            title="Remove this angle"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        )}
+                      </div>
+
+                      {/* Optional URL prompt for this angle */}
                       <button
                         type="button"
                         onClick={() => {
-                          const updated = (formData.gallery_images || []).filter((_, i) => i !== gIdx)
-                          setFormData({ ...formData, gallery_images: updated })
+                          const url = window.prompt(`Enter Image URL for ${title}:`, imgUrl)
+                          if (url !== null) {
+                            setAngleUrl(slot, url.trim())
+                          }
                         }}
-                        className="absolute top-1 right-1 w-6 h-6 rounded-full bg-rose-500 text-white flex items-center justify-center shadow hover:bg-rose-600 transition cursor-pointer opacity-90 group-hover:opacity-100"
-                        title="Remove image"
+                        className="w-full text-center text-[10px] text-zinc-500 hover:text-[#F6851F] font-medium py-0.5 hover:underline"
                       >
-                        <X className="w-3.5 h-3.5" />
+                        {imgUrl && !imgUrl.startsWith('data:') ? 'Edit URL' : 'Or paste URL'}
                       </button>
                     </div>
-                  )
-                })}
-              </div>
-            )}
-
-            {/* Upload or Add image URL */}
-            <div className="flex flex-wrap items-center gap-2">
-              <label className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-slate-50 border border-dashed border-slate-300 text-xs font-bold text-slate-700 hover:bg-slate-100 cursor-pointer transition">
-                <UploadCloud className="w-3.5 h-3.5 text-[#F6851F]" />
-                <span>Upload Other View</span>
-                <input
-                  type="file"
-                  accept="image/*"
-                  className="hidden"
-                  onChange={async (e) => {
-                    const file = e.target.files?.[0]
-                    if (file) {
-                      try {
-                        const compressed = await compressImage(file, 1000, 0.8)
-                        if (compressed.dataUrl) {
-                          setFormData((prev) => ({
-                            ...prev,
-                            gallery_images: [...(prev.gallery_images || []), compressed.dataUrl],
-                          }))
-                        }
-                      } catch (err) {
-                        console.error('Other view compress error:', err)
-                      }
-                    }
-                  }}
-                />
-              </label>
-
-              <button
-                type="button"
-                onClick={() => {
-                  const url = window.prompt('Enter Image URL for other view:')
-                  if (url && url.trim()) {
-                    setFormData({
-                      ...formData,
-                      gallery_images: [...(formData.gallery_images || []), url.trim()],
-                    })
-                  }
-                }}
-                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs font-bold text-slate-700 hover:bg-slate-100 transition cursor-pointer"
-              >
-                <Plus className="w-3.5 h-3.5 text-[#F6851F]" />
-                <span>Add Image URL</span>
-              </button>
+                  </div>
+                )
+              })}
             </div>
           </div>
 

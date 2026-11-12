@@ -213,17 +213,65 @@ export async function syncServerData(force = false): Promise<void> {
       }
     }
 
-    // 3. Sync Products across all devices (Server is the single authoritative source of truth!)
+    // 3. Sync Products intelligently (preserve user uploads & local edits!)
     if (serverProdsRes && serverProdsRes.ok) {
       const serverProds = await serverProdsRes.json()
       if (Array.isArray(serverProds)) {
         const localProds = getFromStorage<ProductItem[]>(STORAGE_KEYS.PRODUCTS, [])
-        if (JSON.stringify(serverProds) !== JSON.stringify(localProds)) {
-          memoryProducts = serverProds
-          saveToStorage(STORAGE_KEYS.PRODUCTS, serverProds)
-          saveToStorage(STORAGE_KEYS.DELETED_PRODUCTS, [])
+        const deletedProdIds = new Set(getFromStorage<string[]>(STORAGE_KEYS.DELETED_PRODUCTS, []))
+
+        const localMap = new Map<string, ProductItem>()
+        for (const p of localProds) {
+          if (!deletedProdIds.has(p.id)) {
+            localMap.set(p.id, p)
+          }
+        }
+
+        const mergedMap = new Map<string, ProductItem>()
+
+        for (const sProd of serverProds) {
+          if (deletedProdIds.has(sProd.id)) continue
+
+          const lProd = localMap.get(sProd.id)
+          if (!lProd) {
+            mergedMap.set(sProd.id, sProd)
+          } else {
+            // Keep local changes if newer or if local has custom uploaded image
+            const localTime = new Date(lProd.updated_at || 0).getTime()
+            const serverTime = new Date(sProd.updated_at || 0).getTime()
+            const localHasCustom = Boolean(
+              lProd.featured_image &&
+              (lProd.featured_image.startsWith('data:') || lProd.featured_image !== sProd.featured_image)
+            )
+
+            if (localHasCustom || localTime >= serverTime) {
+              mergedMap.set(sProd.id, { ...sProd, ...lProd })
+            } else {
+              mergedMap.set(sProd.id, sProd)
+            }
+          }
+        }
+
+        // Add any locally created products
+        for (const [id, lProd] of localMap.entries()) {
+          if (!mergedMap.has(id)) {
+            mergedMap.set(id, lProd)
+          }
+        }
+
+        const unifiedProds = Array.from(mergedMap.values())
+        if (JSON.stringify(unifiedProds) !== JSON.stringify(localProds)) {
+          memoryProducts = unifiedProds
+          saveToStorage(STORAGE_KEYS.PRODUCTS, unifiedProds)
           hasAnyChanges = true
         }
+
+        // Sync unified list to server API so server gets updated as well
+        fetch('/api/products', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'setAll', products: unifiedProds }),
+        }).catch(() => {})
       }
     }
 

@@ -27,6 +27,29 @@ import {
 import { ProductItem, CategoryItem } from '@/src/types'
 import ProductModal from '@/src/components/admin/ProductModal'
 
+function AdminProductThumbnail({ src, alt }: { src?: string | null; alt: string }) {
+  const [imgSrc, setImgSrc] = useState(src || '/images/transact/image2_3812_2.png')
+  const [failed, setFailed] = useState(false)
+
+  useEffect(() => {
+    setImgSrc(src || '/images/transact/image2_3812_2.png')
+    setFailed(false)
+  }, [src])
+
+  return (
+    <div className="w-10 h-10 rounded-xl bg-[#EDF1F6] border border-zinc-200 overflow-hidden relative shrink-0 p-1 flex items-center justify-center">
+      <Image
+        src={failed ? '/images/transact/image2_3812_2.png' : imgSrc}
+        alt={alt}
+        fill
+        unoptimized
+        onError={() => setFailed(true)}
+        className="object-contain p-0.5"
+      />
+    </div>
+  )
+}
+
 export default function AdminProductsPage() {
   const [products, setProducts] = useState<ProductItem[]>([])
   const [categories, setCategories] = useState<CategoryItem[]>([])
@@ -235,15 +258,7 @@ export default function AdminProductsPage() {
                     {/* Product Name & Image */}
                     <td className="px-5 py-3.5">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-xl bg-white border border-zinc-200 overflow-hidden relative shrink-0 p-1">
-                          <Image
-                            src={prod.featured_image || '/images/transact/image5_3812_2.jpg'}
-                            alt={prod.title}
-                            fill
-                            unoptimized
-                            className="object-contain"
-                          />
-                        </div>
+                        <AdminProductThumbnail src={prod.featured_image} alt={prod.title} />
                         <div className="min-w-0">
                           <p className="font-bold text-[#081022] truncate max-w-xs">{prod.title}</p>
                           <span className="text-[10px] text-zinc-400 font-mono">ID: {prod.id}</span>
