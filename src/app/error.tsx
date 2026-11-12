@@ -13,7 +13,8 @@ export default function Error({
     console.error('App Error Boundary caught error:', error)
     if (
       error?.message?.toLowerCase().includes('hydration') ||
-      error?.digest?.toLowerCase().includes('hydration')
+      error?.digest?.toLowerCase().includes('hydration') ||
+      error?.message?.toLowerCase().includes('loading chunk')
     ) {
       reset()
     }
@@ -22,13 +23,10 @@ export default function Error({
   const handleReset = () => {
     if (typeof window !== 'undefined') {
       try {
-        localStorage.removeItem('transact_precision_mfg_v3')
-        localStorage.removeItem('transact_project_dev_v3')
-        localStorage.removeItem('transact_portfolio_cards_v3')
-        localStorage.removeItem('transact_quote_cart_v3')
-        localStorage.removeItem('transact_manufacturing_process_v2')
+        localStorage.clear()
+        sessionStorage.clear()
       } catch {}
-      window.location.reload()
+      window.location.href = '/'
     } else {
       reset()
     }

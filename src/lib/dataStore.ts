@@ -77,11 +77,13 @@ function getFromStorage<T>(key: string, fallback: T): T {
   }
 }
 
-function saveToStorage<T>(key: string, value: T): void {
+function saveToStorage<T>(key: string, value: T, notify: boolean = true): void {
   if (!isBrowser()) return
   try {
     localStorage.setItem(key, JSON.stringify(value))
-    window.dispatchEvent(new Event('transact_data_updated'))
+    if (notify) {
+      window.dispatchEvent(new Event('transact_data_updated'))
+    }
   } catch (err) {
     console.error(`Failed to save to storage ${key}:`, err)
   }
@@ -370,7 +372,7 @@ export function getStoredProducts(): ProductItem[] {
       })
 
     if (clean.length !== fromStorage.length) {
-      saveToStorage(STORAGE_KEYS.PRODUCTS, clean)
+      saveToStorage(STORAGE_KEYS.PRODUCTS, clean, false)
     }
     return clean
   }
@@ -1746,23 +1748,28 @@ export const defaultGlobalPartner: GlobalPartnerData = {
 }
 
 export function getStoredGlobalPartner(): GlobalPartnerData {
-  const data = getFromStorage<GlobalPartnerData>(STORAGE_KEYS.GLOBAL_PARTNER, defaultGlobalPartner)
-  if (data && Array.isArray(data.metrics)) {
-    data.metrics = data.metrics.map((m, idx) => {
-      let icon = m.icon
-      if (!icon || icon.includes('Dedicated Professionals') || icon.includes('undefined') || icon.includes('Worker-icon 1')) {
-        icon = idx === 1 ? '/worker-icon-1.svg' : icon
-      }
-      if (!icon || icon.includes('Flexible Solutions') || icon.includes('undefined') || icon.includes('Asset 27 1')) {
-        icon = idx === 2 ? '/asset-27-1.svg' : icon
-      }
-      if (!icon || icon.includes('undefined') || icon.includes('Global Presence-icon 2')) {
-        icon = idx === 0 ? '/global-presence-icon-2.svg' : icon
-      }
-      return { ...m, icon }
-    })
+  try {
+    const data = getFromStorage<GlobalPartnerData>(STORAGE_KEYS.GLOBAL_PARTNER, defaultGlobalPartner)
+    if (data && Array.isArray(data.metrics)) {
+      data.metrics = data.metrics.map((m, idx) => {
+        let icon = typeof m?.icon === 'string' ? m.icon : ''
+        if (!icon || icon.includes('Dedicated Professionals') || icon.includes('undefined') || icon.includes('Worker-icon 1')) {
+          icon = idx === 1 ? '/worker-icon-1.svg' : icon
+        }
+        if (!icon || icon.includes('Flexible Solutions') || icon.includes('undefined') || icon.includes('Asset 27 1')) {
+          icon = idx === 2 ? '/asset-27-1.svg' : icon
+        }
+        if (!icon || icon.includes('undefined') || icon.includes('Global Presence-icon 2')) {
+          icon = idx === 0 ? '/global-presence-icon-2.svg' : icon
+        }
+        return { ...m, icon: icon || (idx === 0 ? '/global-presence-icon-2.svg' : idx === 1 ? '/worker-icon-1.svg' : '/asset-27-1.svg') }
+      })
+    }
+    return data || defaultGlobalPartner
+  } catch (err) {
+    console.warn('Error reading global partner, using default:', err)
+    return defaultGlobalPartner
   }
-  return data || defaultGlobalPartner
 }
 
 export function saveGlobalPartner(data: GlobalPartnerData): GlobalPartnerData {

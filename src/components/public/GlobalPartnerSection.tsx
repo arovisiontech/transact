@@ -14,15 +14,18 @@ function MetricIconItem({
   defaultIcon: string
   label: string
 }) {
-  const cleanIcon = () => {
-    let s = icon || defaultIcon
-    if (s.includes('Worker-icon 1')) return '/worker-icon-1.svg'
-    if (s.includes('Asset 27 1')) return '/asset-27-1.svg'
-    if (s.includes('Global Presence-icon 2')) return '/global-presence-icon-2.svg'
-    return s
+  const cleanIcon = (): string => {
+    const s = typeof icon === 'string' && icon.trim() !== '' ? icon : defaultIcon
+    if (typeof s === 'string') {
+      if (s.includes('Worker-icon 1') || s.includes('worker-icon')) return '/worker-icon-1.svg'
+      if (s.includes('Asset 27 1') || s.includes('asset-27')) return '/asset-27-1.svg'
+      if (s.includes('Global Presence-icon 2') || s.includes('global-presence')) return '/global-presence-icon-2.svg'
+      return s
+    }
+    return defaultIcon
   }
 
-  const [src, setSrc] = useState(cleanIcon)
+  const [src, setSrc] = useState<string>(cleanIcon)
   const [failed, setFailed] = useState(false)
 
   useEffect(() => {
