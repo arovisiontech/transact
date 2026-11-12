@@ -73,7 +73,7 @@ export default function AdminBannersPage() {
     id: '',
     title: '',
     subtitle: '',
-    image_url: '/images/transact/image3_3812_2.jpg',
+    image_url: '/images/transact/image3_3812_2.png',
     link_url: '/categories',
     position: 'top',
     is_active: true,
@@ -98,7 +98,7 @@ export default function AdminBannersPage() {
       id: `banner-${Date.now()}`,
       title: '',
       subtitle: '',
-      image_url: '/images/transact/image3_3812_2.jpg',
+      image_url: '/images/transact/image3_3812_2.png',
       link_url: '/categories',
       position: 'top',
       is_active: true,
@@ -188,7 +188,7 @@ export default function AdminBannersPage() {
               <div className="flex items-start gap-4 flex-1">
                 <div className="w-24 h-20 rounded-xl overflow-hidden bg-zinc-100 border border-zinc-200 relative shrink-0">
                   <Image
-                    src={banner.image_url || '/images/transact/image3_3812_2.jpg'}
+                    src={banner.image_url || '/images/transact/image3_3812_2.png'}
                     alt={banner.title}
                     fill
                     unoptimized
@@ -328,7 +328,7 @@ export default function AdminBannersPage() {
                     type="text"
                     value={formData.image_url}
                     onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
-                    placeholder="/images/transact/image3_3812_2.jpg"
+                    placeholder="/images/transact/image3_3812_2.png"
                     className="w-full px-3.5 py-2 rounded-xl border border-zinc-200 text-xs focus:ring-2 focus:ring-[#F6851F] focus:outline-none font-mono bg-white"
                   />
                 )}

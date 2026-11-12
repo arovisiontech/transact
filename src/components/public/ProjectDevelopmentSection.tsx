@@ -7,11 +7,11 @@ import { getStoredProjectDev } from '@/src/lib/dataStore'
 import { ProjectDevelopmentSection as ProjectDevType } from '@/src/types'
 
 const defaultFeatures = [
-  { icon: '/Design-icon 1 (1).svg', title: 'Design &\nEngineering' },
-  { icon: '/Prototyping-icon 1 (1).svg', title: 'Rapid\nPrototyping' },
-  { icon: '/Precision-icon 1 (1).svg', title: 'Precision\nTooling' },
-  { icon: '/Customization-icon 1 (1).svg', title: 'Custom OEM\nSolutions' },
-  { icon: '/Material-Selection-icon 1 (1).svg', title: 'Material\nExcellence' },
+  { icon: '/Precision Engineering-icon 1.svg', title: 'Design &\nEngineering' },
+  { icon: '/Forging & Machining-icon 1 (1).svg', title: 'Rapid\nPrototyping' },
+  { icon: '/Assembly-icon 1.svg', title: 'Precision\nTooling' },
+  { icon: '/Asset 27 1.svg', title: 'Custom OEM\nSolutions' },
+  { icon: '/Material-icon 1 (1).svg', title: 'Material\nExcellence' },
 ]
 
 export default function ProjectDevelopmentSection() {

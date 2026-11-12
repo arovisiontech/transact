@@ -903,7 +903,7 @@ const defaultBanners: BannerItem[] = [
     id: 'banner-1',
     title: 'Precision Surgical Forceps Special Line',
     subtitle: 'German Stainless Steel Grade AISI 420/440 with 5-Year Rust Warranty',
-    image_url: '/images/transact/image3_3812_2.jpg',
+    image_url: '/images/transact/image3_3812_2.png',
     link_url: '/categories/general-surgery',
     position: 'top',
     is_active: true,
@@ -1761,12 +1761,12 @@ const defaultGlobalPartner: GlobalPartnerData = {
     {
       value: '150+',
       label: 'Dedicated Professionals',
-      icon: '/Dedicated Professionals-icon 1.svg',
+      icon: '/Worker-icon 1.svg',
     },
     {
       value: 'OEM / Private Label',
       label: 'Flexible Solutions',
-      icon: '/Flexible Solutions-icon 1.svg',
+      icon: '/Asset 27 1.svg',
     },
   ],
   primary_btn_text: 'Request Your Product',
@@ -1776,7 +1776,23 @@ const defaultGlobalPartner: GlobalPartnerData = {
 }
 
 export function getStoredGlobalPartner(): GlobalPartnerData {
-  return getFromStorage<GlobalPartnerData>(STORAGE_KEYS.GLOBAL_PARTNER, defaultGlobalPartner)
+  const data = getFromStorage<GlobalPartnerData>(STORAGE_KEYS.GLOBAL_PARTNER, defaultGlobalPartner)
+  if (data && Array.isArray(data.metrics)) {
+    data.metrics = data.metrics.map((m, idx) => {
+      let icon = m.icon
+      if (!icon || icon.includes('Dedicated Professionals') || icon.includes('undefined')) {
+        icon = idx === 1 ? '/Worker-icon 1.svg' : icon
+      }
+      if (!icon || icon.includes('Flexible Solutions') || icon.includes('undefined')) {
+        icon = idx === 2 ? '/Asset 27 1.svg' : icon
+      }
+      if (!icon || icon.includes('undefined')) {
+        icon = idx === 0 ? '/Global Presence-icon 2.svg' : icon
+      }
+      return { ...m, icon }
+    })
+  }
+  return data || defaultGlobalPartner
 }
 
 export function saveGlobalPartner(data: GlobalPartnerData): GlobalPartnerData {

@@ -6,6 +6,7 @@ import PublicFooter from './PublicFooter'
 import PublicSearchModal from './PublicSearchModal'
 import CartQuoteModal from './CartQuoteModal'
 import FloatingContactCTA from './FloatingContactCTA'
+import MedicaPromoPopup from './MedicaPromoPopup'
 import GeoBlockGuard from './GeoBlockGuard'
 import { syncServerData } from '@/src/lib/dataStore'
 
@@ -54,6 +55,9 @@ export default function PublicShell({ children }: PublicShellProps) {
       <FloatingContactCTA
         onOpenQuote={() => setIsQuoteOpen(true)}
       />
+
+      {/* Medica 2026 Exhibition Animated Popup */}
+      <MedicaPromoPopup />
     </div>
   )
 }

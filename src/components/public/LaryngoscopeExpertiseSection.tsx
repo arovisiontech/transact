@@ -88,10 +88,14 @@ export default function LaryngoscopeExpertiseSection() {
             {/* Photo 2: Lower Left (Gloved testing) */}
             <div className="relative w-full aspect-[4/3] rounded-2xl overflow-hidden shadow-sm border border-zinc-100 bg-zinc-50 group">
               <Image
-                src="/Rectangle 828.png"
+                src="/images/transact/image20_3812_2.jpg"
                 alt="Instrument Assembly & Blade Fitting"
                 fill
                 unoptimized
+                onError={(e) => {
+                  const target = e.currentTarget as HTMLImageElement
+                  target.src = '/Rectangle 828.png'
+                }}
                 className="object-cover object-center group-hover:scale-105 transition-transform duration-500"
               />
             </div>
@@ -101,10 +105,14 @@ export default function LaryngoscopeExpertiseSection() {
           <div className="lg:col-span-4 flex flex-col">
             <div className="relative w-full h-full min-h-[460px] lg:min-h-[580px] rounded-2xl overflow-hidden shadow-md border border-zinc-100 bg-zinc-900 group">
               <Image
-                src="/Rectangle 830.png"
+                src="/Rectangle 827.png"
                 alt="High-Intensity LED Optical Testing"
                 fill
                 unoptimized
+                onError={(e) => {
+                  const target = e.currentTarget as HTMLImageElement
+                  target.src = '/images/transact/image10_3812_2.jpg'
+                }}
                 className="object-cover object-center group-hover:scale-105 transition-transform duration-700"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent pointer-events-none" />
@@ -139,10 +147,14 @@ export default function LaryngoscopeExpertiseSection() {
             {/* Photo 4: Lower Right (Drop forging & steel finishing) */}
             <div className="relative w-full aspect-[4/3] rounded-2xl overflow-hidden shadow-sm border border-zinc-100 bg-zinc-50 group">
               <Image
-                src="/Rectangle 832.png"
+                src="/images/manufacturing/process-01-cnc-machining.png"
                 alt="Precision CNC Machining & Milling"
                 fill
                 unoptimized
+                onError={(e) => {
+                  const target = e.currentTarget as HTMLImageElement
+                  target.src = '/Rectangle 827.png'
+                }}
                 className="object-cover object-center group-hover:scale-105 transition-transform duration-500"
               />
             </div>

@@ -60,28 +60,44 @@ export default function GlobalPartnerSection() {
 
             {/* 3 Metric Highlights */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 pt-2 pb-2 border-y border-zinc-200/60 sm:border-none">
-              {(data.metrics || []).map((m, idx) => (
-                <div key={idx} className="flex items-center gap-3">
-                  <div className="w-12 h-12 flex-shrink-0 flex items-center justify-center">
-                    <Image
-                      src={m.icon || '/Global Presence-icon 2.svg'}
-                      alt={m.label}
-                      width={44}
-                      height={44}
-                      unoptimized
-                      className="object-contain"
-                    />
-                  </div>
-                  <div>
-                    <div className="text-2xl sm:text-3xl font-black text-[#081022] leading-none">
-                      {m.value}
+              {(data.metrics || []).map((m, idx) => {
+                const defaultIcon =
+                  idx === 0
+                    ? '/Global Presence-icon 2.svg'
+                    : idx === 1
+                    ? '/Worker-icon 1.svg'
+                    : '/Asset 27 1.svg'
+                const iconSrc = m.icon || defaultIcon
+
+                return (
+                  <div key={idx} className="flex items-center gap-3">
+                    <div className="w-12 h-12 flex-shrink-0 flex items-center justify-center p-2 rounded-xl bg-white shadow-sm border border-zinc-100">
+                      <Image
+                        src={iconSrc}
+                        alt={m.label}
+                        width={36}
+                        height={36}
+                        unoptimized
+                        className="object-contain"
+                        onError={(e) => {
+                          const target = e.currentTarget as HTMLImageElement
+                          if (!target.src.includes(defaultIcon)) {
+                            target.src = defaultIcon
+                          }
+                        }}
+                      />
                     </div>
-                    <div className="text-[11px] sm:text-xs text-[#5B6776] font-medium mt-1 leading-tight whitespace-pre-line">
-                      {m.label}
+                    <div>
+                      <div className="text-2xl sm:text-3xl font-black text-[#081022] leading-none">
+                        {m.value}
+                      </div>
+                      <div className="text-[11px] sm:text-xs text-[#5B6776] font-medium mt-1 leading-tight whitespace-pre-line">
+                        {m.label}
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                )
+              })}
             </div>
 
             {/* Wide Orange Pill CTA Button */}
@@ -103,11 +119,18 @@ export default function GlobalPartnerSection() {
           <div className="lg:col-span-6 xl:col-span-6 flex justify-center lg:justify-end">
             <div className="relative w-full max-w-[560px] aspect-[4/3] rounded-3xl overflow-hidden shadow-xl bg-white border-4 border-white">
               <Image
-                src="/image 353 (1).svg"
+                src="/image 353.svg"
                 alt="Transact Global B2B Partnership"
                 fill
                 unoptimized
+                priority
                 className="object-contain p-4 hover:scale-105 transition-transform duration-700"
+                onError={(e) => {
+                  const target = e.currentTarget as HTMLImageElement
+                  if (!target.src.includes('image-353.svg')) {
+                    target.src = '/image-353.svg'
+                  }
+                }}
               />
             </div>
           </div>
