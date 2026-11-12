@@ -207,60 +207,17 @@ export async function syncServerData(): Promise<void> {
       }
     }
 
-    // 3. Sync Products across all devices
+    // 3. Sync Products across all devices (Server is the single authoritative source of truth!)
     if (serverProdsRes && serverProdsRes.ok) {
       const serverProds = await serverProdsRes.json()
       if (Array.isArray(serverProds)) {
         const localProds = getFromStorage<ProductItem[]>(STORAGE_KEYS.PRODUCTS, [])
-        const deletedProdIds = new Set(getFromStorage<string[]>(STORAGE_KEYS.DELETED_PRODUCTS, []))
-
-        const localMap = new Map<string, ProductItem>()
-        for (const prod of localProds) {
-          if (!deletedProdIds.has(prod.id)) {
-            localMap.set(prod.id, prod)
-          }
-        }
-
-        const mergedMap = new Map<string, ProductItem>()
-
-        // 1. Process server products (strictly filter out deleted ones!)
-        for (const sProd of serverProds) {
-          if (deletedProdIds.has(sProd.id)) continue // STRICTLY PREVENT RESURRECTION!
-
-          const lProd = localMap.get(sProd.id)
-          if (!lProd) {
-            mergedMap.set(sProd.id, sProd)
-          } else {
-            const localTime = new Date(lProd.updated_at || 0).getTime()
-            const serverTime = new Date(sProd.updated_at || 0).getTime()
-            if (localTime >= serverTime) {
-              mergedMap.set(sProd.id, lProd)
-            } else {
-              mergedMap.set(sProd.id, sProd)
-            }
-          }
-        }
-
-        // 2. Add local products (client uploads)
-        for (const [id, lProd] of localMap.entries()) {
-          if (!mergedMap.has(id)) {
-            mergedMap.set(id, lProd)
-          }
-        }
-
-        const unifiedProds = Array.from(mergedMap.values())
-        if (JSON.stringify(unifiedProds) !== JSON.stringify(localProds)) {
-          memoryProducts = unifiedProds
-          saveToStorage(STORAGE_KEYS.PRODUCTS, unifiedProds)
+        if (JSON.stringify(serverProds) !== JSON.stringify(localProds)) {
+          memoryProducts = serverProds
+          saveToStorage(STORAGE_KEYS.PRODUCTS, serverProds)
+          saveToStorage(STORAGE_KEYS.DELETED_PRODUCTS, [])
           hasAnyChanges = true
         }
-
-        // Auto-save full list to server JSON so server is always synchronized with client uploads
-        fetch('/api/products', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ action: 'setAll', products: unifiedProds }),
-        }).catch(() => {})
       }
     }
 
@@ -379,43 +336,43 @@ export function getStoredProducts(): ProductItem[] {
   if (isBrowser()) {
     const deletedProdIds = new Set(getFromStorage<string[]>(STORAGE_KEYS.DELETED_PRODUCTS, []))
     const fromStorage = getFromStorage<ProductItem[]>(STORAGE_KEYS.PRODUCTS, [])
-    if (fromStorage.length > 0) {
-      // Filter out any deleted products or stale items, and sanitize placeholder images
-      const clean = fromStorage
-        .filter((p) => {
-          if (deletedProdIds.has(p.id)) return false
-          // Filter out empty / blank placeholder cards as requested by user
-          if (p.sku === 'TI-RL-100' || p.sku === 'TI-FRL-200' || p.id === 'prod-reusable-macintosh') return false
-          if (!p.featured_image || p.featured_image.trim() === '') return false
-          if (p.featured_image.includes('integrated-macintosh-fiber-optic-blade.png')) return false
+    const sourceList = fromStorage.length > 0 ? fromStorage : memoryProducts
 
-          const text = `${p.title || ''} ${p.slug || ''} ${p.featured_image || ''}`.toLowerCase()
-          return (
-            !text.includes('motorcycle') &&
-            !text.includes('glove') &&
-            !text.includes('jacket') &&
-            !text.includes('trouser') &&
-            !text.includes('carbon tech') &&
-            !text.includes('torque') &&
-            !text.includes('durable') &&
-            !text.includes('tourer')
-          )
-        })
-        .map((p) => {
-          let featured_image = p.featured_image
-          if (!featured_image || featured_image.includes('image 352') || featured_image.includes('image-352')) {
+    const clean = sourceList
+      .filter((p) => {
+        if (!p || !p.id) return false
+        if (deletedProdIds.has(p.id)) return false
+        // Filter out empty / broken placeholder cards without title
+        if (!p.title || p.title.trim() === '') return false
+
+        const text = `${p.title || ''} ${p.slug || ''} ${p.featured_image || ''}`.toLowerCase()
+        return (
+          !text.includes('motorcycle') &&
+          !text.includes('glove') &&
+          !text.includes('jacket') &&
+          !text.includes('trouser') &&
+          !text.includes('carbon tech') &&
+          !text.includes('torque') &&
+          !text.includes('durable') &&
+          !text.includes('tourer')
+        )
+      })
+      .map((p) => {
+        let featured_image = p.featured_image
+        if (!featured_image || featured_image.trim() === '' || featured_image.includes('image 352') || featured_image.includes('image-352')) {
+          if (p.sku === 'TI-FRL-200' || (p.title || '').toLowerCase().includes('flexible tip')) {
+            featured_image = '/images/transact/image2_3812_2.png'
+          } else {
             featured_image = '/images/products/disposable-sterile-blade.jpg'
           }
-          return { ...p, featured_image }
-        })
-      if (clean.length !== fromStorage.length) {
-        saveToStorage(STORAGE_KEYS.PRODUCTS, clean)
-      }
-      return clean
+        }
+        return { ...p, featured_image }
+      })
+
+    if (clean.length !== fromStorage.length) {
+      saveToStorage(STORAGE_KEYS.PRODUCTS, clean)
     }
-    const cleanMemory = memoryProducts.filter((p) => !deletedProdIds.has(p.id))
-    saveToStorage(STORAGE_KEYS.PRODUCTS, cleanMemory)
-    return cleanMemory
+    return clean
   }
   return memoryProducts
 }

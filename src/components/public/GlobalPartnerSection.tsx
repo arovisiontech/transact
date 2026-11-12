@@ -5,6 +5,78 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { getStoredGlobalPartner, GlobalPartnerData, defaultGlobalPartner } from '@/src/lib/dataStore'
 
+function MetricIconItem({
+  icon,
+  defaultIcon,
+  label,
+}: {
+  icon: string | undefined
+  defaultIcon: string
+  label: string
+}) {
+  const cleanIcon = () => {
+    let s = icon || defaultIcon
+    if (s.includes('Worker-icon 1')) return '/worker-icon-1.svg'
+    if (s.includes('Asset 27 1')) return '/asset-27-1.svg'
+    if (s.includes('Global Presence-icon 2')) return '/global-presence-icon-2.svg'
+    return s
+  }
+
+  const [src, setSrc] = useState(cleanIcon)
+  const [failed, setFailed] = useState(false)
+
+  useEffect(() => {
+    setSrc(cleanIcon())
+    setFailed(false)
+  }, [icon, defaultIcon])
+
+  return (
+    <div className="w-12 h-12 flex-shrink-0 flex items-center justify-center p-2 rounded-xl bg-white shadow-sm border border-zinc-100">
+      {!failed ? (
+        <img
+          src={src}
+          alt={label}
+          width={36}
+          height={36}
+          className="object-contain w-9 h-9"
+          onError={() => {
+            if (src !== defaultIcon) {
+              setSrc(defaultIcon)
+            } else {
+              setFailed(true)
+            }
+          }}
+        />
+      ) : (
+        <div className="w-7 h-7 rounded-full bg-orange-50 border border-orange-200 flex items-center justify-center text-[#F6851F] text-xs font-black">
+          ✓
+        </div>
+      )}
+    </div>
+  )
+}
+
+function ShowcaseIllustration() {
+  const [src, setSrc] = useState<string>('/images/transact/image13_3812_2.png')
+
+  return (
+    <div className="relative w-full max-w-[560px] aspect-[4/3] rounded-3xl overflow-hidden shadow-xl bg-white border-4 border-white flex items-center justify-center">
+      <img
+        src={src}
+        alt="Transact Global B2B Partnership"
+        className="w-full h-full object-contain p-4 hover:scale-105 transition-transform duration-700"
+        onError={() => {
+          if (src !== '/images/partnership-showcase.png') {
+            setSrc('/images/partnership-showcase.png')
+          } else {
+            setSrc('/image-353.svg')
+          }
+        }}
+      />
+    </div>
+  )
+}
+
 export default function GlobalPartnerSection() {
   const [data, setData] = useState<GlobalPartnerData>(defaultGlobalPartner)
 
@@ -67,29 +139,14 @@ export default function GlobalPartnerSection() {
                     : idx === 1
                     ? '/worker-icon-1.svg'
                     : '/asset-27-1.svg'
-                let iconSrc = m.icon || defaultIcon
-                if (iconSrc.includes('Worker-icon 1')) iconSrc = '/worker-icon-1.svg'
-                if (iconSrc.includes('Asset 27 1')) iconSrc = '/asset-27-1.svg'
-                if (iconSrc.includes('Global Presence-icon 2')) iconSrc = '/global-presence-icon-2.svg'
 
                 return (
                   <div key={idx} className="flex items-center gap-3">
-                    <div className="w-12 h-12 flex-shrink-0 flex items-center justify-center p-2 rounded-xl bg-white shadow-sm border border-zinc-100">
-                      <Image
-                        src={iconSrc}
-                        alt={m.label}
-                        width={36}
-                        height={36}
-                        unoptimized
-                        className="object-contain"
-                        onError={(e) => {
-                          const target = e.currentTarget as HTMLImageElement
-                          if (!target.src.includes(defaultIcon)) {
-                            target.src = defaultIcon
-                          }
-                        }}
-                      />
-                    </div>
+                    <MetricIconItem
+                      icon={m.icon}
+                      defaultIcon={defaultIcon}
+                      label={m.label}
+                    />
                     <div>
                       <div className="text-2xl sm:text-3xl font-black text-[#081022] leading-none">
                         {m.value}
@@ -120,22 +177,7 @@ export default function GlobalPartnerSection() {
 
           {/* Right Column: Visual Product Showcase Illustration */}
           <div className="lg:col-span-6 xl:col-span-6 flex justify-center lg:justify-end">
-            <div className="relative w-full max-w-[560px] aspect-[4/3] rounded-3xl overflow-hidden shadow-xl bg-white border-4 border-white">
-              <Image
-                src="/images/partnership-showcase.png"
-                alt="Transact Global B2B Partnership"
-                fill
-                unoptimized
-                priority
-                className="object-contain p-4 hover:scale-105 transition-transform duration-700"
-                onError={(e) => {
-                  const target = e.currentTarget as HTMLImageElement
-                  if (!target.src.includes('image-353.svg')) {
-                    target.src = '/image-353.svg'
-                  }
-                }}
-              />
-            </div>
+            <ShowcaseIllustration />
           </div>
         </div>
       </div>

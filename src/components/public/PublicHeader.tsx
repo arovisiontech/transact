@@ -299,33 +299,35 @@ export default function PublicHeader({ onOpenSearch, onOpenQuote }: PublicHeader
             if (hasSub) {
               return (
                 <div key={link.name} className="border-b border-white/5 py-1">
-                  <div className="flex items-center justify-between">
-                    <Link
-                      href={link.href}
-                      onClick={() => setIsMobileMenuOpen(false)}
-                      className="py-2.5 text-[15px] font-bold text-white hover:text-[#F6851F] transition flex-1"
-                    >
-                      {link.name}
-                    </Link>
-
-                    {/* Dropdown Toggle Chevron Button */}
-                    <button
-                      type="button"
-                      onClick={() => setMobileExpandedDropdown(isExpanded ? null : link.name)}
-                      aria-label={`Toggle ${link.name} submenu`}
-                      className="p-2.5 rounded-lg bg-white/5 hover:bg-white/10 text-white/80 transition cursor-pointer"
-                    >
+                  <button
+                    type="button"
+                    onClick={() => setMobileExpandedDropdown(isExpanded ? null : link.name)}
+                    className="w-full flex items-center justify-between py-2.5 text-[15px] font-bold text-white hover:text-[#F6851F] transition text-left cursor-pointer"
+                  >
+                    <span>{link.name}</span>
+                    <span className="p-1.5 rounded-lg bg-white/5 text-[#F6851F]">
                       <ChevronDown
-                        className={`w-4 h-4 text-[#F6851F] transition-transform duration-300 ${
+                        className={`w-4 h-4 transition-transform duration-300 ${
                           isExpanded ? 'rotate-180' : ''
                         }`}
                       />
-                    </button>
-                  </div>
+                    </span>
+                  </button>
 
                   {/* Expandable Submenu Accordion */}
                   {isExpanded && (
                     <div className="pl-3 pr-1 py-2 my-1 space-y-1.5 bg-black/30 rounded-xl border border-white/5 animate-in fade-in slide-in-from-top-1 duration-200">
+                      <Link
+                        href={link.href}
+                        onClick={() => {
+                          setIsMobileMenuOpen(false)
+                          setMobileExpandedDropdown(null)
+                        }}
+                        className="flex items-center justify-between py-2 px-3 text-xs font-bold text-[#F6851F] hover:bg-white/5 rounded-lg transition"
+                      >
+                        <span>View All {link.name}</span>
+                        <ArrowRight className="w-3.5 h-3.5" />
+                      </Link>
                       {link.items?.map((sub) => (
                         <Link
                           key={sub.name}

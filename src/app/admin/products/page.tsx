@@ -38,29 +38,25 @@ export default function AdminProductsPage() {
 
   const reloadData = async () => {
     try {
-      const deletedProdIds = new Set(
-        typeof window !== 'undefined'
-          ? JSON.parse(localStorage.getItem('transact_deleted_products_v3') || '[]')
-          : []
-      )
       const [pRes, cRes] = await Promise.all([
         fetch('/api/products', { cache: 'no-store' }),
         fetch('/api/categories', { cache: 'no-store' }),
       ])
       if (pRes.ok) {
         const liveProds = await pRes.json()
-        if (Array.isArray(liveProds)) {
-          const filteredLive = liveProds.filter((p: any) => !deletedProdIds.has(p.id))
-          const localProds = getStoredProducts().filter((p) => !deletedProdIds.has(p.id))
-          const map = new Map<string, ProductItem>()
-          filteredLive.forEach((p: any) => map.set(p.id, p))
-          localProds.forEach((p) => map.set(p.id, p))
-          setProducts(Array.from(map.values()))
+        if (Array.isArray(liveProds) && liveProds.length > 0) {
+          setProducts(liveProds)
+          if (typeof window !== 'undefined') {
+            try {
+              localStorage.setItem('transact_products_v3', JSON.stringify(liveProds))
+              localStorage.setItem('transact_deleted_products_v3', '[]')
+            } catch {}
+          }
         } else {
-          setProducts(getStoredProducts().filter((p) => !deletedProdIds.has(p.id)))
+          setProducts(getStoredProducts())
         }
       } else {
-        setProducts(getStoredProducts().filter((p) => !deletedProdIds.has(p.id)))
+        setProducts(getStoredProducts())
       }
       if (cRes.ok) {
         const liveCats = await cRes.json()

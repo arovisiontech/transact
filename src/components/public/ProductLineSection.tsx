@@ -66,23 +66,19 @@ function ShowcaseCardItem({
       >
         {/* Background Image */}
         <div className="absolute inset-0 z-0 overflow-hidden bg-[#0A0E17]">
-          {!imgFailed && (
-            <Image
-              src={imgSrc}
-              alt={card.title}
-              fill
-              unoptimized
-              priority={index === 0}
-              onError={() => {
-                if (imgSrc !== '/images/catalogues/laryngoscope-cover.webp') {
-                  setImgSrc('/images/catalogues/laryngoscope-cover.webp')
-                } else {
-                  setImgFailed(true)
-                }
-              }}
-              className="object-cover object-right group-hover:scale-105 transition-transform duration-700"
-            />
-          )}
+          <Image
+            src={imgSrc}
+            alt={card.title}
+            fill
+            unoptimized
+            priority={index === 0}
+            onError={() => {
+              if (imgSrc !== '/images/catalogues/laryngoscope-cover.webp') {
+                setImgSrc('/images/catalogues/laryngoscope-cover.webp')
+              }
+            }}
+            className="object-cover object-right group-hover:scale-105 transition-transform duration-700"
+          />
           {/* Refined gradient: darkens left side for text readability while keeping the surgical instrument crisp and bright */}
           <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/55 to-transparent pointer-events-none" />
         </div>

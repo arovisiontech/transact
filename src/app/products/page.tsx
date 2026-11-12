@@ -51,22 +51,23 @@ function cleanProductTitle(title: string | undefined): string {
 function ProductCardImage({
   src,
   alt,
-  className = 'object-contain w-full h-full p-2 sm:p-3 group-hover:scale-105 transition-transform duration-300',
+  className = 'object-contain w-full h-full p-3 sm:p-4 group-hover:scale-105 transition-transform duration-300',
 }: {
   src: string | null | undefined
   alt: string
   className?: string
 }) {
-  const defaultBladeFallback = '/images/products/disposable-sterile-blade.jpg'
+  const defaultBladeFallback = '/images/transact/image2_3812_2.png'
   const defaultDiagnosticsFallback = '/images/products/pocket-led-otoscope.jpg'
   
   const getCleanSrc = (url?: string | null, title?: string) => {
     const isDiagnostic = (title || alt || '').toLowerCase().includes('ophthalmoscope') || (title || alt || '').toLowerCase().includes('otoscope')
     const fallback = isDiagnostic ? defaultDiagnosticsFallback : defaultBladeFallback
 
-    if (!url || url.startsWith('blob:') || url.includes('integrated-macintosh-fiber-optic-blade.png') || url.includes('Rectangle 819 (1)') || url.includes('Rectangle-819-1') || url.includes('Rectangle 827') || url.includes('Rectangle-827')) {
+    if (!url || url.startsWith('blob:') || url.trim() === '') {
       return fallback
     }
+    if (url.includes('image2_3812_2')) return '/images/transact/image2_3812_2.png'
     if (url.includes('image 352') || url.includes('image-352')) {
       return '/images/products/disposable-sterile-blade.jpg'
     }
@@ -169,25 +170,24 @@ function ProductsCatalogContent() {
       const res = await fetch('/api/products', { cache: 'no-store' })
       if (res.ok) {
         const liveProds: ProductItem[] = await res.json()
-        if (Array.isArray(liveProds)) {
-          const filteredLive = liveProds.filter((p) => !deletedProdIds.has(p.id) && p.is_published !== false)
-          const localProds = getStoredProducts().filter((p) => !deletedProdIds.has(p.id) && p.is_published !== false)
-          const map = new Map<string, ProductItem>()
-          filteredLive.forEach((p) => map.set(p.id, p))
-          localProds.forEach((p) => map.set(p.id, p))
-          const unified = Array.from(map.values())
-          if (unified.length > 0) {
-            setProducts(unified)
-            setLoading(false)
-            return
+        if (Array.isArray(liveProds) && liveProds.length > 0) {
+          const valid = liveProds.filter((p) => p && p.title && p.title.trim() !== '')
+          setProducts(valid)
+          if (typeof window !== 'undefined') {
+            try {
+              localStorage.setItem('transact_products_v3', JSON.stringify(valid))
+              localStorage.setItem('transact_deleted_products_v3', '[]')
+            } catch {}
           }
+          setLoading(false)
+          return
         }
       }
     } catch (err) {
       console.warn('Live fetch error, falling back to dataStore:', err)
     }
 
-    const localProds = getStoredProducts().filter((p) => !deletedProdIds.has(p.id) && p.is_published !== false)
+    const localProds = getStoredProducts().filter((p) => p && p.title && p.title.trim() !== '')
     if (localProds.length > 0) {
       setProducts(localProds)
     }
@@ -219,10 +219,8 @@ function ProductsCatalogContent() {
 
   // Filtered Products according to active filters
   const filteredProducts = products.filter((prod) => {
-    // Delete empty / blank cards as explicitly requested by user
-    if (prod.sku === 'TI-RL-100' || prod.sku === 'TI-FRL-200' || prod.id === 'prod-reusable-macintosh') return false
-    if (!prod.featured_image || prod.featured_image.trim() === '') return false
-    if (prod.featured_image.includes('integrated-macintosh-fiber-optic-blade.png')) return false
+    // Delete empty / blank cards without title
+    if (!prod || !prod.title || prod.title.trim() === '') return false
 
     // 1. Category Filter
     if (selectedCategory && selectedCategory !== 'all') {
@@ -744,13 +742,13 @@ function ProductsCatalogContent() {
                       {/* Product Card Image Container (Figma SS2 Gray Box: Full surface with 100% visible product) */}
                       <Link
                         href={`/products/${prod.slug}`}
-                        className="relative w-full aspect-[4/3] min-h-[230px] sm:min-h-[270px] bg-[#EDF1F6] rounded-none rounded-bl-[24px] overflow-hidden flex items-center justify-center p-2.5 sm:p-3.5 border border-slate-200/80 cursor-pointer group-hover:border-[#F36C21]/40 transition-colors shadow-sm"
+                        className="relative w-full aspect-[4/3] min-h-[250px] sm:min-h-[290px] bg-[#EDF1F6] rounded-none rounded-bl-[24px] overflow-hidden flex items-center justify-center p-3 sm:p-4 border border-slate-200/80 cursor-pointer group-hover:border-[#F36C21]/40 transition-colors shadow-sm"
                         style={{ borderRadius: '0px 0px 0px 24px' }}
                       >
                         <ProductCardImage
                           src={prod.featured_image}
                           alt={prod.title}
-                          className="object-contain w-full h-full p-1 sm:p-2 group-hover:scale-105 transition-transform duration-300"
+                          className="object-contain w-full h-full p-2.5 sm:p-3.5 group-hover:scale-105 transition-transform duration-300"
                         />
                       </Link>
 
