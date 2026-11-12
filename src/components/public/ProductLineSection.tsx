@@ -38,17 +38,27 @@ function ShowcaseCardItem({
     setImgFailed(false)
   }, [card.image, card.badgeIcon])
 
+  const stickyTop = 84 + index * 10
+  const isLast = index === total - 1
+  const marginBottom = isLast ? '0' : '48vh'
   const isWhiteBadge = card.badgeBg ? card.badgeBg.includes('white') : true
 
   return (
-    <div className="relative w-full mb-8 sm:mb-12 last:mb-0 group">
+    <div
+      className="sticky w-full transition-all duration-300"
+      style={{
+        top: `${stickyTop}px`,
+        zIndex: index + 10,
+        marginBottom: marginBottom,
+      }}
+    >
       {/* ── Visual Card Surface Wrapped in Link (Clickable Anywhere) ── */}
       <Link
         href={card.buttonLink}
         title={`Open ${card.title}`}
-        className="relative w-full rounded-2xl sm:rounded-3xl overflow-hidden bg-[#0A0E17] border border-zinc-200/90 shadow-xl hover:shadow-2xl flex flex-col justify-between group cursor-pointer block transition-all duration-300"
+        className="relative w-full rounded-2xl sm:rounded-3xl overflow-hidden bg-[#0A0E17] border border-white/15 shadow-[0_-12px_45px_rgba(0,0,0,0.2),0_25px_60px_rgba(0,0,0,0.3)] flex flex-col justify-between group cursor-pointer block transition-all duration-300 hover:border-orange-500/40"
         style={{
-          minHeight: 'clamp(420px, 55vh, 580px)',
+          minHeight: 'clamp(400px, 52vh, 560px)',
         }}
       >
         {/* Background Image */}
@@ -108,7 +118,7 @@ function ShowcaseCardItem({
         </div>
 
         {/* Middle Spacer */}
-        <div className="h-16 sm:h-28" />
+        <div className="h-12 sm:h-20" />
 
         {/* Bottom Content Area */}
         <div className="relative z-10 p-6 sm:p-10 flex flex-col sm:flex-row sm:items-end justify-between gap-6 bg-gradient-to-t from-black/95 via-black/60 to-transparent pt-10">
