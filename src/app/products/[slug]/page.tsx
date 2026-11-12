@@ -112,7 +112,7 @@ function ProductDetailContent() {
 
   const [selectedImage, setSelectedImage] = useState<string>(() => {
     const init = findInitialProduct()
-    return init.featured_image || '/images/transact/image2_3812_2.png'
+    return init.featured_image || ''
   })
   const [inquiryModalOpen, setInquiryModalOpen] = useState(false)
   const [inquiryProduct, setInquiryProduct] = useState<ProductItem | null>(null)
@@ -150,7 +150,7 @@ function ProductDetailContent() {
             const found = live.find((p) => p.slug === slug || p.id === slug)
             if (found) {
               setProduct(found)
-              if (found.featured_image && (!selectedImage || selectedImage.includes('integrated-macintosh-fiber-optic-blade.png'))) {
+              if (found.featured_image) {
                 setSelectedImage(found.featured_image)
               }
               // Initialize row quantities
@@ -388,12 +388,17 @@ function ProductDetailContent() {
                 style={{ borderRadius: '0px 0px 0px 24px' }}
               >
                 <Image
-                  src={selectedImage}
+                  src={selectedImage || product?.featured_image || '/images/transact/image2_3812_2.png'}
                   alt={product?.title || 'Surgical Instrument'}
                   fill
                   priority
                   unoptimized
-                  onError={() => setSelectedImage('/images/transact/image2_3812_2.png')}
+                  onError={() => {
+                    const cur = selectedImage || product?.featured_image
+                    if (cur && !cur.startsWith('data:')) {
+                      setSelectedImage('/images/transact/image2_3812_2.png')
+                    }
+                  }}
                   className="object-contain p-4 sm:p-6 hover:scale-105 transition-transform duration-500"
                 />
               </div>

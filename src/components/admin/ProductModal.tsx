@@ -23,6 +23,7 @@ import {
 } from 'lucide-react'
 import { ProductItem, CategoryItem } from '@/src/types'
 import { getStoredCategories, getStoredProducts, saveProduct, saveCategory } from '@/src/lib/dataStore'
+import { compressImage } from '@/src/lib/imageCompressor'
 
 interface ProductModalProps {
   product: ProductItem | null
@@ -87,7 +88,7 @@ export default function ProductModal({ product, isOpen, onClose, onSaved }: Prod
     short_description: '',
     full_description: '',
     specifications_markdown: '',
-    featured_image: '/images/transact/image2_3812_2.png',
+    featured_image: '',
     gallery_images: [],
     chart_rows: defaultSizingRows,
     built_to_perform: defaultBuiltToPerform,
@@ -180,7 +181,7 @@ export default function ProductModal({ product, isOpen, onClose, onSaved }: Prod
         full_description: '',
         specifications_markdown:
           '• Completely Sealed One Piece BLADE CONSTRUCTION\n• Distal Lip Of All Integrated Blades\n• Crafted From Finest Stainless Steel AISI 303 / 304\n• Fiber Optic Core With High Transmission Rate\n• Fully Autoclavable And Sterilization Compatible',
-        featured_image: '/images/transact/image2_3812_2.png',
+        featured_image: '',
         gallery_images: [],
         chart_rows: defaultSizingRows,
         built_to_perform: defaultBuiltToPerform,
@@ -246,38 +247,38 @@ export default function ProductModal({ product, isOpen, onClose, onSaved }: Prod
     if (!file) return
     setIsUploading(true)
     try {
-      const fd = new FormData()
-      fd.append('file', file)
+      // 1. Fast client-side compression to ~40-70KB
+      const compressed = await compressImage(file, 1200, 0.82)
+      const dataUrl = compressed.dataUrl
 
-      const res = await fetch('/api/upload', {
-        method: 'POST',
-        body: fd,
-      })
+      // Immediately set preview with compressed dataUrl so user sees it right away
+      if (dataUrl) {
+        setFormData((prev) => ({ ...prev, featured_image: dataUrl }))
+      }
 
-      if (res.ok) {
-        const data = await res.json()
-        if (data.url) {
-          setFormData((prev) => ({ ...prev, featured_image: data.url }))
-          setIsUploading(false)
-          return
+      // 2. Also try uploading file to server
+      try {
+        const fd = new FormData()
+        fd.append('file', compressed.file)
+
+        const res = await fetch('/api/upload', {
+          method: 'POST',
+          body: fd,
+        })
+
+        if (res.ok) {
+          const data = await res.json()
+          if (data.url) {
+            setFormData((prev) => ({ ...prev, featured_image: data.url }))
+          }
         }
+      } catch (uploadErr) {
+        console.warn('Server upload fallback to optimized dataUrl:', uploadErr)
       }
-
-      const reader = new FileReader()
-      reader.onload = (e) => {
-        const b64 = e.target?.result as string
-        setFormData((prev) => ({ ...prev, featured_image: b64 }))
-        setIsUploading(false)
-      }
-      reader.readAsDataURL(file)
-    } catch {
-      const reader = new FileReader()
-      reader.onload = (e) => {
-        const b64 = e.target?.result as string
-        setFormData((prev) => ({ ...prev, featured_image: b64 }))
-        setIsUploading(false)
-      }
-      reader.readAsDataURL(file)
+    } catch (err) {
+      console.error('Image compression error:', err)
+    } finally {
+      setIsUploading(false)
     }
   }
 
@@ -470,8 +471,7 @@ export default function ProductModal({ product, isOpen, onClose, onSaved }: Prod
         built_to_perform: formData.built_to_perform || defaultBuiltToPerform,
         custom_related_products: formData.custom_related_products || [],
         related_product_ids: formData.related_product_ids || [],
-        featured_image:
-          formData.featured_image || '/images/transact/image2_3812_2.png',
+        featured_image: formData.featured_image || '',
         gallery_images: formData.gallery_images || [],
         sort_order: Number(formData.sort_order) || 1,
       }
@@ -563,24 +563,38 @@ export default function ProductModal({ product, isOpen, onClose, onSaved }: Prod
             {/* Drag & Drop Upload Zone + Live Preview */}
             <div className="grid grid-cols-1 sm:grid-cols-12 gap-4 items-center">
               {/* Preview Box */}
-              <div className="sm:col-span-4 relative aspect-[4/3] rounded-2xl bg-white border-2 border-dashed border-zinc-300 overflow-hidden flex items-center justify-center p-2 group shadow-inner">
+              <div className="sm:col-span-4 relative aspect-[4/3] rounded-2xl bg-[#EDF1F6] border-2 border-dashed border-zinc-300 overflow-hidden flex items-center justify-center p-2 group shadow-inner">
                 {formData.featured_image ? (
-                  <div className="relative w-full h-full">
+                  <div className="relative w-full h-full flex items-center justify-center">
                     <Image
                       src={formData.featured_image}
                       alt="Product preview"
                       fill
                       unoptimized
-                      className="object-contain"
+                      className="object-contain p-2"
                     />
-                    <div className="absolute inset-x-0 bottom-0 bg-slate-900/80 text-white text-[10px] px-2 py-1 truncate text-center font-mono">
-                      {formData.featured_image}
+                    <div className="absolute inset-x-0 bottom-0 bg-slate-900/85 text-white text-[10px] px-2.5 py-1.5 flex items-center justify-between">
+                      <span className="truncate max-w-[120px] font-mono">
+                        {formData.featured_image.startsWith('data:') ? 'Custom Upload' : formData.featured_image}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          setFormData({ ...formData, featured_image: '' })
+                        }}
+                        className="text-rose-400 hover:text-rose-200 font-bold text-[10px] ml-2 shrink-0 cursor-pointer"
+                        title="Remove image"
+                      >
+                        Remove
+                      </button>
                     </div>
                   </div>
                 ) : (
                   <div className="text-center p-4 text-zinc-400">
-                    <ImageIcon className="w-8 h-8 mx-auto mb-1 stroke-1" />
-                    <span className="text-[11px] font-medium">No Image Selected</span>
+                    <ImageIcon className="w-8 h-8 mx-auto mb-1 stroke-1 text-slate-400" />
+                    <span className="text-[11px] font-bold text-slate-700 block">No Image Selected</span>
+                    <span className="text-[10px] text-zinc-400 block mt-0.5">Upload image on the right</span>
                   </div>
                 )}
               </div>
@@ -616,24 +630,35 @@ export default function ProductModal({ product, isOpen, onClose, onSaved }: Prod
                   <UploadCloud className="w-5 h-5" />
                 </div>
                 <p className="text-xs font-bold text-zinc-800">
-                  {isUploading ? 'Uploading Image...' : 'Click or Drag & Drop Product Image'}
+                  {isUploading ? 'Compressing & Uploading...' : 'Click or Drag & Drop Product Image'}
                 </p>
-                <p className="text-[11px] text-zinc-500 mt-0.5">PNG, JPG, SVG, WebP (Max 5MB)</p>
+                <p className="text-[11px] text-zinc-500 mt-0.5">PNG, JPG, SVG, WebP (Auto-optimized for instant speed)</p>
               </div>
             </div>
 
             {/* Quick Preset Selector */}
             <div className="pt-2">
-              <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-wider block mb-1.5">
-                Quick Surgical Presets:
-              </span>
+              <div className="flex items-center justify-between mb-1.5">
+                <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-wider block">
+                  Quick Surgical Presets (Optional):
+                </span>
+                {formData.featured_image && (
+                  <button
+                    type="button"
+                    onClick={() => setFormData({ ...formData, featured_image: '' })}
+                    className="text-[10px] text-rose-600 font-bold hover:underline cursor-pointer"
+                  >
+                    Clear Image
+                  </button>
+                )}
+              </div>
               <div className="flex flex-wrap gap-2">
                 {samplePresets.map((preset, idx) => (
                   <button
                     key={idx}
                     type="button"
                     onClick={() => setFormData({ ...formData, featured_image: preset.url })}
-                    className={`px-3 py-1.5 rounded-xl text-xs font-medium border transition flex items-center gap-1.5 ${
+                    className={`px-3 py-1.5 rounded-xl text-xs font-medium border transition flex items-center gap-1.5 cursor-pointer ${
                       formData.featured_image === preset.url
                         ? 'border-[#F6851F] bg-[#F6851F]/10 text-[#F6851F] font-bold'
                         : 'border-zinc-200 bg-white text-zinc-700 hover:border-zinc-300'
@@ -710,20 +735,20 @@ export default function ProductModal({ product, isOpen, onClose, onSaved }: Prod
                   type="file"
                   accept="image/*"
                   className="hidden"
-                  onChange={(e) => {
+                  onChange={async (e) => {
                     const file = e.target.files?.[0]
                     if (file) {
-                      const reader = new FileReader()
-                      reader.onload = (ev) => {
-                        const base64 = ev.target?.result as string
-                        if (base64) {
-                          setFormData({
-                            ...formData,
-                            gallery_images: [...(formData.gallery_images || []), base64],
-                          })
+                      try {
+                        const compressed = await compressImage(file, 1000, 0.8)
+                        if (compressed.dataUrl) {
+                          setFormData((prev) => ({
+                            ...prev,
+                            gallery_images: [...(prev.gallery_images || []), compressed.dataUrl],
+                          }))
                         }
+                      } catch (err) {
+                        console.error('Other view compress error:', err)
                       }
-                      reader.readAsDataURL(file)
                     }
                   }}
                 />

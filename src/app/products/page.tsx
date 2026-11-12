@@ -93,7 +93,7 @@ function ProductCardImage({
       fill
       unoptimized
       onError={() => {
-        if (!hasError) {
+        if (!hasError && !imgUrl.startsWith('data:')) {
           setHasError(true)
           setImgUrl(currentFallback)
         }

@@ -91,10 +91,14 @@ function saveToStorage<T>(key: string, value: T, notify: boolean = true): void {
 
 let syncInitiated = false
 let isSyncing = false
+let lastSyncTimestamp = 0
 
-export async function syncServerData(): Promise<void> {
+export async function syncServerData(force = false): Promise<void> {
   if (!isBrowser() || isSyncing) return
+  const now = Date.now()
+  if (!force && now - lastSyncTimestamp < 30000) return
   isSyncing = true
+  lastSyncTimestamp = now
 
   try {
     const [serverProdsRes, serverCatsRes, serverSubcatsRes, serverCatsLogRes, serverFaqsRes, serverMfgRes] = await Promise.all([
@@ -280,8 +284,8 @@ export async function initLiveSupabase(): Promise<void> {
 
   // Set up periodic & event-driven auto-sync across all tabs and devices
   window.addEventListener('focus', () => syncServerData())
-  window.addEventListener('online', () => syncServerData())
-  setInterval(() => syncServerData(), 15000)
+  window.addEventListener('online', () => syncServerData(true))
+  setInterval(() => syncServerData(), 60000)
 
   try {
     const {
