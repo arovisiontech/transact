@@ -58,16 +58,23 @@ function ProductCardImage({
   className?: string
 }) {
   const fallback = '/images/products/integrated-macintosh-fiber-optic-blade.png'
-  const cleanInitial =
-    src &&
-    !src.includes('Rectangle 819 (1)') &&
-    !src.includes('Rectangle-819-1') &&
-    !src.startsWith('blob:')
-      ? src
-      : fallback
+  const getCleanSrc = (url?: string | null) => {
+    if (!url || url.startsWith('blob:') || url.includes('Rectangle 819 (1)') || url.includes('Rectangle-819-1')) {
+      return fallback
+    }
+    if (url.includes('image 352') || url.includes('image-352')) {
+      return '/images/products/disposable-sterile-blade.jpg'
+    }
+    return url
+  }
 
-  const [imgUrl, setImgUrl] = useState(cleanInitial)
+  const [imgUrl, setImgUrl] = useState(() => getCleanSrc(src))
   const [hasError, setHasError] = useState(false)
+
+  useEffect(() => {
+    setImgUrl(getCleanSrc(src))
+    setHasError(false)
+  }, [src])
 
   return (
     <Image

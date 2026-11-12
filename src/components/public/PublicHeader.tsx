@@ -28,6 +28,7 @@ export default function PublicHeader({ onOpenSearch, onOpenQuote }: PublicHeader
   const pathname = usePathname()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null)
+  const [mobileExpandedDropdown, setMobileExpandedDropdown] = useState<string | null>(null)
   const [quoteCount, setQuoteCount] = useState(0)
   const [isOverProductLine, setIsOverProductLine] = useState(false)
 
@@ -179,19 +180,22 @@ export default function PublicHeader({ onOpenSearch, onOpenQuote }: PublicHeader
                     />
                   </Link>
 
-                  {/* Dropdown Menu */}
+                  {/* Dropdown Menu with Hover Bridge */}
                   {isOpen && link.items && (
-                    <div className="absolute top-full left-0 w-64 bg-[#0A1328] rounded-2xl shadow-2xl border border-white/10 py-2 z-50 text-white animate-in fade-in slide-in-from-top-1 duration-150">
-                      {link.items.map((sub) => (
-                        <Link
-                          key={sub.name}
-                          href={sub.href}
-                          className="flex items-center justify-between px-4 py-2.5 text-xs font-medium text-slate-200 hover:text-[#F6851F] hover:bg-white/5 transition"
-                        >
-                          <span>{sub.name}</span>
-                          <ArrowRight className="w-3 h-3 text-slate-400 group-hover:text-[#F6851F]" />
-                        </Link>
-                      ))}
+                    <div className="absolute top-full left-0 pt-2 z-50 w-64 animate-in fade-in slide-in-from-top-1 duration-150">
+                      <div className="bg-[#0A1328] rounded-2xl shadow-2xl border border-white/10 py-2 text-white overflow-hidden">
+                        {link.items.map((sub) => (
+                          <Link
+                            key={sub.name}
+                            href={sub.href}
+                            onClick={() => setActiveDropdown(null)}
+                            className="flex items-center justify-between px-4 py-2.5 text-xs font-medium text-slate-200 hover:text-[#F6851F] hover:bg-white/5 transition"
+                          >
+                            <span>{sub.name}</span>
+                            <ArrowRight className="w-3 h-3 text-slate-400 group-hover:text-[#F6851F]" />
+                          </Link>
+                        ))}
+                      </div>
                     </div>
                   )}
                 </div>
@@ -287,22 +291,78 @@ export default function PublicHeader({ onOpenSearch, onOpenQuote }: PublicHeader
 
       {/* Mobile Menu Drawer */}
       {isMobileMenuOpen && (
-        <div className="lg:hidden bg-[#0A1328]/95 backdrop-blur-xl border-t border-white/10 px-6 py-5 space-y-2">
-          {navLinks.map((link) => (
-            <Link
-              key={link.name}
-              href={link.href}
-              onClick={() => setIsMobileMenuOpen(false)}
-              className="block py-2.5 text-sm font-semibold text-white hover:text-[#F6851F] border-b border-white/5 transition"
-            >
-              {link.name}
-            </Link>
-          ))}
-          <div className="pt-4">
+        <div className="lg:hidden bg-[#0A1328]/98 backdrop-blur-2xl border-t border-white/10 px-5 py-4 space-y-1 max-h-[calc(100vh-75px)] overflow-y-auto">
+          {navLinks.map((link) => {
+            const hasSub = Boolean(link.hasDropdown && link.items && link.items.length > 0)
+            const isExpanded = mobileExpandedDropdown === link.name
+
+            if (hasSub) {
+              return (
+                <div key={link.name} className="border-b border-white/5 py-1">
+                  <div className="flex items-center justify-between">
+                    <Link
+                      href={link.href}
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className="py-2.5 text-[15px] font-bold text-white hover:text-[#F6851F] transition flex-1"
+                    >
+                      {link.name}
+                    </Link>
+
+                    {/* Dropdown Toggle Chevron Button */}
+                    <button
+                      type="button"
+                      onClick={() => setMobileExpandedDropdown(isExpanded ? null : link.name)}
+                      aria-label={`Toggle ${link.name} submenu`}
+                      className="p-2.5 rounded-lg bg-white/5 hover:bg-white/10 text-white/80 transition cursor-pointer"
+                    >
+                      <ChevronDown
+                        className={`w-4 h-4 text-[#F6851F] transition-transform duration-300 ${
+                          isExpanded ? 'rotate-180' : ''
+                        }`}
+                      />
+                    </button>
+                  </div>
+
+                  {/* Expandable Submenu Accordion */}
+                  {isExpanded && (
+                    <div className="pl-3 pr-1 py-2 my-1 space-y-1.5 bg-black/30 rounded-xl border border-white/5 animate-in fade-in slide-in-from-top-1 duration-200">
+                      {link.items?.map((sub) => (
+                        <Link
+                          key={sub.name}
+                          href={sub.href}
+                          onClick={() => {
+                            setIsMobileMenuOpen(false)
+                            setMobileExpandedDropdown(null)
+                          }}
+                          className="flex items-center justify-between py-2 px-3 text-xs font-medium text-slate-300 hover:text-white hover:bg-white/5 rounded-lg transition"
+                        >
+                          <span>{sub.name}</span>
+                          <ArrowRight className="w-3 h-3 text-[#F6851F] shrink-0" />
+                        </Link>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )
+            }
+
+            return (
+              <Link
+                key={link.name}
+                href={link.href}
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="block py-3 text-[15px] font-bold text-white hover:text-[#F6851F] border-b border-white/5 transition"
+              >
+                {link.name}
+              </Link>
+            )
+          })}
+
+          <div className="pt-4 pb-2">
             <Link
               href="/contact"
               onClick={() => setIsMobileMenuOpen(false)}
-              className="w-full flex items-center justify-center gap-2 py-3 bg-[#F6851F] hover:bg-[#E07314] text-white text-sm font-bold rounded-full shadow transition"
+              className="w-full flex items-center justify-center gap-2 py-3 bg-[#F6851F] hover:bg-[#E07314] text-white text-sm font-bold rounded-full shadow-lg shadow-orange-500/20 transition"
             >
               <span>Partner With Us</span>
               <ArrowRight className="w-4 h-4" />

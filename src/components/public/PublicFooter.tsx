@@ -260,7 +260,7 @@ export default function PublicFooter() {
         {/* Copyright Line */}
         <div className="pt-6 text-center text-xs text-slate-400">
           <p>
-            Copyright 2026 Transact INTL, All Rights Reserved Design By: Graphixals
+            Copyright 2026 Transact INTL, All Rights Reserved Design By: Brandi Design Agency
           </p>
         </div>
       </div>

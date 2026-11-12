@@ -380,21 +380,29 @@ export function getStoredProducts(): ProductItem[] {
     const deletedProdIds = new Set(getFromStorage<string[]>(STORAGE_KEYS.DELETED_PRODUCTS, []))
     const fromStorage = getFromStorage<ProductItem[]>(STORAGE_KEYS.PRODUCTS, [])
     if (fromStorage.length > 0) {
-      // Filter out any deleted products or stale items
-      const clean = fromStorage.filter((p) => {
-        if (deletedProdIds.has(p.id)) return false
-        const text = `${p.title || ''} ${p.slug || ''} ${p.featured_image || ''}`.toLowerCase()
-        return (
-          !text.includes('motorcycle') &&
-          !text.includes('glove') &&
-          !text.includes('jacket') &&
-          !text.includes('trouser') &&
-          !text.includes('carbon tech') &&
-          !text.includes('torque') &&
-          !text.includes('durable') &&
-          !text.includes('tourer')
-        )
-      })
+      // Filter out any deleted products or stale items, and sanitize placeholder images
+      const clean = fromStorage
+        .filter((p) => {
+          if (deletedProdIds.has(p.id)) return false
+          const text = `${p.title || ''} ${p.slug || ''} ${p.featured_image || ''}`.toLowerCase()
+          return (
+            !text.includes('motorcycle') &&
+            !text.includes('glove') &&
+            !text.includes('jacket') &&
+            !text.includes('trouser') &&
+            !text.includes('carbon tech') &&
+            !text.includes('torque') &&
+            !text.includes('durable') &&
+            !text.includes('tourer')
+          )
+        })
+        .map((p) => {
+          let featured_image = p.featured_image
+          if (!featured_image || featured_image.includes('image 352') || featured_image.includes('image-352')) {
+            featured_image = '/images/products/disposable-sterile-blade.jpg'
+          }
+          return { ...p, featured_image }
+        })
       if (clean.length !== fromStorage.length) {
         saveToStorage(STORAGE_KEYS.PRODUCTS, clean)
       }
