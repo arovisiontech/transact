@@ -108,7 +108,17 @@ function ProductsCatalogContent() {
   const categoryParam = searchParams.get('category') || searchParams.get('cat')
   const subcategoryParam = searchParams.get('subcategory') || searchParams.get('subcat')
 
-  const [products, setProducts] = useState<ProductItem[]>(initialProducts as unknown as ProductItem[])
+  const [products, setProducts] = useState<ProductItem[]>(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const stored = JSON.parse(localStorage.getItem('transact_products_v3') || '[]')
+        if (Array.isArray(stored) && stored.length > 0) {
+          return stored.filter((p: any) => p && p.title && p.title.trim() !== '')
+        }
+      } catch {}
+    }
+    return (initialProducts as unknown as ProductItem[]).filter((p) => p && p.title && p.title.trim() !== '')
+  })
   const [categoriesList, setCategoriesList] = useState<CategoryItem[]>(initialCategories as unknown as CategoryItem[])
   const [subcategoriesList, setSubcategoriesList] = useState<SubcategoryItem[]>(
     initialSubcategories as unknown as SubcategoryItem[]

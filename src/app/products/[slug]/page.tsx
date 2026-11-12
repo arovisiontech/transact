@@ -82,9 +82,38 @@ function FormattedSpecifications({ text }: { text: string }) {
 function ProductDetailContent() {
   const params = useParams()
   const slug = (params?.slug as string) || ''
-  const [product, setProduct] = useState<ProductItem>(initialProducts[0] as unknown as ProductItem)
-  const [allProducts, setAllProducts] = useState<ProductItem[]>(initialProducts as unknown as ProductItem[])
-  const [selectedImage, setSelectedImage] = useState<string>('/images/products/integrated-macintosh-fiber-optic-blade.png')
+
+  const findInitialProduct = (): ProductItem => {
+    if (typeof window !== 'undefined') {
+      try {
+        const stored = JSON.parse(localStorage.getItem('transact_products_v3') || '[]')
+        if (Array.isArray(stored) && stored.length > 0) {
+          const match = stored.find((p: any) => p && (p.slug === slug || p.id === slug))
+          if (match) return match
+        }
+      } catch {}
+    }
+    const initList = initialProducts as unknown as ProductItem[]
+    const initMatch = initList.find((p) => p && (p.slug === slug || p.id === slug))
+    if (initMatch) return initMatch
+    return initList[0] || ({} as ProductItem)
+  }
+
+  const [product, setProduct] = useState<ProductItem>(findInitialProduct)
+  const [allProducts, setAllProducts] = useState<ProductItem[]>(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const stored = JSON.parse(localStorage.getItem('transact_products_v3') || '[]')
+        if (Array.isArray(stored) && stored.length > 0) return stored
+      } catch {}
+    }
+    return initialProducts as unknown as ProductItem[]
+  })
+
+  const [selectedImage, setSelectedImage] = useState<string>(() => {
+    const init = findInitialProduct()
+    return init.featured_image || '/images/transact/image2_3812_2.png'
+  })
   const [inquiryModalOpen, setInquiryModalOpen] = useState(false)
   const [inquiryProduct, setInquiryProduct] = useState<ProductItem | null>(null)
 
@@ -107,44 +136,42 @@ function ProductDetailContent() {
     'TI-RL-100-5': 1,
   })
 
-  // Load products live from server API & dataStore
+  // Load products live from server API in background (no flickering!)
   useEffect(() => {
+    let isMounted = true
+
     const loadProd = async () => {
-      let prods = getStoredProducts().filter((p) => p.is_published)
       try {
         const res = await fetch('/api/products', { cache: 'no-store' })
         if (res.ok) {
           const live: ProductItem[] = await res.json()
-          if (Array.isArray(live) && live.length > 0) {
-            prods = live.filter((p) => p.is_published)
+          if (isMounted && Array.isArray(live) && live.length > 0) {
+            setAllProducts(live)
+            const found = live.find((p) => p.slug === slug || p.id === slug)
+            if (found) {
+              setProduct(found)
+              if (found.featured_image && (!selectedImage || selectedImage.includes('integrated-macintosh-fiber-optic-blade.png'))) {
+                setSelectedImage(found.featured_image)
+              }
+              // Initialize row quantities
+              const initialQty: { [key: string]: number } = {}
+              const rows = found.chart_rows || defaultChartRows
+              rows.forEach((r) => {
+                initialQty[r.reference] = 1
+              })
+              setQuantities(initialQty)
+            }
           }
         }
       } catch (err) {
-        console.warn('Product detail live fetch:', err)
+        console.warn('Product detail live fetch error:', err)
       }
-
-      setAllProducts(prods)
-      const found = prods.find((p) => p.slug === slug || p.id === slug) || prods[0] || (initialProducts[0] as unknown as ProductItem)
-      setProduct(found)
-      const cleanImg =
-        found.featured_image &&
-        !found.featured_image.includes('Rectangle 819 (1)') &&
-        !found.featured_image.includes('Rectangle-819-1') &&
-        !found.featured_image.startsWith('blob:')
-          ? found.featured_image
-          : '/images/products/integrated-macintosh-fiber-optic-blade.png'
-      setSelectedImage(cleanImg)
-
-      // Initialize row quantities
-      const initialQty: { [key: string]: number } = {}
-      const rows = found.chart_rows || defaultChartRows
-      rows.forEach((r) => {
-        initialQty[r.reference] = 1
-      })
-      setQuantities(initialQty)
     }
 
     loadProd()
+    return () => {
+      isMounted = false
+    }
   }, [slug])
 
   const chartRows = product.chart_rows || defaultChartRows
@@ -180,11 +207,15 @@ function ProductDetailContent() {
     setInquiryModalOpen(true)
   }
 
-  const galleryList = [
-    product.featured_image || '/images/products/integrated-macintosh-fiber-optic-blade.png',
-    '/images/products/laryngoscope-attachment-1.png',
-    '/images/products/laryngoscope-attachment-2.png',
-  ]
+  // Only other views that the client explicitly added in gallery_images:
+  const customOtherViews = Array.isArray(product?.gallery_images)
+    ? product.gallery_images
+        .map((img) => (typeof img === 'string' ? img : (img as any)?.image_url || (img as any)?.url))
+        .filter((url): url is string => Boolean(url && typeof url === 'string' && url.trim() !== '' && url !== product?.featured_image))
+    : []
+
+  const hasOtherViews = customOtherViews.length > 0
+  const galleryList = hasOtherViews ? [product?.featured_image, ...customOtherViews].filter(Boolean) as string[] : []
 
   return (
     <PublicShell>
@@ -350,20 +381,20 @@ function ProductDetailContent() {
               </div>
             </div>
 
-            {/* Right Column: Large Product Image in Clean White Container */}
+            {/* Right Column: Large Product Image in Gray Container (Matching Figma & Products Page) */}
             <div className="lg:col-span-6 flex flex-col items-center">
               <div 
-                className="relative w-full aspect-[4/3] bg-white rounded-none rounded-bl-[10px] overflow-hidden flex items-center justify-center p-8 border border-slate-200/80 shadow-xs"
-                style={{ borderRadius: '0px 0px 0px 10px' }}
+                className="relative w-full aspect-[4/3] bg-[#EDF1F6] rounded-none rounded-bl-[24px] overflow-hidden flex items-center justify-center p-6 sm:p-8 border border-slate-200/80 shadow-xs"
+                style={{ borderRadius: '0px 0px 0px 24px' }}
               >
                 <Image
                   src={selectedImage}
-                  alt={product.title}
+                  alt={product?.title || 'Surgical Instrument'}
                   fill
                   priority
                   unoptimized
-                  onError={() => setSelectedImage('/images/products/integrated-macintosh-fiber-optic-blade.png')}
-                  className="object-contain p-6 hover:scale-105 transition-transform duration-500"
+                  onError={() => setSelectedImage('/images/transact/image2_3812_2.png')}
+                  className="object-contain p-4 sm:p-6 hover:scale-105 transition-transform duration-500"
                 />
               </div>
             </div>
@@ -377,8 +408,8 @@ function ProductDetailContent() {
       <section className="bg-white pb-16">
         <div className="max-w-[1600px] 3xl:max-w-[1800px] mx-auto px-6 sm:px-10 lg:px-16">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-            {/* Left 8 Cols: Functional Sizing Table */}
-            <div className="lg:col-span-8 space-y-5">
+            {/* Functional Sizing Table (Full width if no other views, 8 cols if other views added) */}
+            <div className={`${hasOtherViews ? 'lg:col-span-8' : 'lg:col-span-12'} space-y-5`}>
               <div className="overflow-x-auto rounded-xl border border-slate-200 shadow-sm">
                 <table className="w-full text-left text-xs sm:text-sm">
                   {/* Table Header */}
@@ -444,56 +475,29 @@ function ProductDetailContent() {
               </div>
             </div>
 
-            {/* Right 4 Cols: 3 Thumbnail Gallery Cards */}
-            <div className="lg:col-span-4 grid grid-cols-2 gap-4">
-              <button
-                onClick={() => setSelectedImage(galleryList[0])}
-                className={`relative aspect-[4/3] rounded-none rounded-bl-[10px] overflow-hidden bg-white border-2 transition p-4 flex items-center justify-center ${
-                  selectedImage === galleryList[0] ? 'border-[#F36C21] shadow-md' : 'border-slate-200 hover:border-slate-300'
-                }`}
-                style={{ borderRadius: '0px 0px 0px 10px' }}
-              >
-                <Image
-                  src={galleryList[0]}
-                  alt="Blade View 1"
-                  fill
-                  unoptimized
-                  className="object-contain p-2"
-                />
-              </button>
-
-              <button
-                onClick={() => setSelectedImage(galleryList[1])}
-                className={`relative aspect-[4/3] rounded-none rounded-bl-[10px] overflow-hidden bg-white border-2 transition p-4 flex items-center justify-center ${
-                  selectedImage === galleryList[1] ? 'border-[#F36C21] shadow-md' : 'border-slate-200 hover:border-slate-300'
-                }`}
-                style={{ borderRadius: '0px 0px 0px 10px' }}
-              >
-                <Image
-                  src={galleryList[1]}
-                  alt="Blade Attachment 1"
-                  fill
-                  unoptimized
-                  className="object-contain p-2"
-                />
-              </button>
-
-              <button
-                onClick={() => setSelectedImage(galleryList[2])}
-                className={`relative col-span-2 aspect-[16/9] rounded-none rounded-bl-[10px] overflow-hidden bg-white border-2 transition p-4 flex items-center justify-center ${
-                  selectedImage === galleryList[2] ? 'border-[#F36C21] shadow-md' : 'border-slate-200 hover:border-slate-300'
-                }`}
-                style={{ borderRadius: '0px 0px 0px 10px' }}
-              >
-                <Image
-                  src={galleryList[2]}
-                  alt="Blade Attachment 2"
-                  fill
-                  unoptimized
-                  className="object-contain p-2"
-                />
-              </button>
-            </div>
+            {/* Right 4 Cols: Only shown when client actually added other views */}
+            {hasOtherViews && (
+              <div className="lg:col-span-4 grid grid-cols-2 gap-4">
+                {galleryList.map((viewUrl, vIdx) => (
+                  <button
+                    key={vIdx}
+                    onClick={() => setSelectedImage(viewUrl)}
+                    className={`relative aspect-[4/3] rounded-none rounded-bl-[16px] overflow-hidden bg-[#EDF1F6] border-2 transition p-3 flex items-center justify-center cursor-pointer ${
+                      selectedImage === viewUrl ? 'border-[#F36C21] shadow-md' : 'border-slate-200 hover:border-slate-300'
+                    }`}
+                    style={{ borderRadius: '0px 0px 0px 16px' }}
+                  >
+                    <Image
+                      src={viewUrl}
+                      alt={`View ${vIdx + 1}`}
+                      fill
+                      unoptimized
+                      className="object-contain p-2"
+                    />
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </section>
@@ -613,13 +617,13 @@ function ProductDetailContent() {
                   return (
                     <div 
                       key={idx} 
-                      className="group flex flex-col bg-white rounded-none rounded-bl-[10px] transition hover:shadow-lg"
-                      style={{ borderRadius: '0px 0px 0px 10px' }}
+                      className="group flex flex-col bg-white rounded-none rounded-bl-[20px] transition hover:shadow-lg"
+                      style={{ borderRadius: '0px 0px 0px 20px' }}
                     >
                       <Link
                         href={href}
-                        className="relative w-full aspect-[4/3] bg-white rounded-none rounded-bl-[10px] overflow-hidden flex items-center justify-center p-6 border border-slate-200/60"
-                        style={{ borderRadius: '0px 0px 0px 10px' }}
+                        className="relative w-full aspect-[4/3] bg-[#EDF1F6] rounded-none rounded-bl-[20px] overflow-hidden flex items-center justify-center p-6 border border-slate-200/60"
+                        style={{ borderRadius: '0px 0px 0px 20px' }}
                       >
                         <Image
                           src={imageSrc}

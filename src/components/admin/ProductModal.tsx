@@ -87,7 +87,8 @@ export default function ProductModal({ product, isOpen, onClose, onSaved }: Prod
     short_description: '',
     full_description: '',
     specifications_markdown: '',
-    featured_image: '/images/products/integrated-macintosh-fiber-optic-blade.png',
+    featured_image: '/images/transact/image2_3812_2.png',
+    gallery_images: [],
     chart_rows: defaultSizingRows,
     built_to_perform: defaultBuiltToPerform,
     custom_related_products: [],
@@ -157,6 +158,7 @@ export default function ProductModal({ product, isOpen, onClose, onSaved }: Prod
         material: product.material || 'Stainless Steel',
         chart_rows: product.chart_rows && product.chart_rows.length > 0 ? product.chart_rows : defaultSizingRows,
         built_to_perform: product.built_to_perform || defaultBuiltToPerform,
+        gallery_images: Array.isArray(product.gallery_images) ? product.gallery_images : [],
         custom_related_products: product.custom_related_products || [],
         related_product_ids: product.related_product_ids || [],
       })
@@ -178,7 +180,8 @@ export default function ProductModal({ product, isOpen, onClose, onSaved }: Prod
         full_description: '',
         specifications_markdown:
           '• Completely Sealed One Piece BLADE CONSTRUCTION\n• Distal Lip Of All Integrated Blades\n• Crafted From Finest Stainless Steel AISI 303 / 304\n• Fiber Optic Core With High Transmission Rate\n• Fully Autoclavable And Sterilization Compatible',
-        featured_image: '/images/products/integrated-macintosh-fiber-optic-blade.png',
+        featured_image: '/images/transact/image2_3812_2.png',
+        gallery_images: [],
         chart_rows: defaultSizingRows,
         built_to_perform: defaultBuiltToPerform,
         custom_related_products: [],
@@ -468,7 +471,8 @@ export default function ProductModal({ product, isOpen, onClose, onSaved }: Prod
         custom_related_products: formData.custom_related_products || [],
         related_product_ids: formData.related_product_ids || [],
         featured_image:
-          formData.featured_image || '/images/products/integrated-macintosh-fiber-optic-blade.png',
+          formData.featured_image || '/images/transact/image2_3812_2.png',
+        gallery_images: formData.gallery_images || [],
         sort_order: Number(formData.sort_order) || 1,
       }
 
@@ -639,6 +643,108 @@ export default function ProductModal({ product, isOpen, onClose, onSaved }: Prod
                   </button>
                 ))}
               </div>
+            </div>
+          </div>
+
+          {/* ──────────────────────────────────────────────────────── */}
+          {/* 1.5 OTHER VIEWS / GALLERY IMAGES (OPTIONAL)            */}
+          {/* ──────────────────────────────────────────────────────── */}
+          <div className="p-5 rounded-2xl bg-white border border-slate-200 space-y-4">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-2">
+              <div className="flex items-center gap-2">
+                <ImageIcon className="w-4 h-4 text-[#F6851F]" />
+                <h4 className="text-xs font-bold text-[#081022] uppercase tracking-wide">
+                  Other Views / Gallery Images (Optional)
+                </h4>
+              </div>
+              <span className="text-[10px] px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 font-bold">
+                {formData.gallery_images?.length || 0} Added
+              </span>
+            </div>
+
+            <p className="text-[11px] text-slate-500">
+              Only views added here will appear as thumbnails on the product page. If left empty, no extra view thumbnails will be shown.
+            </p>
+
+            {/* List of currently added gallery images */}
+            {formData.gallery_images && formData.gallery_images.length > 0 && (
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                {formData.gallery_images.map((rawImg, gIdx) => {
+                  const srcUrl = typeof rawImg === 'string' ? rawImg : rawImg?.image_url || ''
+                  if (!srcUrl) return null
+                  return (
+                    <div
+                      key={gIdx}
+                      className="relative group aspect-[4/3] rounded-xl overflow-hidden bg-[#EDF1F6] border border-slate-200 flex items-center justify-center p-2"
+                    >
+                      <Image
+                        src={srcUrl}
+                        alt={`View ${gIdx + 1}`}
+                        fill
+                        unoptimized
+                        className="object-contain p-1"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const updated = (formData.gallery_images || []).filter((_, i) => i !== gIdx)
+                          setFormData({ ...formData, gallery_images: updated })
+                        }}
+                        className="absolute top-1 right-1 w-6 h-6 rounded-full bg-rose-500 text-white flex items-center justify-center shadow hover:bg-rose-600 transition cursor-pointer opacity-90 group-hover:opacity-100"
+                        title="Remove image"
+                      >
+                        <X className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  )
+                })}
+              </div>
+            )}
+
+            {/* Upload or Add image URL */}
+            <div className="flex flex-wrap items-center gap-2">
+              <label className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-slate-50 border border-dashed border-slate-300 text-xs font-bold text-slate-700 hover:bg-slate-100 cursor-pointer transition">
+                <UploadCloud className="w-3.5 h-3.5 text-[#F6851F]" />
+                <span>Upload Other View</span>
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0]
+                    if (file) {
+                      const reader = new FileReader()
+                      reader.onload = (ev) => {
+                        const base64 = ev.target?.result as string
+                        if (base64) {
+                          setFormData({
+                            ...formData,
+                            gallery_images: [...(formData.gallery_images || []), base64],
+                          })
+                        }
+                      }
+                      reader.readAsDataURL(file)
+                    }
+                  }}
+                />
+              </label>
+
+              <button
+                type="button"
+                onClick={() => {
+                  const url = window.prompt('Enter Image URL for other view:')
+                  if (url && url.trim()) {
+                    setFormData({
+                      ...formData,
+                      gallery_images: [...(formData.gallery_images || []), url.trim()],
+                    })
+                  }
+                }}
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs font-bold text-slate-700 hover:bg-slate-100 transition cursor-pointer"
+              >
+                <Plus className="w-3.5 h-3.5 text-[#F6851F]" />
+                <span>Add Image URL</span>
+              </button>
             </div>
           </div>
 
