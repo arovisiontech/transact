@@ -5,19 +5,27 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { X } from 'lucide-react'
 
+// Flag to ensure auto-popup only triggers on 1st time site load or browser refresh (F5), NOT on page navigation
+let hasAutoOpenedOnPageLoad = false
+
 export default function MedicaPromoPopup() {
   const [isOpen, setIsOpen] = useState(false)
   const [isRendered, setIsRendered] = useState(false)
   const [imgSrc, setImgSrc] = useState('/images/events/medica-2026.jpg')
 
   useEffect(() => {
-    // Open automatically on website open
-    const timer = setTimeout(() => {
-      setIsRendered(true)
-      requestAnimationFrame(() => {
-        setTimeout(() => setIsOpen(true), 50)
-      })
-    }, 350)
+    // Only open on initial site open or page refresh. Do NOT show when navigating to new pages.
+    if (!hasAutoOpenedOnPageLoad) {
+      hasAutoOpenedOnPageLoad = true
+      const timer = setTimeout(() => {
+        setIsRendered(true)
+        requestAnimationFrame(() => {
+          setTimeout(() => setIsOpen(true), 50)
+        })
+      }, 350)
+
+      return () => clearTimeout(timer)
+    }
 
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') handleClose()
@@ -25,7 +33,6 @@ export default function MedicaPromoPopup() {
     window.addEventListener('keydown', handleKeyDown)
 
     return () => {
-      clearTimeout(timer)
       window.removeEventListener('keydown', handleKeyDown)
     }
   }, [])

@@ -51,20 +51,20 @@ function cleanProductTitle(title: string | undefined): string {
 function ProductCardImage({
   src,
   alt,
-  className = 'object-contain w-full h-full p-0 group-hover:scale-105 transition-transform duration-300',
+  className = 'object-cover w-full h-full p-0 group-hover:scale-105 transition-transform duration-500',
 }: {
   src: string | null | undefined
   alt: string
   className?: string
 }) {
-  const defaultBladeFallback = '/images/products/integrated-macintosh-fiber-optic-blade.png'
+  const defaultBladeFallback = '/images/products/disposable-sterile-blade.jpg'
   const defaultDiagnosticsFallback = '/images/products/pocket-led-otoscope.jpg'
   
   const getCleanSrc = (url?: string | null, title?: string) => {
     const isDiagnostic = (title || alt || '').toLowerCase().includes('ophthalmoscope') || (title || alt || '').toLowerCase().includes('otoscope')
     const fallback = isDiagnostic ? defaultDiagnosticsFallback : defaultBladeFallback
 
-    if (!url || url.startsWith('blob:') || url.includes('Rectangle 819 (1)') || url.includes('Rectangle-819-1') || url.includes('Rectangle 827') || url.includes('Rectangle-827')) {
+    if (!url || url.startsWith('blob:') || url.includes('integrated-macintosh-fiber-optic-blade.png') || url.includes('Rectangle 819 (1)') || url.includes('Rectangle-819-1') || url.includes('Rectangle 827') || url.includes('Rectangle-827')) {
       return fallback
     }
     if (url.includes('image 352') || url.includes('image-352')) {
@@ -219,6 +219,11 @@ function ProductsCatalogContent() {
 
   // Filtered Products according to active filters
   const filteredProducts = products.filter((prod) => {
+    // Delete empty / blank cards as explicitly requested by user
+    if (prod.sku === 'TI-RL-100' || prod.sku === 'TI-FRL-200' || prod.id === 'prod-reusable-macintosh') return false
+    if (!prod.featured_image || prod.featured_image.trim() === '') return false
+    if (prod.featured_image.includes('integrated-macintosh-fiber-optic-blade.png')) return false
+
     // 1. Category Filter
     if (selectedCategory && selectedCategory !== 'all') {
       const catKey = selectedCategory.toLowerCase()
@@ -745,7 +750,7 @@ function ProductsCatalogContent() {
                         <ProductCardImage
                           src={prod.featured_image}
                           alt={prod.title}
-                          className="object-contain w-full h-full p-0 group-hover:scale-105 transition-transform duration-300"
+                          className="object-cover w-full h-full p-0 group-hover:scale-105 transition-transform duration-500"
                         />
                       </Link>
 
@@ -786,7 +791,7 @@ function ProductsCatalogContent() {
                         <ProductCardImage
                           src={prod.featured_image}
                           alt={prod.title}
-                          className="object-contain w-full h-full p-0"
+                          className="object-cover w-full h-full p-0"
                         />
                       </Link>
 

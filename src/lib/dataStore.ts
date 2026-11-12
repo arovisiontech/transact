@@ -384,6 +384,11 @@ export function getStoredProducts(): ProductItem[] {
       const clean = fromStorage
         .filter((p) => {
           if (deletedProdIds.has(p.id)) return false
+          // Filter out empty / blank placeholder cards as requested by user
+          if (p.sku === 'TI-RL-100' || p.sku === 'TI-FRL-200' || p.id === 'prod-reusable-macintosh') return false
+          if (!p.featured_image || p.featured_image.trim() === '') return false
+          if (p.featured_image.includes('integrated-macintosh-fiber-optic-blade.png')) return false
+
           const text = `${p.title || ''} ${p.slug || ''} ${p.featured_image || ''}`.toLowerCase()
           return (
             !text.includes('motorcycle') &&

@@ -1,29 +1,5 @@
 [
   {
-    "id": "prod-reusable-macintosh",
-    "category_id": "cat-reusable-laryngoscopes",
-    "category_name": "Reusable Laryngoscopes",
-    "subcategory_id": "subcat-macintosh-miller",
-    "subcategory_name": "Macintosh & Miller Reusable Blades",
-    "title": "Integrated Macintosh Fiber Optic Blade",
-    "slug": "integrated-macintosh-fiber-optic-blade",
-    "sku": "TI-RL-100",
-    "price": 125,
-    "stock_quantity": 100,
-    "badge": "REUSABLE SURGICAL GRADE",
-    "is_featured": true,
-    "is_published": true,
-    "short_description": "Precision engineered reusable stainless steel Macintosh blade with integrated fiber optic bundle.",
-    "full_description": "Crafted from German stainless steel AISI 303/304 with superior optical illumination and cryogenic treatment for maximum longevity.",
-    "specifications_markdown": "• Completely Sealed One Piece BLADE CONSTRUCTION\n• Distal Lip Of All Integrated Blades\n• Crafted From Finest Stainless Steel AISI 303 / 304\n• Fiber Optic Core With High Transmission Rate\n• Fully Autoclavable And Sterilization Compatible",
-    "product_type": "Macintosh Blades",
-    "material": "Stainless Steel",
-    "featured_image": "/images/products/integrated-macintosh-fiber-optic-blade.png",
-    "sort_order": 1,
-    "updated_at": "2026-10-25T13:25:47.321Z",
-    "created_at": "2026-10-25T12:00:00.000Z"
-  },
-  {
     "id": "prod-single-use-blade",
     "category_id": "cat-single-use-laryngoscopes",
     "category_name": "Single Use Laryngoscopes",
@@ -43,7 +19,7 @@
     "product_type": "Conventional Single Use",
     "material": "Plastic / Fiber Optic",
     "featured_image": "/images/products/disposable-sterile-blade.jpg",
-    "sort_order": 2,
+    "sort_order": 1,
     "updated_at": "2026-10-25T13:25:47.321Z",
     "created_at": "2026-10-25T12:00:00.000Z"
   },
