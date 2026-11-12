@@ -51,7 +51,7 @@ function cleanProductTitle(title: string | undefined): string {
 function ProductCardImage({
   src,
   alt,
-  className = 'object-cover w-full h-full p-0 group-hover:scale-105 transition-transform duration-500',
+  className = 'object-contain w-full h-full p-2 sm:p-3 group-hover:scale-105 transition-transform duration-300',
 }: {
   src: string | null | undefined
   alt: string
@@ -741,16 +741,16 @@ function ProductsCatalogContent() {
                       className="group flex flex-col bg-white rounded-none rounded-bl-[24px] transition hover:shadow-xl duration-300"
                       style={{ borderRadius: '0px 0px 0px 24px' }}
                     >
-                      {/* Product Card Image Container (Clean full-bleed box without grey background) */}
+                      {/* Product Card Image Container (Figma SS2 Gray Box: Full surface with 100% visible product) */}
                       <Link
                         href={`/products/${prod.slug}`}
-                        className="relative w-full aspect-[4/3] bg-white rounded-none rounded-bl-[24px] overflow-hidden flex items-center justify-center p-0 border border-slate-200/80 cursor-pointer group-hover:border-[#F36C21]/40 transition-colors shadow-sm"
+                        className="relative w-full aspect-[4/3] min-h-[230px] sm:min-h-[270px] bg-[#EDF1F6] rounded-none rounded-bl-[24px] overflow-hidden flex items-center justify-center p-2.5 sm:p-3.5 border border-slate-200/80 cursor-pointer group-hover:border-[#F36C21]/40 transition-colors shadow-sm"
                         style={{ borderRadius: '0px 0px 0px 24px' }}
                       >
                         <ProductCardImage
                           src={prod.featured_image}
                           alt={prod.title}
-                          className="object-cover w-full h-full p-0 group-hover:scale-105 transition-transform duration-500"
+                          className="object-contain w-full h-full p-1 sm:p-2 group-hover:scale-105 transition-transform duration-300"
                         />
                       </Link>
 
@@ -785,13 +785,13 @@ function ProductsCatalogContent() {
                     >
                       <Link
                         href={`/products/${prod.slug}`}
-                        className="relative w-full sm:w-48 aspect-[4/3] bg-white rounded-none rounded-bl-[20px] overflow-hidden shrink-0 flex items-center justify-center p-0 cursor-pointer border border-slate-200/80"
+                        className="relative w-full sm:w-52 aspect-[4/3] min-h-[170px] bg-[#EDF1F6] rounded-none rounded-bl-[20px] overflow-hidden shrink-0 flex items-center justify-center p-2.5 cursor-pointer border border-slate-200/80 group-hover:border-[#F36C21]/40 transition-colors"
                         style={{ borderRadius: '0px 0px 0px 20px' }}
                       >
                         <ProductCardImage
                           src={prod.featured_image}
                           alt={prod.title}
-                          className="object-cover w-full h-full p-0"
+                          className="object-contain w-full h-full p-1"
                         />
                       </Link>
 
