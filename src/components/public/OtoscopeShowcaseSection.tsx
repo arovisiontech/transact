@@ -95,7 +95,7 @@ export default function OtoscopeShowcaseSection() {
           {cards.map((card, index) => {
             const stickyTop = 84 + index * 10
             const isLast = index === cards.length - 1
-            const marginBottom = isLast ? '0' : '48vh'
+            const marginBottom = isLast ? '0' : '55vh'
             const isWhiteBadge = card.badgeBg.includes('white')
 
             return (
@@ -114,7 +114,7 @@ export default function OtoscopeShowcaseSection() {
                   title={`Open ${card.title}`}
                   className="relative w-full rounded-2xl sm:rounded-3xl overflow-hidden bg-[#0A0E17] border border-white/15 shadow-[0_-12px_45px_rgba(0,0,0,0.2),0_25px_60px_rgba(0,0,0,0.3)] flex flex-col justify-between group cursor-pointer block transition-all duration-300 hover:border-orange-500/40"
                   style={{
-                    minHeight: 'clamp(400px, 52vh, 560px)',
+                    minHeight: 'clamp(540px, 72vh, 760px)',
                   }}
                 >
                   {/* Background Image */}
@@ -125,7 +125,7 @@ export default function OtoscopeShowcaseSection() {
                       fill
                       unoptimized
                       priority={index === 0}
-                      className="object-cover object-right sm:object-center group-hover:scale-105 transition-transform duration-700"
+                      className="object-cover object-right group-hover:scale-105 transition-transform duration-700"
                     />
                     {/* Balanced gradient: darkens left side for text while leaving diagnostic instrument bright */}
                     <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/55 to-transparent pointer-events-none" />
@@ -158,7 +158,7 @@ export default function OtoscopeShowcaseSection() {
                   </div>
 
                   {/* Middle Spacer */}
-                  <div className="h-12 sm:h-20" />
+                  <div className="h-28 sm:h-44 md:h-56" />
 
                   {/* Bottom Content Area: Details + Action Button */}
                   <div className="relative z-10 p-6 sm:p-10 flex flex-col sm:flex-row sm:items-end justify-between gap-6 bg-gradient-to-t from-black/90 via-black/60 to-transparent pt-10">

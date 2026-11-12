@@ -51,7 +51,7 @@ function cleanProductTitle(title: string | undefined): string {
 function ProductCardImage({
   src,
   alt,
-  className = 'object-contain p-4 group-hover:scale-105 transition-transform duration-300',
+  className = 'object-contain p-1 group-hover:scale-105 transition-transform duration-300',
 }: {
   src: string | null | undefined
   alt: string
@@ -724,19 +724,19 @@ function ProductsCatalogContent() {
                   {filteredProducts.map((prod) => (
                     <div
                       key={prod.id}
-                      className="group flex flex-col bg-white rounded-none rounded-bl-[10px] transition hover:shadow-lg duration-300"
-                      style={{ borderRadius: '0px 0px 0px 10px' }}
+                      className="group flex flex-col bg-white rounded-none rounded-bl-[24px] transition hover:shadow-xl duration-300"
+                      style={{ borderRadius: '0px 0px 0px 24px' }}
                     >
-                      {/* Product Card Image Container */}
+                      {/* Product Card Image Container (Figma SS2 Style: Light grey-blue full surface) */}
                       <Link
                         href={`/products/${prod.slug}`}
-                        className="relative w-full aspect-[4/3] bg-white rounded-none rounded-bl-[10px] overflow-hidden flex items-center justify-center p-6 border border-slate-200/60 cursor-pointer"
-                        style={{ borderRadius: '0px 0px 0px 10px' }}
+                        className="relative w-full aspect-[4/3] bg-[#EDF1F6] rounded-none rounded-bl-[24px] overflow-hidden flex items-center justify-center p-2 sm:p-3 border border-slate-200/80 cursor-pointer group-hover:border-[#F36C21]/40 transition-colors shadow-sm"
+                        style={{ borderRadius: '0px 0px 0px 24px' }}
                       >
                         <ProductCardImage
                           src={prod.featured_image}
                           alt={prod.title}
-                          className="object-contain p-4 group-hover:scale-105 transition-transform duration-300"
+                          className="object-contain p-1 sm:p-1.5 group-hover:scale-105 transition-transform duration-300"
                         />
                       </Link>
 
@@ -766,18 +766,18 @@ function ProductsCatalogContent() {
                   {filteredProducts.map((prod) => (
                     <div
                       key={prod.id}
-                      className="flex flex-col sm:flex-row items-center gap-6 p-4 sm:p-5 bg-white border border-slate-200 rounded-none rounded-bl-[10px] hover:shadow-md transition"
-                      style={{ borderRadius: '0px 0px 0px 10px' }}
+                      className="flex flex-col sm:flex-row items-center gap-6 p-4 sm:p-5 bg-white border border-slate-200 rounded-none rounded-bl-[20px] hover:shadow-md transition"
+                      style={{ borderRadius: '0px 0px 0px 20px' }}
                     >
                       <Link
                         href={`/products/${prod.slug}`}
-                        className="relative w-full sm:w-48 aspect-[4/3] bg-white rounded-none rounded-bl-[10px] overflow-hidden shrink-0 flex items-center justify-center p-3 cursor-pointer"
-                        style={{ borderRadius: '0px 0px 0px 10px' }}
+                        className="relative w-full sm:w-48 aspect-[4/3] bg-[#EDF1F6] rounded-none rounded-bl-[20px] overflow-hidden shrink-0 flex items-center justify-center p-2 cursor-pointer border border-slate-200/80"
+                        style={{ borderRadius: '0px 0px 0px 20px' }}
                       >
                         <ProductCardImage
                           src={prod.featured_image}
                           alt={prod.title}
-                          className="object-contain p-2"
+                          className="object-contain p-1"
                         />
                       </Link>
 

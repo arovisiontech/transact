@@ -11,18 +11,13 @@ export default function MedicaPromoPopup() {
   const [imgSrc, setImgSrc] = useState('/images/events/medica-2026.jpg')
 
   useEffect(() => {
-    // Check if dismissed in this browser session
-    const dismissed = sessionStorage.getItem('transact_medica_popup_dismissed')
-
-    // Open with a smooth delay on initial page load
+    // Open automatically on website open
     const timer = setTimeout(() => {
-      if (!dismissed) {
-        setIsRendered(true)
-        requestAnimationFrame(() => {
-          setTimeout(() => setIsOpen(true), 50)
-        })
-      }
-    }, 600)
+      setIsRendered(true)
+      requestAnimationFrame(() => {
+        setTimeout(() => setIsOpen(true), 50)
+      })
+    }, 350)
 
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') handleClose()
@@ -37,8 +32,7 @@ export default function MedicaPromoPopup() {
 
   const handleClose = () => {
     setIsOpen(false)
-    sessionStorage.setItem('transact_medica_popup_dismissed', 'true')
-    setTimeout(() => setIsRendered(false), 500)
+    setTimeout(() => setIsRendered(false), 450)
   }
 
   const handleManualOpen = () => {
@@ -101,15 +95,8 @@ export default function MedicaPromoPopup() {
                     setImgSrc('/Medica.jpg')
                   }
                 }}
-                className="object-contain bg-white transition-transform duration-700 group-hover:scale-[1.02]"
+                className="object-contain bg-white transition-transform duration-700 group-hover:scale-[1.01]"
               />
-
-              {/* Subtle hover overlay hint */}
-              <div className="absolute inset-x-0 bottom-0 py-3 bg-gradient-to-t from-black/80 via-black/40 to-transparent text-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                <span className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-[#F6851F] text-white text-xs font-bold shadow-lg">
-                  Click to Book a Meeting (Hall 16, Booth G67-20)
-                </span>
-              </div>
             </Link>
           </div>
         </div>
