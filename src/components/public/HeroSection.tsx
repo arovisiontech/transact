@@ -113,76 +113,79 @@ export default function HeroSection({ onOpenSearch, onOpenQuote }: HeroSectionPr
         className="relative w-full overflow-hidden bg-[#050811] flex flex-col justify-end items-center min-h-[580px] sm:min-h-[640px] md:min-h-[720px] pb-10 sm:pb-14 pt-28"
         style={{ minHeight: 'clamp(560px, 80vh, 900px)' }}
       >
-        {/* ── Background Video Playing Full Hero Section ── */}
+        {/* ── Background: Media Banner (Video or Image) ── */}
         <div className="absolute inset-0 z-0 overflow-hidden">
-          <video
-            ref={videoRef}
-            autoPlay
-            loop
-            muted={isMuted}
-            playsInline
-            preload="auto"
-            poster={active.image || '/image 333.svg'}
-            className="w-full h-full object-cover object-center scale-[1.01]"
-          >
-            <source src={encodeURI('/xC3Hykji4pvl53V3bFrZhUuFXfs (1).mp4')} type="video/mp4" />
-            <source src="/xC3Hykji4pvl53V3bFrZhUuFXfs (1).mp4" type="video/mp4" />
-            <source src="/hero-video.mp4" type="video/mp4" />
-            Your browser does not support HTML5 video.
-          </video>
-
-          {/* Fallback image if video cannot load */}
-          <noscript>
+          {active.media_type === 'image' || (!active.video_url && active.image) ? (
+            /* High-resolution Image Banner */
             <Image
-              src={active.image || '/image 333.svg'}
-              alt={active.title || 'Precision For Life'}
+              src={active.image || '/images/transact/image0_3812_2.png'}
+              alt={active.title || 'Transact Medical Hero'}
               fill
               priority
               unoptimized
-              className="object-cover object-center"
+              className="w-full h-full object-cover object-center scale-[1.01]"
             />
-          </noscript>
+          ) : (
+            /* Background Video Playing Full Hero Section */
+            <video
+              ref={videoRef}
+              autoPlay
+              loop
+              muted={isMuted}
+              playsInline
+              preload="auto"
+              poster={active.image || '/images/transact/image0_3812_2.png'}
+              className="w-full h-full object-cover object-center scale-[1.01]"
+            >
+              <source src={encodeURI('/xC3Hykji4pvl53V3bFrZhUuFXfs (1).mp4')} type="video/mp4" />
+              <source src="/xC3Hykji4pvl53V3bFrZhUuFXfs (1).mp4" type="video/mp4" />
+              <source src="/hero-video.mp4" type="video/mp4" />
+              Your browser does not support HTML5 video.
+            </video>
+          )}
 
           {/* Cinematic gradient: clear in the middle, dark at bottom for text legibility */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-black/30 pointer-events-none z-10" />
         </div>
 
-        {/* ── Top-Right Floating Controls (Sound & Play/Pause) ── */}
-        <div className="absolute top-5 right-5 sm:top-8 sm:right-8 z-30 flex items-center gap-2">
-          <button
-            type="button"
-            onClick={togglePlayPause}
-            className="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-black/60 hover:bg-[#F6851F] border border-white/20 text-white backdrop-blur-md flex items-center justify-center transition-all duration-200 shadow-xl cursor-pointer"
-            title={isPlaying ? 'Pause Background Video' : 'Play Background Video'}
-            aria-label={isPlaying ? 'Pause Background Video' : 'Play Background Video'}
-          >
-            {isPlaying ? (
-              <Pause className="w-4 h-4 fill-white" />
-            ) : (
-              <Play className="w-4 h-4 fill-white translate-x-0.5" />
-            )}
-          </button>
+        {/* ── Top-Right Floating Controls (Sound & Play/Pause for Video) ── */}
+        {active.media_type !== 'image' && active.video_url && (
+          <div className="absolute top-5 right-5 sm:top-8 sm:right-8 z-30 flex items-center gap-2">
+            <button
+              type="button"
+              onClick={togglePlayPause}
+              className="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-black/60 hover:bg-[#F6851F] border border-white/20 text-white backdrop-blur-md flex items-center justify-center transition-all duration-200 shadow-xl cursor-pointer"
+              title={isPlaying ? 'Pause Background Video' : 'Play Background Video'}
+              aria-label={isPlaying ? 'Pause Background Video' : 'Play Background Video'}
+            >
+              {isPlaying ? (
+                <Pause className="w-4 h-4 fill-white" />
+              ) : (
+                <Play className="w-4 h-4 fill-white translate-x-0.5" />
+              )}
+            </button>
 
-          <button
-            type="button"
-            onClick={toggleMute}
-            className="px-3.5 h-10 sm:h-11 rounded-full bg-black/60 hover:bg-[#F6851F] border border-white/20 text-white backdrop-blur-md flex items-center gap-2 text-xs font-semibold transition-all duration-200 shadow-xl cursor-pointer"
-            title={isMuted ? 'Unmute Audio' : 'Mute Audio'}
-            aria-label={isMuted ? 'Unmute Audio' : 'Mute Audio'}
-          >
-            {isMuted ? (
-              <>
-                <VolumeX className="w-4 h-4 text-zinc-300" />
-                <span className="hidden sm:inline">Unmute</span>
-              </>
-            ) : (
-              <>
-                <Volume2 className="w-4 h-4 text-emerald-400" />
-                <span className="hidden sm:inline">Mute</span>
-              </>
-            )}
-          </button>
-        </div>
+            <button
+              type="button"
+              onClick={toggleMute}
+              className="px-3.5 h-10 sm:h-11 rounded-full bg-black/60 hover:bg-[#F6851F] border border-white/20 text-white backdrop-blur-md flex items-center gap-2 text-xs font-semibold transition-all duration-200 shadow-xl cursor-pointer"
+              title={isMuted ? 'Unmute Audio' : 'Mute Audio'}
+              aria-label={isMuted ? 'Unmute Audio' : 'Mute Audio'}
+            >
+              {isMuted ? (
+                <>
+                  <VolumeX className="w-4 h-4 text-zinc-300" />
+                  <span className="hidden sm:inline">Unmute</span>
+                </>
+              ) : (
+                <>
+                  <Volume2 className="w-4 h-4 text-emerald-400" />
+                  <span className="hidden sm:inline">Mute</span>
+                </>
+              )}
+            </button>
+          </div>
+        )}
 
         {/* ── Bottom Content Area: moved from center to bottom so video is completely unobstructed ── */}
         <div className="relative z-20 max-w-3xl mx-auto px-4 sm:px-6 text-center flex flex-col items-center justify-end w-full">

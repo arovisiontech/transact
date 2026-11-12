@@ -51,6 +51,7 @@ export default function AdminHeroSlidesPage() {
     subtitle: '',
     badge: 'ISO 13485:2016 CERTIFIED',
     image: '/images/transact/image0_3812_2.png',
+    media_type: 'image',
     primaryCtaText: 'Request Quotation',
     primaryCtaLink: '/contact',
     secondaryCtaText: 'Browse Catalogues',
@@ -81,6 +82,7 @@ export default function AdminHeroSlidesPage() {
       subtitle: '',
       badge: 'ISO 13485:2016 CERTIFIED',
       image: '/images/transact/image0_3812_2.png',
+      media_type: 'image',
       primaryCtaText: 'Request Quotation',
       primaryCtaLink: '/contact',
       secondaryCtaText: 'Browse Catalogues',
@@ -95,7 +97,10 @@ export default function AdminHeroSlidesPage() {
     setEditingSlide(slide)
     setShowImageManualUrl(false)
     setShowVideoManualUrl(false)
-    setFormData({ ...slide })
+    setFormData({
+      ...slide,
+      media_type: slide.media_type || (slide.video_url ? 'video' : 'image'),
+    })
     setIsModalOpen(true)
   }
 
@@ -372,6 +377,44 @@ export default function AdminHeroSlidesPage() {
                 />
               </div>
 
+              {/* ── Media Type Selection ── */}
+              <div className="p-4 rounded-2xl bg-orange-50/60 border border-orange-200/80 space-y-2">
+                <label className="block text-xs font-bold text-[#081022] uppercase tracking-wide">
+                  Hero Background Media Type *
+                </label>
+                <div className="grid grid-cols-2 gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setFormData({ ...formData, media_type: 'image' })}
+                    className={`flex items-center justify-center gap-2 p-3 rounded-xl border text-xs font-bold transition cursor-pointer ${
+                      formData.media_type !== 'video'
+                        ? 'bg-[#F6851F] text-white border-[#F6851F] shadow-md'
+                        : 'bg-white text-zinc-700 border-zinc-200 hover:border-zinc-300'
+                    }`}
+                  >
+                    <ImageIcon className="w-4 h-4" />
+                    <span>Image Banner</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setFormData({ ...formData, media_type: 'video' })}
+                    className={`flex items-center justify-center gap-2 p-3 rounded-xl border text-xs font-bold transition cursor-pointer ${
+                      formData.media_type === 'video'
+                        ? 'bg-[#F6851F] text-white border-[#F6851F] shadow-md'
+                        : 'bg-white text-zinc-700 border-zinc-200 hover:border-zinc-300'
+                    }`}
+                  >
+                    <Video className="w-4 h-4" />
+                    <span>Video Background</span>
+                  </button>
+                </div>
+                <p className="text-[11px] text-zinc-500">
+                  {formData.media_type === 'video'
+                    ? 'Autoplays full-width MP4 surgical background video with audio controls.'
+                    : 'Displays crisp full-bleed photograph / image banner.'}
+                </p>
+              </div>
+
               {/* ── 1. Slide Image Placeholder & Upload ── */}
               <div className="space-y-2 p-4 rounded-2xl bg-slate-50 border border-slate-200">
                 <div className="flex items-center justify-between">
@@ -399,22 +442,42 @@ export default function AdminHeroSlidesPage() {
                 )}
 
                 <div className="grid grid-cols-1 sm:grid-cols-12 gap-3 items-center">
-                  {/* Live Preview Box */}
-                  <div className="sm:col-span-4 relative aspect-[4/3] rounded-xl bg-white border-2 border-dashed border-zinc-300 overflow-hidden flex items-center justify-center p-2 shadow-inner">
+                  {/* Live Preview Box with Remove / Replace buttons */}
+                  <div className="sm:col-span-5 relative aspect-[4/3] rounded-xl bg-white border-2 border-dashed border-zinc-300 overflow-hidden flex flex-col items-center justify-center p-2 shadow-inner group">
                     {formData.image ? (
-                      <div className="relative w-full h-full">
-                        <Image
-                          src={formData.image}
-                          alt="Slide preview"
-                          fill
-                          unoptimized
-                          className="object-cover rounded-lg"
-                        />
-                      </div>
+                      <>
+                        <div className="relative w-full h-full">
+                          <Image
+                            src={formData.image}
+                            alt="Slide preview"
+                            fill
+                            unoptimized
+                            className="object-cover rounded-lg"
+                          />
+                        </div>
+                        {/* Overlay Controls */}
+                        <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-2 p-2 rounded-xl">
+                          <button
+                            type="button"
+                            onClick={() => imageInputRef.current?.click()}
+                            className="px-3 py-1 bg-white text-zinc-900 rounded-lg text-[11px] font-bold shadow hover:bg-zinc-100 cursor-pointer"
+                          >
+                            Replace Image
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setFormData({ ...formData, image: '' })}
+                            className="px-3 py-1 bg-red-600 text-white rounded-lg text-[11px] font-bold shadow hover:bg-red-700 cursor-pointer"
+                          >
+                            Delete / Remove
+                          </button>
+                        </div>
+                      </>
                     ) : (
                       <div className="text-center p-3 text-zinc-400">
                         <ImageIcon className="w-7 h-7 mx-auto mb-1 opacity-50" />
-                        <span className="text-[10px] font-medium">No Image Selected</span>
+                        <span className="text-[10px] font-medium block">No Image Selected</span>
+                        <span className="text-[9px] text-zinc-400">Click upload on right</span>
                       </div>
                     )}
                   </div>
@@ -432,7 +495,7 @@ export default function AdminHeroSlidesPage() {
                       if (e.dataTransfer.files?.[0]) handleImageFile(e.dataTransfer.files[0])
                     }}
                     onClick={() => imageInputRef.current?.click()}
-                    className={`sm:col-span-8 border-2 border-dashed rounded-xl p-4 text-center cursor-pointer transition flex flex-col items-center justify-center min-h-[110px] ${
+                    className={`sm:col-span-7 border-2 border-dashed rounded-xl p-4 text-center cursor-pointer transition flex flex-col items-center justify-center min-h-[120px] ${
                       isImageDragOver
                         ? 'border-[#F6851F] bg-orange-50/70'
                         : 'border-zinc-300 hover:border-[#F6851F] bg-white'
@@ -456,11 +519,26 @@ export default function AdminHeroSlidesPage() {
                       )}
                     </div>
                     <p className="text-xs font-bold text-zinc-800">
-                      {isImageUploading ? 'Uploading Image...' : 'Click or Drag & Drop to Upload Image'}
+                      {isImageUploading ? 'Uploading Image...' : 'Click or Drag & Drop to Upload'}
                     </p>
-                    <p className="text-[10px] text-zinc-500 mt-0.5">Upload direct from device gallery (PNG, JPG, SVG, WebP)</p>
+                    <p className="text-[10px] text-zinc-500 mt-0.5">Direct device upload (PNG, JPG, SVG, WebP)</p>
                   </div>
                 </div>
+
+                {formData.image && (
+                  <div className="flex items-center justify-between pt-1">
+                    <span className="text-[11px] text-zinc-500 truncate max-w-[280px]">
+                      {formData.image}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => setFormData({ ...formData, image: '' })}
+                      className="text-xs text-red-600 font-bold hover:underline cursor-pointer"
+                    >
+                      Remove Image
+                    </button>
+                  </div>
+                )}
               </div>
 
               {/* ── 2. Slide Video Placeholder & Upload ── */}

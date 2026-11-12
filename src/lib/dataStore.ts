@@ -1752,7 +1752,7 @@ export interface GlobalPartnerData {
   tag_2: string
 }
 
-const defaultGlobalPartner: GlobalPartnerData = {
+export const defaultGlobalPartner: GlobalPartnerData = {
   eyebrow: 'GLOBAL B2B PARTNERSHIP',
   title: 'Your Reliable Medical Instrument Partner',
   title_highlight: 'Instrument Partner',
@@ -1764,17 +1764,17 @@ const defaultGlobalPartner: GlobalPartnerData = {
     {
       value: '50+',
       label: 'Countries Global Presence',
-      icon: '/Global Presence-icon 2.svg',
+      icon: '/global-presence-icon-2.svg',
     },
     {
       value: '150+',
       label: 'Dedicated Professionals',
-      icon: '/Worker-icon 1.svg',
+      icon: '/worker-icon-1.svg',
     },
     {
       value: 'OEM / Private Label',
       label: 'Flexible Solutions',
-      icon: '/Asset 27 1.svg',
+      icon: '/asset-27-1.svg',
     },
   ],
   primary_btn_text: 'Request Your Product',
@@ -1788,14 +1788,14 @@ export function getStoredGlobalPartner(): GlobalPartnerData {
   if (data && Array.isArray(data.metrics)) {
     data.metrics = data.metrics.map((m, idx) => {
       let icon = m.icon
-      if (!icon || icon.includes('Dedicated Professionals') || icon.includes('undefined')) {
-        icon = idx === 1 ? '/Worker-icon 1.svg' : icon
+      if (!icon || icon.includes('Dedicated Professionals') || icon.includes('undefined') || icon.includes('Worker-icon 1')) {
+        icon = idx === 1 ? '/worker-icon-1.svg' : icon
       }
-      if (!icon || icon.includes('Flexible Solutions') || icon.includes('undefined')) {
-        icon = idx === 2 ? '/Asset 27 1.svg' : icon
+      if (!icon || icon.includes('Flexible Solutions') || icon.includes('undefined') || icon.includes('Asset 27 1')) {
+        icon = idx === 2 ? '/asset-27-1.svg' : icon
       }
-      if (!icon || icon.includes('undefined')) {
-        icon = idx === 0 ? '/Global Presence-icon 2.svg' : icon
+      if (!icon || icon.includes('undefined') || icon.includes('Global Presence-icon 2')) {
+        icon = idx === 0 ? '/global-presence-icon-2.svg' : icon
       }
       return { ...m, icon }
     })

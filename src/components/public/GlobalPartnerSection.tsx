@@ -3,10 +3,10 @@
 import React, { useState, useEffect } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { getStoredGlobalPartner, GlobalPartnerData } from '@/src/lib/dataStore'
+import { getStoredGlobalPartner, GlobalPartnerData, defaultGlobalPartner } from '@/src/lib/dataStore'
 
 export default function GlobalPartnerSection() {
-  const [data, setData] = useState<GlobalPartnerData>(getStoredGlobalPartner())
+  const [data, setData] = useState<GlobalPartnerData>(defaultGlobalPartner)
 
   const reloadData = () => {
     setData(getStoredGlobalPartner())
@@ -63,11 +63,14 @@ export default function GlobalPartnerSection() {
               {(data.metrics || []).map((m, idx) => {
                 const defaultIcon =
                   idx === 0
-                    ? '/Global Presence-icon 2.svg'
+                    ? '/global-presence-icon-2.svg'
                     : idx === 1
-                    ? '/Worker-icon 1.svg'
-                    : '/Asset 27 1.svg'
-                const iconSrc = m.icon || defaultIcon
+                    ? '/worker-icon-1.svg'
+                    : '/asset-27-1.svg'
+                let iconSrc = m.icon || defaultIcon
+                if (iconSrc.includes('Worker-icon 1')) iconSrc = '/worker-icon-1.svg'
+                if (iconSrc.includes('Asset 27 1')) iconSrc = '/asset-27-1.svg'
+                if (iconSrc.includes('Global Presence-icon 2')) iconSrc = '/global-presence-icon-2.svg'
 
                 return (
                   <div key={idx} className="flex items-center gap-3">
@@ -119,7 +122,7 @@ export default function GlobalPartnerSection() {
           <div className="lg:col-span-6 xl:col-span-6 flex justify-center lg:justify-end">
             <div className="relative w-full max-w-[560px] aspect-[4/3] rounded-3xl overflow-hidden shadow-xl bg-white border-4 border-white">
               <Image
-                src="/image 353.svg"
+                src="/images/partnership-showcase.png"
                 alt="Transact Global B2B Partnership"
                 fill
                 unoptimized

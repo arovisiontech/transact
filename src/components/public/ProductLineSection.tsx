@@ -23,7 +23,10 @@ function ShowcaseCardItem({
 }) {
   const sanitizeImg = (url: string | undefined) => {
     if (!url || url.startsWith('blob:')) return '/images/catalogues/laryngoscope-cover.webp'
-    return url.replace(/ /g, '%20')
+    let clean = url.replace(/ /g, '%20')
+    if (clean.includes('image10_3812_2.jpg')) clean = clean.replace('image10_3812_2.jpg', 'image10_3812_2.webp')
+    if (clean.includes('image20_3812_2.jpg')) clean = clean.replace('image20_3812_2.jpg', 'image20_3812_2.webp')
+    return clean
   }
 
   const [imgSrc, setImgSrc] = useState(sanitizeImg(card.image))
@@ -58,7 +61,7 @@ function ShowcaseCardItem({
         title={`Open ${card.title}`}
         className="relative w-full rounded-2xl sm:rounded-3xl overflow-hidden bg-[#0A0E17] border border-white/15 shadow-[0_-12px_45px_rgba(0,0,0,0.2),0_25px_60px_rgba(0,0,0,0.3)] flex flex-col justify-between group cursor-pointer block transition-all duration-300 hover:border-orange-500/40"
         style={{
-          minHeight: 'clamp(540px, 72vh, 760px)',
+          minHeight: 'clamp(460px, 64vh, 660px)',
         }}
       >
         {/* Background Image */}
@@ -85,7 +88,7 @@ function ShowcaseCardItem({
         </div>
 
         {/* Top Bar: Left circular badge + Right index pill */}
-        <div className="relative z-10 p-6 sm:p-10 flex items-center justify-between">
+        <div className="relative z-10 p-6 sm:p-8 flex items-center justify-between">
           {/* Left Circular Icon Badge */}
           <div
             className={`w-12 h-12 sm:w-14 sm:h-14 rounded-full flex items-center justify-center shadow-lg p-2.5 transition-transform group-hover:scale-105 ${
@@ -117,11 +120,11 @@ function ShowcaseCardItem({
           </span>
         </div>
 
-        {/* Middle Spacer */}
-        <div className="h-28 sm:h-44 md:h-56" />
+        {/* Middle Flexible Spacer */}
+        <div className="flex-1 min-h-[40px] sm:min-h-[80px]" />
 
         {/* Bottom Content Area */}
-        <div className="relative z-10 p-6 sm:p-10 flex flex-col sm:flex-row sm:items-end justify-between gap-6 bg-gradient-to-t from-black/95 via-black/60 to-transparent pt-10">
+        <div className="relative z-10 p-6 sm:p-8 flex flex-col sm:flex-row sm:items-end justify-between gap-6 bg-gradient-to-t from-black/95 via-black/60 to-transparent pt-8">
           {/* Left Info Column */}
           <div className="space-y-3 max-w-2xl">
             {/* Pill Tag */}

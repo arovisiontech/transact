@@ -127,6 +127,7 @@ export interface HeroSlideItem {
   badge?: string
   image: string
   video_url?: string
+  media_type?: 'video' | 'image'
   primaryCtaText: string
   primaryCtaLink: string
   secondaryCtaText?: string

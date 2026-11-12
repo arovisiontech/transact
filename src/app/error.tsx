@@ -11,7 +11,13 @@ export default function Error({
 }) {
   useEffect(() => {
     console.error('App Error Boundary caught error:', error)
-  }, [error])
+    if (
+      error?.message?.toLowerCase().includes('hydration') ||
+      error?.digest?.toLowerCase().includes('hydration')
+    ) {
+      reset()
+    }
+  }, [error, reset])
 
   const handleReset = () => {
     if (typeof window !== 'undefined') {

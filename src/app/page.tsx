@@ -24,13 +24,19 @@ export default function HomePage() {
       </ClientOnly>
 
       {/* 2. Impact in Numbers Section */}
-      <ImpactNumbersSection />
+      <ClientOnly fallback={<div className="py-12 bg-white min-h-[200px]" />}>
+        <ImpactNumbersSection />
+      </ClientOnly>
 
       {/* 3. About / Facility — text left / building right */}
-      <AboutFacilitySection />
+      <ClientOnly fallback={<div className="py-16 bg-[#F4F7FB] min-h-[400px]" />}>
+        <AboutFacilitySection />
+      </ClientOnly>
 
       {/* 4. Trust & Metallurgy strip — Quality You Can Trust, Every Time */}
-      <TrustFeaturesSection />
+      <ClientOnly fallback={<div className="py-12 bg-white min-h-[200px]" />}>
+        <TrustFeaturesSection />
+      </ClientOnly>
 
       {/* 5. Our Complete Product Line (Airway Showcase) */}
       <ClientOnly fallback={<div className="py-16 bg-white min-h-[450px]" />}>
@@ -48,10 +54,14 @@ export default function HomePage() {
       </ClientOnly>
 
       {/* 8. Global B2B Partner Section */}
-      <GlobalPartnerSection />
+      <ClientOnly fallback={<div className="py-16 bg-[#F4F7FB] min-h-[400px]" />}>
+        <GlobalPartnerSection />
+      </ClientOnly>
 
       {/* 9. Laryngoscope Expertise / Built for Precision & Reliability */}
-      <LaryngoscopeExpertiseSection />
+      <ClientOnly fallback={<div className="py-16 bg-white min-h-[400px]" />}>
+        <LaryngoscopeExpertiseSection />
+      </ClientOnly>
 
       {/* 10. Complete Product Line / Otoscope Showcase */}
       <ClientOnly fallback={<div className="py-16 bg-white min-h-[450px]" />}>
@@ -59,7 +69,9 @@ export default function HomePage() {
       </ClientOnly>
 
       {/* 11. Compliance & Quality + Latest Blogs */}
-      <ComplianceAndBlogsSection />
+      <ClientOnly fallback={<div className="py-16 bg-[#F4F7FB] min-h-[400px]" />}>
+        <ComplianceAndBlogsSection />
+      </ClientOnly>
     </PublicShell>
   )
 }
