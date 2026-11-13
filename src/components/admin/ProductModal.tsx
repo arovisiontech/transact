@@ -155,6 +155,7 @@ export default function ProductModal({ product, isOpen, onClose, onSaved }: Prod
   })
   const fileInputRef = useRef<HTMLInputElement>(null)
   const relFileInputRef = useRef<HTMLInputElement>(null)
+  const bannerFileInputRef = useRef<HTMLInputElement>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
 
   const reloadCategories = async () => {
@@ -218,6 +219,7 @@ export default function ProductModal({ product, isOpen, onClose, onSaved }: Prod
         material: product.material || 'None',
         chart_rows: product.chart_rows && product.chart_rows.length > 0 ? product.chart_rows : defaultSizingRows,
         built_to_perform: product.built_to_perform || defaultBuiltToPerform,
+        hero_banner: product.hero_banner || '',
         gallery_images: sideAngles,
         custom_related_products: product.custom_related_products || [],
         related_product_ids: product.related_product_ids || [],
@@ -242,6 +244,7 @@ export default function ProductModal({ product, isOpen, onClose, onSaved }: Prod
         specifications_markdown:
           '• Completely Sealed One Piece BLADE CONSTRUCTION\n• Distal Lip Of All Integrated Blades\n• Crafted From Finest Stainless Steel AISI 303 / 304\n• Fiber Optic Core With High Transmission Rate\n• Fully Autoclavable And Sterilization Compatible',
         featured_image: '',
+        hero_banner: '',
         gallery_images: [],
         chart_rows: defaultSizingRows,
         built_to_perform: defaultBuiltToPerform,
@@ -349,6 +352,23 @@ export default function ProductModal({ product, isOpen, onClose, onSaved }: Prod
       }
     } catch (err) {
       console.error(`Angle ${angle} upload error:`, err)
+    } finally {
+      setIsUploading(false)
+    }
+  }
+
+  // Upload handler for Hero Section Banner (SS 1 Header background)
+  const handleBannerUpload = async (file: File) => {
+    if (!file) return
+    setIsUploading(true)
+    try {
+      // Landscape compression (1600x500 max, 0.8 quality) -> ~45-65KB WebP
+      const compressed = await compressImage(file, 1600, 0.8)
+      if (compressed.dataUrl) {
+        setFormData((prev) => ({ ...prev, hero_banner: compressed.dataUrl }))
+      }
+    } catch (err) {
+      console.error('Hero banner upload error:', err)
     } finally {
       setIsUploading(false)
     }
@@ -559,6 +579,7 @@ export default function ProductModal({ product, isOpen, onClose, onSaved }: Prod
         custom_related_products: customRelated,
         related_product_ids: formData.related_product_ids || [],
         featured_image: angleSlots[1] || formData.featured_image || '',
+        hero_banner: formData.hero_banner || null,
         gallery_images: [angleSlots[2], angleSlots[3], angleSlots[4]].filter(
           (url): url is string => Boolean(url && url.trim() !== '')
         ),
@@ -743,7 +764,126 @@ export default function ProductModal({ product, isOpen, onClose, onSaved }: Prod
           </div>
 
           {/* ──────────────────────────────────────────────────────── */}
-          {/* 2. CATEGORIZATION & STORE FILTERS                       */}
+          {/* 2. HERO SECTION BANNER & BACKGROUND (SHOWN IN SS 1)      */}
+          {/* ──────────────────────────────────────────────────────── */}
+          <div className="p-5 rounded-2xl bg-white border border-slate-200 space-y-4">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-lg bg-[#F6851F]/15 flex items-center justify-center text-[#F6851F]">
+                  <Layers className="w-4 h-4" />
+                </div>
+                <div>
+                  <h4 className="text-xs font-bold text-[#081022] uppercase tracking-wide">
+                    Hero Section Banner Image (SS 1 Header Background)
+                  </h4>
+                  <p className="text-[11px] text-zinc-500">
+                    High-resolution landscape background banner displayed at the top of the product page & catalog hero header.
+                  </p>
+                </div>
+              </div>
+              <span
+                className={`text-[9px] font-bold px-2 py-0.5 rounded-full shrink-0 ${
+                  formData.hero_banner
+                    ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                    : 'bg-zinc-100 text-zinc-500'
+                }`}
+              >
+                {formData.hero_banner ? 'Custom Banner Active' : 'Default Medical Gradient'}
+              </span>
+            </div>
+
+            {/* Banner Preview & Action Area */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-center">
+              {/* Landscape Banner Preview Box */}
+              <div className="lg:col-span-8 relative h-36 sm:h-44 rounded-xl bg-[#EDF1F6] border border-slate-200 overflow-hidden shadow-inner flex items-center justify-center group">
+                {formData.hero_banner ? (
+                  <div className="relative w-full h-full">
+                    <Image
+                      src={formData.hero_banner}
+                      alt="Hero Section Banner"
+                      fill
+                      unoptimized
+                      className="object-cover object-center"
+                    />
+                    {/* Dark gradient overlay preview matching live hero */}
+                    <div className="absolute inset-0 bg-gradient-to-r from-[#081022]/80 via-[#081022]/50 to-transparent pointer-events-none" />
+                    <div className="absolute bottom-3 left-3 z-10 text-white pointer-events-none">
+                      <span className="text-[10px] font-bold uppercase tracking-wider bg-[#F6851F] px-2 py-0.5 rounded text-white inline-block mb-1">
+                        Header Banner Preview
+                      </span>
+                      <p className="text-xs font-black drop-shadow truncate max-w-sm">
+                        {formData.title || 'Product Hero Section'}
+                      </p>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="text-center p-4 text-zinc-400">
+                    <ImageIcon className="w-8 h-8 mx-auto mb-1 stroke-1 text-slate-300" />
+                    <span className="text-xs text-zinc-500 font-semibold block">
+                      No Custom Hero Banner Added
+                    </span>
+                    <span className="text-[10px] text-zinc-400 block mt-0.5">
+                      The live site will use the standard clean medical background banner.
+                    </span>
+                  </div>
+                )}
+              </div>
+
+              {/* Upload Controls */}
+              <div className="lg:col-span-4 space-y-2.5">
+                <label className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-[#F6851F] hover:bg-[#E07314] text-white text-xs font-bold cursor-pointer transition shadow-sm text-center">
+                  <UploadCloud className="w-4 h-4" />
+                  <span>{formData.hero_banner ? 'Change Hero Banner' : 'Upload Hero Banner'}</span>
+                  <input
+                    ref={bannerFileInputRef}
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0]
+                      if (file) handleBannerUpload(file)
+                    }}
+                  />
+                </label>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    const url = window.prompt(
+                      'Enter or paste Image URL for Hero Section Banner:',
+                      formData.hero_banner || ''
+                    )
+                    if (url !== null) {
+                      setFormData((prev) => ({ ...prev, hero_banner: url.trim() }))
+                    }
+                  }}
+                  className="w-full py-2 rounded-xl border border-slate-200 text-xs font-semibold text-slate-700 hover:border-[#F6851F] hover:text-[#F6851F] transition text-center"
+                >
+                  {formData.hero_banner && !formData.hero_banner.startsWith('data:')
+                    ? 'Edit Banner URL'
+                    : 'Or Paste Banner URL'}
+                </button>
+
+                {formData.hero_banner && (
+                  <button
+                    type="button"
+                    onClick={() => setFormData((prev) => ({ ...prev, hero_banner: '' }))}
+                    className="w-full py-2 rounded-xl bg-rose-50 border border-rose-200 text-xs font-semibold text-rose-600 hover:bg-rose-100 transition text-center flex items-center justify-center gap-1.5"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                    <span>Remove Banner</span>
+                  </button>
+                )}
+
+                <p className="text-[10px] text-zinc-400 text-center leading-tight">
+                  Landscape 1600x450 banner recommended. Automatically compressed to WebP for 1st-upload instant save.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* ──────────────────────────────────────────────────────── */}
+          {/* 3. CATEGORIZATION & STORE FILTERS                       */}
           {/* ──────────────────────────────────────────────────────── */}
           <div className="p-5 rounded-2xl bg-white border border-slate-200 space-y-4">
             <div className="flex items-center justify-between border-b border-slate-100 pb-2">

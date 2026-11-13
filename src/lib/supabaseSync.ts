@@ -104,6 +104,7 @@ export async function fetchLiveProducts(): Promise<ProductItem[]> {
         short_description: p.short_description || src.short_description || '',
         full_description: p.description || src.full_description || '',
         featured_image: p.main_image_url || src.featured_image || '/image 351 (1).svg',
+        hero_banner: src.hero_banner || p.hero_banner || null,
         gallery_images: src.gallery_images || [p.main_image_url || '/image 351 (1).svg'],
         features: src.features || [
           'German Stainless Steel AISI 420/440',

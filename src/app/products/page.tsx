@@ -280,11 +280,17 @@ function ProductsCatalogContent() {
     return true
   })
 
-  // Dynamic Header Titles
+  // Dynamic Header Titles & Banner
   const heroHeading = activeCategory ? activeCategory.name : 'Complete Product Line'
   const heroSubtitle = activeCategory?.description
     ? activeCategory.description
     : 'Hospital-grade German stainless steel and sterile diagnostic solutions engineered for patient safety.'
+  const categoryHeroBanner =
+    (activeCategory && products.find((p) => p.category_id === activeCategory.id && p.hero_banner)?.hero_banner) ||
+    activeCategory?.banner_url ||
+    products.find((p) => p.hero_banner)?.hero_banner ||
+    activeCategory?.card_image ||
+    '/image 431.svg'
 
   return (
     <PublicShell>
@@ -295,7 +301,7 @@ function ProductsCatalogContent() {
         {/* Full Hero Background Banner */}
         <div className="absolute inset-0 w-full h-full pointer-events-none select-none overflow-hidden">
           <Image
-            src={activeCategory?.card_image || '/image 431.svg'}
+            src={categoryHeroBanner}
             alt={heroHeading}
             fill
             priority

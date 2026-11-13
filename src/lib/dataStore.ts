@@ -512,6 +512,28 @@ export async function saveProduct(product: ProductItem): Promise<ProductItem> {
   memoryProducts = prods
   saveToStorage(STORAGE_KEYS.PRODUCTS, prods)
 
+  // If hero_banner is set and category exists, also sync hero_banner to category banner_url
+  if (isBrowser() && updatedProduct.hero_banner && updatedProduct.category_id) {
+    try {
+      const cats = [...getStoredCategories()]
+      const catIdx = cats.findIndex((c) => c.id === updatedProduct.category_id)
+      if (catIdx >= 0) {
+        cats[catIdx] = {
+          ...cats[catIdx],
+          banner_url: updatedProduct.hero_banner,
+          updated_at: new Date().toISOString(),
+        }
+        memoryCategories = cats
+        saveToStorage(STORAGE_KEYS.CATEGORIES, cats)
+        fetch('/api/categories', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'setAll', categories: cats }),
+        }).catch(() => {})
+      }
+    } catch {}
+  }
+
   // Persist directly to server JSON file for cross-device & refresh persistence
   if (isBrowser()) {
     try {

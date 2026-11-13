@@ -27,6 +27,7 @@ export interface ProductItem {
   short_description: string | null
   full_description: string | null
   featured_image: string | null
+  hero_banner?: string | null
   gallery_images?: (ProductImageItem | string)[]
   features?: string[]
   specifications?: Record<string, string>

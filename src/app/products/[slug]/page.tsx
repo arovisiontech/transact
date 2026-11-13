@@ -265,7 +265,7 @@ function ProductDetailContent() {
         {/* Full Hero Background Banner */}
         <div className="absolute inset-0 w-full h-full pointer-events-none select-none overflow-hidden">
           <Image
-            src={product.featured_image || '/image 431.svg'}
+            src={product.hero_banner || product.featured_image || '/image 431.svg'}
             alt={product.title}
             fill
             priority
