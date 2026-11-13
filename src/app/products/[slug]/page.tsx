@@ -86,7 +86,7 @@ function ProductDetailContent() {
   const findInitialProduct = (): ProductItem => {
     if (typeof window !== 'undefined') {
       try {
-        const stored = JSON.parse(localStorage.getItem('transact_products_v3') || '[]')
+        const stored = getStoredProducts()
         if (Array.isArray(stored) && stored.length > 0) {
           const match = stored.find((p: any) => p && (p.slug === slug || p.id === slug))
           if (match) return match
@@ -103,7 +103,7 @@ function ProductDetailContent() {
   const [allProducts, setAllProducts] = useState<ProductItem[]>(() => {
     if (typeof window !== 'undefined') {
       try {
-        const stored = JSON.parse(localStorage.getItem('transact_products_v3') || '[]')
+        const stored = getStoredProducts()
         if (Array.isArray(stored) && stored.length > 0) return stored
       } catch {}
     }
@@ -136,30 +136,52 @@ function ProductDetailContent() {
     'TI-RL-100-5': 1,
   })
 
-  // Load products live from server API in background (no flickering!)
+  // Load products live from server API in background and sync with dataStore
   useEffect(() => {
     let isMounted = true
 
-    const loadProd = async () => {
+    const syncProductData = async () => {
+      // 1. Immediately sync from local dataStore (has latest uploaded angles & related products instantly!)
+      const localList = getStoredProducts()
+      if (localList.length > 0 && isMounted) {
+        setAllProducts(localList)
+        const localFound = localList.find((p) => p && (p.slug === slug || p.id === slug))
+        if (localFound) {
+          setProduct(localFound)
+          setSelectedImage((prev) => prev || localFound.featured_image || '')
+          const initialQty: { [key: string]: number } = {}
+          const rows = localFound.chart_rows || defaultChartRows
+          rows.forEach((r) => {
+            initialQty[r.reference] = 1
+          })
+          setQuantities(initialQty)
+        }
+      }
+
+      // 2. Fetch from /api/products and merge safely without wiping newly uploaded images
       try {
         const res = await fetch('/api/products', { cache: 'no-store' })
         if (res.ok) {
           const live: ProductItem[] = await res.json()
           if (isMounted && Array.isArray(live) && live.length > 0) {
-            setAllProducts(live)
             const found = live.find((p) => p.slug === slug || p.id === slug)
             if (found) {
-              setProduct(found)
-              if (found.featured_image) {
-                setSelectedImage(found.featured_image)
+              const currentLocal = getStoredProducts().find((p) => p && (p.slug === slug || p.id === slug))
+              const mergedProduct: ProductItem = {
+                ...found,
+                // Preserve newly uploaded angles if local has them
+                gallery_images:
+                  currentLocal?.gallery_images && currentLocal.gallery_images.length > 0
+                    ? currentLocal.gallery_images
+                    : found.gallery_images,
+                // Preserve newly uploaded custom related products if local has them
+                custom_related_products:
+                  currentLocal?.custom_related_products && currentLocal.custom_related_products.length > 0
+                    ? currentLocal.custom_related_products
+                    : found.custom_related_products,
               }
-              // Initialize row quantities
-              const initialQty: { [key: string]: number } = {}
-              const rows = found.chart_rows || defaultChartRows
-              rows.forEach((r) => {
-                initialQty[r.reference] = 1
-              })
-              setQuantities(initialQty)
+              setProduct(mergedProduct)
+              setSelectedImage((prev) => prev || mergedProduct.featured_image || '')
             }
           }
         }
@@ -168,9 +190,14 @@ function ProductDetailContent() {
       }
     }
 
-    loadProd()
+    syncProductData()
+
+    // 3. Listen to transact_data_updated event for instant updates on first upload
+    const handleUpdate = () => syncProductData()
+    window.addEventListener('transact_data_updated', handleUpdate)
     return () => {
       isMounted = false
+      window.removeEventListener('transact_data_updated', handleUpdate)
     }
   }, [slug])
 
@@ -207,15 +234,17 @@ function ProductDetailContent() {
     setInquiryModalOpen(true)
   }
 
-  // Only other views that the client explicitly added in gallery_images:
-  const customOtherViews = Array.isArray(product?.gallery_images)
+  // Other views (Angles 2, 3, 4) explicitly uploaded in gallery_images
+  const rawGallery = Array.isArray(product?.gallery_images)
     ? product.gallery_images
-        .map((img) => (typeof img === 'string' ? img : (img as any)?.image_url || (img as any)?.url))
-        .filter((url): url is string => Boolean(url && typeof url === 'string' && url.trim() !== '' && url !== product?.featured_image))
+        .map((img) => (typeof img === 'string' ? img : (img as any)?.image_url || (img as any)?.url || ''))
+        .filter((url): url is string => Boolean(url && typeof url === 'string' && url.trim() !== ''))
     : []
 
-  const hasOtherViews = customOtherViews.length > 0
-  const galleryList = hasOtherViews ? [product?.featured_image, ...customOtherViews].filter(Boolean) as string[] : []
+  const hasOtherViews = rawGallery.length > 0
+  const galleryList = hasOtherViews
+    ? [product?.featured_image, ...rawGallery].filter(Boolean) as string[]
+    : []
 
   return (
     <PublicShell>

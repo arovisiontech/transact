@@ -477,6 +477,17 @@ export default function ProductModal({ product, isOpen, onClose, onSaved }: Prod
 
     setIsSaving(true)
     try {
+      const customRelated = [...(formData.custom_related_products || [])]
+      if (newRelTitle.trim()) {
+        customRelated.push({
+          id: `rel-${Date.now()}`,
+          title: newRelTitle.trim(),
+          sku: newRelSku.trim() || 'TI-RL-100',
+          image: newRelImage || '/images/products/integrated-macintosh-fiber-optic-blade.png',
+          slug: newRelTitle.toLowerCase().replace(/[^\w\s-]/g, '').replace(/[\s_-]+/g, '-'),
+        })
+      }
+
       const prodToSave: ProductItem = {
         id: formData.id || `prod-${Date.now()}`,
         category_id: formData.category_id || null,
@@ -496,7 +507,7 @@ export default function ProductModal({ product, isOpen, onClose, onSaved }: Prod
         material: formData.material || 'None',
         chart_rows: formData.chart_rows && formData.chart_rows.length > 0 ? formData.chart_rows : defaultSizingRows,
         built_to_perform: formData.built_to_perform || defaultBuiltToPerform,
-        custom_related_products: formData.custom_related_products || [],
+        custom_related_products: customRelated,
         related_product_ids: formData.related_product_ids || [],
         featured_image: formData.featured_image || '',
         gallery_images: (formData.gallery_images || [])
