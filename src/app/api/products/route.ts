@@ -7,20 +7,35 @@ const filePath = path.join(process.cwd(), 'src', 'data', 'products.json')
 
 let memoryProductsCache: ProductItem[] | null = null
 
+const PURGED_IDS = new Set([
+  'prod-1794472236251',
+  'prod-1794547009124',
+  'prod-1794549388678',
+  'prod-single-use-blade',
+  'prod-diagnostic-set-pro',
+  'prod-1794382149391',
+])
+
 function readProducts(): ProductItem[] {
+  let list: ProductItem[] = []
   if (memoryProductsCache && memoryProductsCache.length > 0) {
-    return memoryProductsCache
+    list = memoryProductsCache
+  } else {
+    try {
+      if (fs.existsSync(filePath)) {
+        const content = fs.readFileSync(filePath, 'utf8')
+        list = JSON.parse(content)
+      }
+    } catch (e) {
+      console.error('Error reading products.json:', e)
+    }
   }
-  try {
-    if (!fs.existsSync(filePath)) return []
-    const content = fs.readFileSync(filePath, 'utf8')
-    const parsed = JSON.parse(content)
-    memoryProductsCache = parsed
-    return parsed
-  } catch (e) {
-    console.error('Error reading products.json:', e)
-    return memoryProductsCache || []
-  }
+
+  const filtered = list.filter(
+    (p) => p && p.id && !PURGED_IDS.has(p.id) && p.title !== 'test' && p.title !== ': test'
+  )
+  memoryProductsCache = filtered
+  return filtered
 }
 
 function writeProducts(products: ProductItem[]) {

@@ -23,6 +23,8 @@ import {
   deleteProduct,
   saveProduct,
   moveProductOrder,
+  syncServerData,
+  PERMANENT_PURGED_PRODUCT_IDS,
 } from '@/src/lib/dataStore'
 import { ProductItem, CategoryItem } from '@/src/types'
 import ProductModal from '@/src/components/admin/ProductModal'
@@ -62,28 +64,17 @@ export default function AdminProductsPage() {
   const reloadData = async () => {
     try {
       const [pRes, cRes] = await Promise.all([
-        fetch('/api/products', { cache: 'no-store' }),
-        fetch('/api/categories', { cache: 'no-store' }),
+        fetch('/api/products', { cache: 'no-store' }).catch(() => null),
+        fetch('/api/categories', { cache: 'no-store' }).catch(() => null),
       ])
-      if (pRes.ok) {
-        const liveProds = await pRes.json()
-        if (Array.isArray(liveProds) && liveProds.length > 0) {
-          setProducts(liveProds)
-          if (typeof window !== 'undefined') {
-            try {
-              localStorage.setItem('transact_products_v3', JSON.stringify(liveProds))
-              localStorage.setItem('transact_deleted_products_v3', '[]')
-            } catch {}
-          }
-        } else {
-          setProducts(getStoredProducts())
-        }
-      } else {
-        setProducts(getStoredProducts())
+      if (pRes && pRes.ok) {
+        await syncServerData(true)
       }
-      if (cRes.ok) {
+      setProducts(getStoredProducts())
+
+      if (cRes && cRes.ok) {
         const liveCats = await cRes.json()
-        if (Array.isArray(liveCats)) {
+        if (Array.isArray(liveCats) && liveCats.length > 0) {
           setCategories(liveCats)
         } else {
           setCategories(getStoredCategories())
@@ -98,6 +89,23 @@ export default function AdminProductsPage() {
   }
 
   useEffect(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        localStorage.removeItem('transact_products_v3')
+        localStorage.removeItem('transact_deleted_products_v3')
+        // Clean out any purged products that were cached in localStorage
+        const rawProds = localStorage.getItem('transact_products_v5')
+        if (rawProds) {
+          const parsed = JSON.parse(rawProds)
+          if (Array.isArray(parsed)) {
+            const clean = parsed.filter(
+              (p) => p && p.id && !PERMANENT_PURGED_PRODUCT_IDS.has(p.id) && p.title !== 'test'
+            )
+            localStorage.setItem('transact_products_v5', JSON.stringify(clean))
+          }
+        }
+      } catch {}
+    }
     reloadData()
     const handleUpdate = () => reloadData()
     window.addEventListener('transact_data_updated', handleUpdate)

@@ -23,6 +23,15 @@ import initialHeroSlides from '@/src/data/heroSlides.json'
 import initialSubcategories from '@/src/data/subcategories.json'
 import { createClient } from './supabase/client'
 
+export const PERMANENT_PURGED_PRODUCT_IDS = new Set([
+  'prod-1794472236251',
+  'prod-1794547009124',
+  'prod-1794549388678',
+  'prod-single-use-blade',
+  'prod-diagnostic-set-pro',
+  'prod-1794382149391',
+])
+
 const STORAGE_KEYS = {
   PRODUCTS: 'transact_products_v5',
   CATEGORIES: 'transact_categories_v4',
@@ -218,11 +227,14 @@ export async function syncServerData(force = false): Promise<void> {
       const serverProds = await serverProdsRes.json()
       if (Array.isArray(serverProds)) {
         const localProds = getFromStorage<ProductItem[]>(STORAGE_KEYS.PRODUCTS, [])
-        const deletedProdIds = new Set(getFromStorage<string[]>(STORAGE_KEYS.DELETED_PRODUCTS, []))
+        const deletedProdIds = new Set([
+          ...Array.from(PERMANENT_PURGED_PRODUCT_IDS),
+          ...getFromStorage<string[]>(STORAGE_KEYS.DELETED_PRODUCTS, []),
+        ])
 
         const localMap = new Map<string, ProductItem>()
         for (const p of localProds) {
-          if (!deletedProdIds.has(p.id)) {
+          if (!deletedProdIds.has(p.id) && !PERMANENT_PURGED_PRODUCT_IDS.has(p.id) && p.title !== 'test') {
             localMap.set(p.id, p)
           }
         }
@@ -230,22 +242,28 @@ export async function syncServerData(force = false): Promise<void> {
         const mergedMap = new Map<string, ProductItem>()
 
         for (const sProd of serverProds) {
-          if (deletedProdIds.has(sProd.id)) continue
+          if (deletedProdIds.has(sProd.id) || PERMANENT_PURGED_PRODUCT_IDS.has(sProd.id) || sProd.title === 'test') continue
 
           const lProd = localMap.get(sProd.id)
           if (!lProd) {
             mergedMap.set(sProd.id, sProd)
           } else {
-            // Keep local changes if newer or if local has custom uploaded image
+            // Keep local changes if newer or if local has custom uploaded image / angles / related products
             const localTime = new Date(lProd.updated_at || 0).getTime()
             const serverTime = new Date(sProd.updated_at || 0).getTime()
             const localHasCustom = Boolean(
-              lProd.featured_image &&
-              (lProd.featured_image.startsWith('data:') || lProd.featured_image !== sProd.featured_image)
+              (lProd.featured_image && (lProd.featured_image.startsWith('data:') || lProd.featured_image !== sProd.featured_image)) ||
+              (lProd.gallery_images && lProd.gallery_images.length > 0) ||
+              (lProd.custom_related_products && lProd.custom_related_products.length > 0)
             )
 
             if (localHasCustom || localTime >= serverTime) {
-              mergedMap.set(sProd.id, { ...sProd, ...lProd })
+              mergedMap.set(sProd.id, {
+                ...sProd,
+                ...lProd,
+                gallery_images: lProd.gallery_images && lProd.gallery_images.length > 0 ? lProd.gallery_images : sProd.gallery_images,
+                custom_related_products: lProd.custom_related_products && lProd.custom_related_products.length > 0 ? lProd.custom_related_products : sProd.custom_related_products,
+              })
             } else {
               mergedMap.set(sProd.id, sProd)
             }
@@ -366,6 +384,12 @@ export async function initLiveSupabase(): Promise<void> {
       saveToStorage(STORAGE_KEYS.CATALOGUES, catalogues)
     }
 
+    // Purge unwanted dummy products from Supabase permanently
+    try {
+      const supabase = createClient()
+      await supabase.from('products').delete().in('id', Array.from(PERMANENT_PURGED_PRODUCT_IDS))
+    } catch {}
+
     // Setup listener so any other computer or mobile device updates in real time
     setupSupabaseRealtime(async () => {
       await syncServerData()
@@ -378,6 +402,10 @@ export async function initLiveSupabase(): Promise<void> {
 // Auto-trigger on client
 if (isBrowser()) {
   setTimeout(() => {
+    try {
+      localStorage.removeItem('transact_products_v3')
+      localStorage.removeItem('transact_deleted_products_v3')
+    } catch {}
     initLiveSupabase()
   }, 50)
 }
@@ -388,7 +416,10 @@ if (isBrowser()) {
 // ============================================
 export function getStoredProducts(): ProductItem[] {
   if (isBrowser()) {
-    const deletedProdIds = new Set(getFromStorage<string[]>(STORAGE_KEYS.DELETED_PRODUCTS, []))
+    const deletedProdIds = new Set([
+      ...Array.from(PERMANENT_PURGED_PRODUCT_IDS),
+      ...getFromStorage<string[]>(STORAGE_KEYS.DELETED_PRODUCTS, []),
+    ])
     const fromStorage = getFromStorage<ProductItem[]>(STORAGE_KEYS.PRODUCTS, [])
     const sourceList = fromStorage.length > 0 ? fromStorage : memoryProducts
 
@@ -396,6 +427,8 @@ export function getStoredProducts(): ProductItem[] {
       .filter((p) => {
         if (!p || !p.id) return false
         if (deletedProdIds.has(p.id)) return false
+        if (PERMANENT_PURGED_PRODUCT_IDS.has(p.id)) return false
+        if (p.title === 'test' || p.title === ': test') return false
         // Filter out empty / broken placeholder cards without title
         if (!p.title || p.title.trim() === '') return false
 

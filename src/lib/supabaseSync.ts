@@ -54,7 +54,18 @@ export async function fetchLiveProducts(): Promise<ProductItem[]> {
       return []
     }
 
+    const purgedIds = new Set([
+      'prod-1794472236251',
+      'prod-1794547009124',
+      'prod-1794549388678',
+      'prod-single-use-blade',
+      'prod-diagnostic-set-pro',
+      'prod-1794382149391',
+    ])
+
     const cleanData = data.filter((p) => {
+      if (purgedIds.has(p.id)) return false
+      if (p.name === 'test' || p.title === 'test') return false
       const text = `${p.name || ''} ${p.title || ''} ${p.slug || ''} ${p.main_image_url || ''}`.toLowerCase()
       const isMotorcycle =
         text.includes('motorcycle') ||

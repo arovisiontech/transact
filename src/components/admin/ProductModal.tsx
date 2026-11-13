@@ -25,6 +25,38 @@ import { ProductItem, CategoryItem } from '@/src/types'
 import { getStoredCategories, getStoredProducts, saveProduct, saveCategory } from '@/src/lib/dataStore'
 import { compressImage } from '@/src/lib/imageCompressor'
 
+function AngleThumbnail({ src, alt }: { src: string; alt: string }) {
+  const [hasError, setHasError] = useState(false)
+  const [currentSrc, setCurrentSrc] = useState(src)
+
+  useEffect(() => {
+    setCurrentSrc(src)
+    setHasError(false)
+  }, [src])
+
+  if (hasError || !currentSrc || currentSrc.trim() === '') {
+    return (
+      <div className="text-center p-2 text-zinc-400">
+        <ImageIcon className="w-7 h-7 mx-auto mb-1 stroke-1 text-slate-300" />
+        <span className="text-[10px] text-zinc-400 font-medium block">
+          No Image Added
+        </span>
+      </div>
+    )
+  }
+
+  return (
+    <Image
+      src={currentSrc}
+      alt={alt}
+      fill
+      unoptimized
+      onError={() => setHasError(true)}
+      className="object-contain p-1"
+    />
+  )
+}
+
 interface ProductModalProps {
   product: ProductItem | null
   isOpen: boolean
@@ -110,6 +142,17 @@ export default function ProductModal({ product, isOpen, onClose, onSaved }: Prod
   const [newRelImage, setNewRelImage] = useState('/images/products/integrated-macintosh-fiber-optic-blade.png')
   const [isRelUploading, setIsRelUploading] = useState(false)
   const [isRelDragOver, setIsRelDragOver] = useState(false)
+  const [angleSlots, setAngleSlots] = useState<{
+    1: string
+    2: string
+    3: string
+    4: string
+  }>({
+    1: '',
+    2: '',
+    3: '',
+    4: '',
+  })
   const fileInputRef = useRef<HTMLInputElement>(null)
   const relFileInputRef = useRef<HTMLInputElement>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
@@ -153,18 +196,35 @@ export default function ProductModal({ product, isOpen, onClose, onSaved }: Prod
 
   useEffect(() => {
     if (product) {
+      const a1 = product.featured_image || ''
+      const rawGallery = Array.isArray(product.gallery_images)
+        ? product.gallery_images
+            .map((g) => (typeof g === 'string' ? g : (g as any)?.image_url || ''))
+            .filter((url): url is string => Boolean(url && url.trim() !== ''))
+        : []
+      // If gallery had featured_image duplicated, exclude it so side angles 2, 3, 4 don't repeat Angle 1
+      const sideAngles = rawGallery.filter((url) => url !== a1)
+
+      setAngleSlots({
+        1: a1,
+        2: sideAngles[0] || '',
+        3: sideAngles[1] || '',
+        4: sideAngles[2] || '',
+      })
+
       setFormData({
         ...product,
         product_type: product.product_type || 'None',
         material: product.material || 'None',
         chart_rows: product.chart_rows && product.chart_rows.length > 0 ? product.chart_rows : defaultSizingRows,
         built_to_perform: product.built_to_perform || defaultBuiltToPerform,
-        gallery_images: Array.isArray(product.gallery_images) ? product.gallery_images : [],
+        gallery_images: sideAngles,
         custom_related_products: product.custom_related_products || [],
         related_product_ids: product.related_product_ids || [],
       })
     } else {
       const defCat = categories[0]
+      setAngleSlots({ 1: '', 2: '', 3: '', 4: '' })
       setFormData({
         id: `prod-${Date.now()}`,
         title: '',
@@ -245,48 +305,35 @@ export default function ProductModal({ product, isOpen, onClose, onSaved }: Prod
 
   // Helper to read URL of any of the 4 angle slots
   const getAngleUrl = (angle: 1 | 2 | 3 | 4): string => {
-    if (angle === 1) return formData.featured_image || ''
-    const gallery = Array.isArray(formData.gallery_images) ? formData.gallery_images : []
-    const raw = gallery[angle - 2]
-    return typeof raw === 'string' ? raw : (raw as any)?.image_url || ''
+    return angleSlots[angle] || ''
   }
 
   // Helper to update specific angle slot
   const setAngleUrl = (angle: 1 | 2 | 3 | 4, url: string) => {
-    if (angle === 1) {
-      setFormData((prev) => ({ ...prev, featured_image: url }))
-    } else {
-      setFormData((prev) => {
-        const gallery = Array.isArray(prev.gallery_images)
-          ? [...prev.gallery_images.map((g) => (typeof g === 'string' ? g : (g as any)?.image_url || ''))]
-          : []
-        while (gallery.length < 3) gallery.push('')
-        gallery[angle - 2] = url
-        return {
-          ...prev,
-          gallery_images: gallery,
-        }
-      })
-    }
+    setAngleSlots((prev) => {
+      const next = { ...prev, [angle]: url }
+      if (angle === 1) {
+        setFormData((f) => ({ ...f, featured_image: url }))
+      } else {
+        const otherAngles = [next[2], next[3], next[4]].filter(Boolean)
+        setFormData((f) => ({ ...f, gallery_images: otherAngles }))
+      }
+      return next
+    })
   }
 
   // Helper to remove specific angle slot
   const removeAngleImage = (angle: 1 | 2 | 3 | 4) => {
-    if (angle === 1) {
-      setFormData((prev) => ({ ...prev, featured_image: '' }))
-    } else {
-      setFormData((prev) => {
-        const gallery = Array.isArray(prev.gallery_images)
-          ? [...prev.gallery_images.map((g) => (typeof g === 'string' ? g : (g as any)?.image_url || ''))]
-          : []
-        while (gallery.length < 3) gallery.push('')
-        gallery[angle - 2] = ''
-        return {
-          ...prev,
-          gallery_images: gallery,
-        }
-      })
-    }
+    setAngleSlots((prev) => {
+      const next = { ...prev, [angle]: '' }
+      if (angle === 1) {
+        setFormData((f) => ({ ...f, featured_image: '' }))
+      } else {
+        const otherAngles = [next[2], next[3], next[4]].filter(Boolean)
+        setFormData((f) => ({ ...f, gallery_images: otherAngles }))
+      }
+      return next
+    })
   }
 
   // Upload handler for any of the 4 angles
@@ -294,7 +341,9 @@ export default function ProductModal({ product, isOpen, onClose, onSaved }: Prod
     if (!file) return
     setIsUploading(true)
     try {
-      const compressed = await compressImage(file, 1200, 0.82)
+      // High-efficiency web compression: keeps images crisp & lightweight (~35-50KB)
+      // Guarantees reliable instant save on 1st upload without localStorage overflows
+      const compressed = await compressImage(file, 900, 0.78)
       if (compressed.dataUrl) {
         setAngleUrl(angle, compressed.dataUrl)
       }
@@ -509,10 +558,10 @@ export default function ProductModal({ product, isOpen, onClose, onSaved }: Prod
         built_to_perform: formData.built_to_perform || defaultBuiltToPerform,
         custom_related_products: customRelated,
         related_product_ids: formData.related_product_ids || [],
-        featured_image: formData.featured_image || '',
-        gallery_images: (formData.gallery_images || [])
-          .map((g) => (typeof g === 'string' ? g : (g as any)?.image_url || ''))
-          .filter((url): url is string => Boolean(url && url.trim() !== '')),
+        featured_image: angleSlots[1] || formData.featured_image || '',
+        gallery_images: [angleSlots[2], angleSlots[3], angleSlots[4]].filter(
+          (url): url is string => Boolean(url && url.trim() !== '')
+        ),
         sort_order: Number(formData.sort_order) || 1,
       }
 
@@ -639,24 +688,9 @@ export default function ProductModal({ product, isOpen, onClose, onSaved }: Prod
 
                     {/* Image Preview Box */}
                     <div className="relative aspect-[4/3] rounded-xl bg-[#EDF1F6] border border-slate-200 overflow-hidden flex items-center justify-center p-2 mb-3 shadow-inner">
-                      {isPresent ? (
-                        <div className="relative w-full h-full">
-                          <Image
-                            src={imgUrl}
-                            alt={title}
-                            fill
-                            unoptimized
-                            className="object-contain p-1"
-                          />
-                        </div>
-                      ) : (
-                        <div className="text-center p-2 text-zinc-400">
-                          <ImageIcon className="w-7 h-7 mx-auto mb-1 stroke-1 text-slate-300" />
-                          <span className="text-[10px] text-zinc-400 font-medium block">
-                            No Image Added
-                          </span>
-                        </div>
-                      )}
+                      <div className="relative w-full h-full flex items-center justify-center">
+                        <AngleThumbnail src={imgUrl} alt={title} />
+                      </div>
                     </div>
 
                     {/* Upload / Action Buttons */}

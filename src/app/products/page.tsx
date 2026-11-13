@@ -26,6 +26,8 @@ import {
   getStoredFilterFacets,
   addToQuoteCart,
   FilterFacets,
+  syncServerData,
+  PERMANENT_PURGED_PRODUCT_IDS,
 } from '@/src/lib/dataStore'
 import initialProducts from '@/src/data/products.json'
 import initialCategories from '@/src/data/categories.json'
@@ -109,15 +111,7 @@ function ProductsCatalogContent() {
   const subcategoryParam = searchParams.get('subcategory') || searchParams.get('subcat')
 
   const [products, setProducts] = useState<ProductItem[]>(() => {
-    if (typeof window !== 'undefined') {
-      try {
-        const stored = JSON.parse(localStorage.getItem('transact_products_v3') || '[]')
-        if (Array.isArray(stored) && stored.length > 0) {
-          return stored.filter((p: any) => p && p.title && p.title.trim() !== '')
-        }
-      } catch {}
-    }
-    return (initialProducts as unknown as ProductItem[]).filter((p) => p && p.title && p.title.trim() !== '')
+    return getStoredProducts().filter((p) => p && p.title && p.title.trim() !== '')
   })
   const [categoriesList, setCategoriesList] = useState<CategoryItem[]>(initialCategories as unknown as CategoryItem[])
   const [subcategoriesList, setSubcategoriesList] = useState<SubcategoryItem[]>(
@@ -170,39 +164,28 @@ function ProductsCatalogContent() {
       console.warn('Error reading stored categories/facets:', e)
     }
 
-    const deletedProdIds = new Set(
-      typeof window !== 'undefined'
-        ? JSON.parse(localStorage.getItem('transact_deleted_products_v3') || '[]')
-        : []
-    )
-
     try {
-      const res = await fetch('/api/products', { cache: 'no-store' })
-      if (res.ok) {
-        const liveProds: ProductItem[] = await res.json()
-        if (Array.isArray(liveProds) && liveProds.length > 0) {
-          const valid = liveProds.filter((p) => p && p.title && p.title.trim() !== '')
-          setProducts(valid)
-          if (typeof window !== 'undefined') {
-            try {
-              localStorage.setItem('transact_products_v3', JSON.stringify(valid))
-              localStorage.setItem('transact_deleted_products_v3', '[]')
-            } catch {}
-          }
-          setLoading(false)
-          return
-        }
+      const res = await fetch('/api/products', { cache: 'no-store' }).catch(() => null)
+      if (res && res.ok) {
+        await syncServerData(true)
       }
     } catch (err) {
-      console.warn('Live fetch error, falling back to dataStore:', err)
+      console.warn('Live sync error, using dataStore:', err)
     }
 
     const localProds = getStoredProducts().filter((p) => p && p.title && p.title.trim() !== '')
-    if (localProds.length > 0) {
-      setProducts(localProds)
-    }
+    setProducts(localProds)
     setLoading(false)
   }
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        localStorage.removeItem('transact_products_v3')
+        localStorage.removeItem('transact_deleted_products_v3')
+      } catch {}
+    }
+  }, [])
 
   useEffect(() => {
     reloadData()

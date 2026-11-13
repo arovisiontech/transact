@@ -145,10 +145,14 @@ function ProductDetailContent() {
       const localList = getStoredProducts()
       if (localList.length > 0 && isMounted) {
         setAllProducts(localList)
-        const localFound = localList.find((p) => p && (p.slug === slug || p.id === slug))
+        const localFound = localList.find((p) => p && (p.slug === slug || p.id === slug)) || localList[0]
         if (localFound) {
           setProduct(localFound)
-          setSelectedImage((prev) => prev || localFound.featured_image || '')
+          setSelectedImage((prev) => {
+            if (!prev) return localFound.featured_image || ''
+            const inGallery = [localFound.featured_image, ...(localFound.gallery_images || [])].includes(prev)
+            return inGallery ? prev : localFound.featured_image || ''
+          })
           const initialQty: { [key: string]: number } = {}
           const rows = localFound.chart_rows || defaultChartRows
           rows.forEach((r) => {
@@ -164,9 +168,9 @@ function ProductDetailContent() {
         if (res.ok) {
           const live: ProductItem[] = await res.json()
           if (isMounted && Array.isArray(live) && live.length > 0) {
-            const found = live.find((p) => p.slug === slug || p.id === slug)
+            const found = live.find((p) => p.slug === slug || p.id === slug) || live[0]
             if (found) {
-              const currentLocal = getStoredProducts().find((p) => p && (p.slug === slug || p.id === slug))
+              const currentLocal = getStoredProducts().find((p) => p && (p.slug === slug || p.id === slug)) || getStoredProducts()[0]
               const mergedProduct: ProductItem = {
                 ...found,
                 // Preserve newly uploaded angles if local has them
@@ -181,7 +185,11 @@ function ProductDetailContent() {
                     : found.custom_related_products,
               }
               setProduct(mergedProduct)
-              setSelectedImage((prev) => prev || mergedProduct.featured_image || '')
+              setSelectedImage((prev) => {
+                if (!prev) return mergedProduct.featured_image || ''
+                const inGallery = [mergedProduct.featured_image, ...(mergedProduct.gallery_images || [])].includes(prev)
+                return inGallery ? prev : mergedProduct.featured_image || ''
+              })
             }
           }
         }
@@ -241,9 +249,11 @@ function ProductDetailContent() {
         .filter((url): url is string => Boolean(url && typeof url === 'string' && url.trim() !== ''))
     : []
 
-  const hasOtherViews = rawGallery.length > 0
+  const cleanOtherAngles = rawGallery.filter((url) => url !== product?.featured_image)
+
+  const hasOtherViews = cleanOtherAngles.length > 0
   const galleryList = hasOtherViews
-    ? [product?.featured_image, ...rawGallery].filter(Boolean) as string[]
+    ? [product?.featured_image, ...cleanOtherAngles].filter(Boolean) as string[]
     : []
 
   return (
@@ -531,6 +541,10 @@ function ProductDetailContent() {
                         alt={angleLabel}
                         fill
                         unoptimized
+                        onError={(e) => {
+                          const target = e.currentTarget
+                          target.style.display = 'none'
+                        }}
                         className="object-contain p-2"
                       />
                       <span className="absolute bottom-1.5 left-1.5 right-1.5 px-1.5 py-0.5 rounded-md bg-slate-900/80 text-white text-[10px] font-bold text-center truncate">
