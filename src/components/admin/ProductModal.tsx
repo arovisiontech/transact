@@ -80,8 +80,8 @@ export default function ProductModal({ product, isOpen, onClose, onSaved }: Prod
     sku: '',
     category_id: '',
     category_name: '',
-    product_type: 'Macintosh Blades',
-    material: 'Stainless Steel',
+    product_type: 'None',
+    material: 'None',
     price: 125.0,
     stock_quantity: 100,
     badge: 'REUSABLE SURGICAL GRADE',
@@ -155,8 +155,8 @@ export default function ProductModal({ product, isOpen, onClose, onSaved }: Prod
     if (product) {
       setFormData({
         ...product,
-        product_type: product.product_type || 'Macintosh Blades',
-        material: product.material || 'Stainless Steel',
+        product_type: product.product_type || 'None',
+        material: product.material || 'None',
         chart_rows: product.chart_rows && product.chart_rows.length > 0 ? product.chart_rows : defaultSizingRows,
         built_to_perform: product.built_to_perform || defaultBuiltToPerform,
         gallery_images: Array.isArray(product.gallery_images) ? product.gallery_images : [],
@@ -172,8 +172,8 @@ export default function ProductModal({ product, isOpen, onClose, onSaved }: Prod
         sku: `TI-RL-${Math.floor(100 + Math.random() * 900)}`,
         category_id: defCat?.id || 'cat-reusable-laryngoscopes',
         category_name: defCat?.name || 'Reusable Laryngoscopes',
-        product_type: 'Macintosh Blades',
-        material: 'Stainless Steel',
+        product_type: 'None',
+        material: 'None',
         price: 125.0,
         stock_quantity: 100,
         badge: 'REUSABLE SURGICAL GRADE',
@@ -492,8 +492,8 @@ export default function ProductModal({ product, isOpen, onClose, onSaved }: Prod
         short_description: formData.short_description || null,
         full_description: formData.full_description || null,
         specifications_markdown: formData.specifications_markdown || null,
-        product_type: formData.product_type || 'Macintosh Blades',
-        material: formData.material || 'Stainless Steel',
+        product_type: formData.product_type || 'None',
+        material: formData.material || 'None',
         chart_rows: formData.chart_rows && formData.chart_rows.length > 0 ? formData.chart_rows : defaultSizingRows,
         built_to_perform: formData.built_to_perform || defaultBuiltToPerform,
         custom_related_products: formData.custom_related_products || [],
@@ -743,10 +743,11 @@ export default function ProductModal({ product, isOpen, onClose, onSaved }: Prod
               <div>
                 <label className="block text-xs font-bold text-[#081022] mb-1">Product Type *</label>
                 <select
-                  value={formData.product_type || 'Macintosh Blades'}
+                  value={formData.product_type || 'None'}
                   onChange={(e) => setFormData({ ...formData, product_type: e.target.value })}
                   className="w-full text-xs px-3.5 py-2.5 rounded-xl bg-[#FAFAFC] border border-zinc-200 focus:outline-none focus:border-[#F6851F] font-medium"
                 >
+                  <option value="None">None</option>
                   <option value="Macintosh Blades">Macintosh Blades</option>
                   <option value="Miller Blades">Miller Blades</option>
                   <option value="Conventional Single Use">Conventional Single Use</option>
@@ -758,10 +759,11 @@ export default function ProductModal({ product, isOpen, onClose, onSaved }: Prod
               <div>
                 <label className="block text-xs font-bold text-[#081022] mb-1">Material *</label>
                 <select
-                  value={formData.material || 'Stainless Steel'}
+                  value={formData.material || 'None'}
                   onChange={(e) => setFormData({ ...formData, material: e.target.value })}
                   className="w-full text-xs px-3.5 py-2.5 rounded-xl bg-[#FAFAFC] border border-zinc-200 focus:outline-none focus:border-[#F6851F] font-medium"
                 >
+                  <option value="None">None</option>
                   <option value="Stainless Steel">Stainless Steel</option>
                   <option value="Fiber Optic">Fiber Optic</option>
                   <option value="Plastic">Plastic</option>

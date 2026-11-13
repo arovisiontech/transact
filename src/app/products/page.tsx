@@ -214,11 +214,9 @@ function ProductsCatalogContent() {
   // Active Category metadata for Hero header & subcategory filters
   const activeCategory = categoriesList.find(
     (c) =>
-      c.slug === selectedCategory ||
-      c.id === selectedCategory ||
-      (selectedCategory === 'single-use' && c.slug?.includes('single')) ||
-      (selectedCategory === 'reusable' && c.slug?.includes('reusable')) ||
-      (selectedCategory === 'diagnostics' && c.slug?.includes('diagnos'))
+      (c.slug && c.slug.toLowerCase() === selectedCategory.toLowerCase()) ||
+      (c.id && c.id.toLowerCase() === selectedCategory.toLowerCase()) ||
+      (c.name && c.name.toLowerCase() === selectedCategory.toLowerCase())
   )
 
   // Subcategories relevant to currently selected category (or all if 'all')
@@ -232,28 +230,29 @@ function ProductsCatalogContent() {
     // Delete empty / blank cards without title
     if (!prod || !prod.title || prod.title.trim() === '') return false
 
-    // 1. Category Filter
+    // 1. Category Filter - Strict matching so products only appear in their assigned category
     if (selectedCategory && selectedCategory !== 'all') {
-      const catKey = selectedCategory.toLowerCase()
-      const prodCatId = (prod.category_id || '').toLowerCase()
-      const prodCatName = (prod.category_name || '').toLowerCase()
+      const selectedKey = selectedCategory.trim().toLowerCase()
+      const prodCatId = (prod.category_id || '').trim().toLowerCase()
+      const prodCatName = (prod.category_name || '').trim().toLowerCase()
 
       let catMatches = false
       if (activeCategory) {
-        if (prodCatId === activeCategory.id.toLowerCase() || prodCatName === activeCategory.name.toLowerCase()) {
+        const actId = (activeCategory.id || '').trim().toLowerCase()
+        const actName = (activeCategory.name || '').trim().toLowerCase()
+        const actSlug = (activeCategory.slug || '').trim().toLowerCase()
+
+        if (
+          (actId && prodCatId === actId) ||
+          (actName && prodCatName === actName) ||
+          (actSlug && prodCatId === actSlug)
+        ) {
           catMatches = true
         }
-      }
-      if (
-        prodCatId === catKey ||
-        prodCatName.includes(catKey) ||
-        (catKey.includes('single') && prodCatName.includes('single')) ||
-        (catKey.includes('reusable') && prodCatName.includes('reusable')) ||
-        (catKey.includes('diagnost') && prodCatName.includes('diagnost')) ||
-        (catKey.includes('pocket') && prodCatName.includes('pocket')) ||
-        (catKey.includes('otoscop') && prodCatName.includes('otoscop'))
-      ) {
-        catMatches = true
+      } else {
+        if (prodCatId === selectedKey || prodCatName === selectedKey) {
+          catMatches = true
+        }
       }
       if (!catMatches) return false
     }
@@ -276,6 +275,7 @@ function ProductsCatalogContent() {
     if (selectedType && selectedType !== 'all') {
       const pType = (prod.product_type || '').toLowerCase()
       const selType = selectedType.toLowerCase()
+      if (pType === 'none' || !pType) return false
       if (selType === 'macintosh' && !pType.includes('macintosh')) return false
       if (selType === 'miller' && !pType.includes('miller')) return false
       if (selType === 'conventional' && !pType.includes('conventional')) return false
@@ -287,6 +287,7 @@ function ProductsCatalogContent() {
     if (selectedMaterial && selectedMaterial !== 'all') {
       const mat = (prod.material || '').toLowerCase()
       const selMat = selectedMaterial.toLowerCase()
+      if (mat === 'none' || !mat) return false
       if (selMat === 'stainless-steel' && !mat.includes('stainless') && !mat.includes('steel')) return false
       if (selMat === 'fiber-optic' && !mat.includes('fiber')) return false
       if (selMat === 'plastic' && !mat.includes('plastic')) return false
@@ -505,8 +506,9 @@ function ProductsCatalogContent() {
                       const isCatSelected =
                         selectedCategory === cat.slug ||
                         selectedCategory === cat.id ||
-                        (selectedCategory === 'single-use' && cat.slug?.includes('single')) ||
-                        (selectedCategory === 'reusable' && cat.slug?.includes('reusable'))
+                        selectedCategory.toLowerCase() === (cat.slug || '').toLowerCase() ||
+                        selectedCategory.toLowerCase() === (cat.id || '').toLowerCase() ||
+                        selectedCategory.toLowerCase() === (cat.name || '').toLowerCase()
 
                       return (
                         <label
