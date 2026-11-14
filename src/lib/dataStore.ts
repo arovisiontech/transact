@@ -23,30 +23,12 @@ import initialHeroSlides from '@/src/data/heroSlides.json'
 import initialSubcategories from '@/src/data/subcategories.json'
 import { createClient } from './supabase/client'
 
-export const PERMANENT_PURGED_PRODUCT_IDS = new Set([
-  'prod-1794472236251',
-  'prod-1794547009124',
-  'prod-1794549388678',
-  'prod-single-use-blade',
-  'prod-diagnostic-set-pro',
-  'prod-1794382149391',
-])
-
-export const PERMANENT_PURGED_CATEGORY_IDS = new Set([
-  'cat-mccoy-reusable-laryngoscope',
-  'cat-mccoy-disposable-laryngoscope',
-  'cat-disposable-laryngoscope',
-  'cat-laryngoscope-sets',
-  'cat-laryngoscope-handles',
-  'cat-otoscopes-pocket',
-  'cat-otoscopes-metal',
-  'cat-ophthalmoscope-pocket',
-  'cat-ophthalmoscopes-metal',
-])
+export const PERMANENT_PURGED_PRODUCT_IDS = new Set<string>()
+export const PERMANENT_PURGED_CATEGORY_IDS = new Set<string>()
 
 const STORAGE_KEYS = {
-  PRODUCTS: 'transact_products_v5',
-  CATEGORIES: 'transact_categories_v5',
+  PRODUCTS: 'transact_products_v6',
+  CATEGORIES: 'transact_categories_v6',
   DELETED_CATEGORIES: 'transact_deleted_categories_v1',
   DELETED_PRODUCTS: 'transact_deleted_products_v1',
   SUBCATEGORIES: 'transact_subcategories_v3',

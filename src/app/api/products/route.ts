@@ -7,14 +7,7 @@ const filePath = path.join(process.cwd(), 'src', 'data', 'products.json')
 
 let memoryProductsCache: ProductItem[] | null = null
 
-const PURGED_IDS = new Set([
-  'prod-1794472236251',
-  'prod-1794547009124',
-  'prod-1794549388678',
-  'prod-single-use-blade',
-  'prod-diagnostic-set-pro',
-  'prod-1794382149391',
-])
+const PURGED_IDS = new Set<string>()
 
 function readProducts(): ProductItem[] {
   let list: ProductItem[] = []

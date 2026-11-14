@@ -1,34 +1,785 @@
 [
   {
+    "id": "prod-1792934676585",
+    "category_id": "cat-reusable-laryngoscopes",
+    "category_name": "Reusable Laryngoscopes",
+    "title": "tez",
+    "slug": "tez",
+    "sku": "TI-RL-372",
+    "price": 125,
+    "stock_quantity": 100,
+    "badge": "REUSABLE SURGICAL GRADE",
+    "is_featured": true,
+    "is_published": true,
+    "short_description": null,
+    "full_description": null,
+    "specifications_markdown": "• Completely Sealed One Piece BLADE CONSTRUCTION\n• Distal Lip Of All Integrated Blades\n• Crafted From Finest Stainless Steel AISI 303 / 304\n• Fiber Optic Core With High Transmission Rate\n• Fully Autoclavable And Sterilization Compatible\n•  **Bold Text**",
+    "product_type": "Miller Blades",
+    "material": "Fiber Optic",
+    "featured_image": "/images/products/integrated-macintosh-fiber-optic-blade.png",
+    "sort_order": 1,
+    "updated_at": "2026-10-25T13:25:47.321Z",
+    "created_at": "2026-10-25T13:25:47.321Z"
+  },
+  {
+    "id": "prod-1794496581599",
+    "category_id": "cat-reusable-laryngoscopes",
+    "category_name": "Reusable Laryngoscopes",
+    "title": "Testing Product",
+    "slug": "testing-product",
+    "sku": "TI-SU-200",
+    "price": 125,
+    "stock_quantity": 100,
+    "badge": "REUSABLE SURGICAL GRADE",
+    "is_featured": true,
+    "is_published": true,
+    "short_description": null,
+    "full_description": null,
+    "specifications_markdown": "• Completely Sealed One Piece BLADE CONSTRUCTION\n• Distal Lip Of All Integrated Blades\n• Crafted From Finest Stainless Steel AISI 303 / 304\n• Fiber Optic Core With High Transmission Rate\n• Fully Autoclavable And Sterilization Compatible",
+    "product_type": "Macintosh Blades",
+    "material": "Stainless Steel",
+    "chart_rows": [
+      {
+        "reference": "TI-RL-100-0",
+        "blade": "Neonate",
+        "size": "Mac-0",
+        "weight": "85",
+        "length": "L90 X H36"
+      },
+      {
+        "reference": "TI-RL-100-1",
+        "blade": "Infant",
+        "size": "Mac-1",
+        "weight": "89",
+        "length": "L96 X H36"
+      },
+      {
+        "reference": "TI-RL-100-2",
+        "blade": "Child",
+        "size": "Mac-2",
+        "weight": "98",
+        "length": "L111 X H36"
+      },
+      {
+        "reference": "TI-RL-100-3",
+        "blade": "Medium",
+        "size": "Mac-3",
+        "weight": "119",
+        "length": "L135 X H38"
+      },
+      {
+        "reference": "TI-RL-100-4",
+        "blade": "Large Adult",
+        "size": "Mac-4",
+        "weight": "138",
+        "length": "L157 X H39"
+      },
+      {
+        "reference": "TI-RL-100-5",
+        "blade": "X-Large",
+        "size": "Mac-5",
+        "weight": "150",
+        "length": "L176 X H40"
+      }
+    ],
+    "built_to_perform": {
+      "heading": "BUILT TO PERFORM. MADE TO LAST.",
+      "cards": [
+        {
+          "title": "Product Catalogs",
+          "description": "Explore Our Comprehensive Range Of Surgical Instruments Designed For Precision And Professional Use.",
+          "link_text": "View Catalogs",
+          "link_url": "/catalogues"
+        },
+        {
+          "title": "Quality Standards",
+          "description": "Manufactured to DIN and ISO/ASTM Standards with strict quality control to ensure reliability and safety.",
+          "link_text": "View Standards",
+          "link_url": "/about#quality"
+        },
+        {
+          "title": "OEM / Private Label",
+          "description": "Custom Manufacturing, Private Label Branding And Sterile Kitting Solutions Tailored To Your Business Needs.",
+          "link_text": "View OEM Solutions",
+          "link_url": "/production"
+        },
+        {
+          "title": "Materials & Sterilization",
+          "description": "Premium German & Japanese Stainless Steel With Options For Reusable, Single-Use And EO Sterilized Configurations.",
+          "link_text": "View Materials",
+          "link_url": "/about"
+        }
+      ]
+    },
+    "custom_related_products": [],
+    "related_product_ids": [],
+    "featured_image": "/images/uploads/12121-1794496559416.png",
+    "sort_order": 1,
+    "updated_at": "2026-11-12T15:17:18.383Z"
+  },
+  {
+    "id": "prod-1794471666181",
+    "category_id": "cat-reusable-laryngoscopes",
+    "category_name": "Reusable Laryngoscopes",
+    "title": "Integrated Macintosh Flexible Tip Fiber Optic Laryngoscope Blade ",
+    "slug": "integrated-macintosh-flexible-tip-fiber-optic-laryngoscope-blade",
+    "sku": " TI-FRL-200 ",
+    "price": null,
+    "stock_quantity": 100,
+    "badge": "REUSABLE SURGICAL GRADE",
+    "is_featured": true,
+    "is_published": true,
+    "short_description": null,
+    "full_description": null,
+    "specifications_markdown": "• Completely Sealed One Piece BLADE CONSTRUCTION\n• Distal Lip Of All Integrated Blades\n• Crafted From Finest Stainless Steel AISI 303 / 304\n• Fiber Optic Core With High Transmission Rate\n• Fully Autoclavable And Sterilization Compatible",
+    "product_type": "Macintosh Blades",
+    "material": "Stainless Steel",
+    "chart_rows": [
+      {
+        "reference": "TI-FRL-200-0",
+        "blade": "Neonate",
+        "size": "Mac-0",
+        "weight": "128",
+        "length": "L 190 × H 34 "
+      },
+      {
+        "reference": "TI-FRL-200-1",
+        "blade": "Infant",
+        "size": "Mac-1",
+        "weight": "134",
+        "length": "L 195 × H 34 "
+      },
+      {
+        "reference": "TI-FRL-200-2",
+        "blade": "Child",
+        "size": "Mac-2",
+        "weight": "147",
+        "length": "L 215 × H 35 "
+      },
+      {
+        "reference": "TI-FRL-200-3",
+        "blade": "Medium",
+        "size": "Mac-3",
+        "weight": "168",
+        "length": "L 230 × H 39 "
+      },
+      {
+        "reference": "TI-FRL-200-4",
+        "blade": "Large Adult",
+        "size": "Mac-4TI-FRL-200-0",
+        "weight": "197",
+        "length": "L 240 × H 40 "
+      },
+      {
+        "reference": "TI-FRL-200-5",
+        "blade": "X-Large",
+        "size": "Mac-5",
+        "weight": "220",
+        "length": "L 250 × H 40 "
+      }
+    ],
+    "built_to_perform": {
+      "heading": "BUILT TO PERFORM. MADE TO LAST.",
+      "cards": [
+        {
+          "title": "Product Catalogs",
+          "description": "Explore Our Comprehensive Range Of Surgical Instruments Designed For Precision And Professional Use.",
+          "link_text": "View Catalogs",
+          "link_url": "/catalogues"
+        },
+        {
+          "title": "Quality Standards",
+          "description": "Manufactured to DIN and ISO/ASTM Standards with strict quality control to ensure reliability and safety.",
+          "link_text": "View Standards",
+          "link_url": "/about#quality"
+        },
+        {
+          "title": "OEM / Private Label",
+          "description": "Custom Manufacturing, Private Label Branding And Sterile Kitting Solutions Tailored To Your Business Needs.",
+          "link_text": "View OEM Solutions",
+          "link_url": "/production"
+        },
+        {
+          "title": "Materials & Sterilization",
+          "description": "Premium German & Japanese Stainless Steel With Options For Reusable, Single-Use And EO Sterilized Configurations.",
+          "link_text": "View Materials",
+          "link_url": "/about"
+        }
+      ]
+    },
+    "custom_related_products": [],
+    "related_product_ids": [],
+    "featured_image": "/images/uploads/ti-frl-200-1794471693040.png",
+    "sort_order": 1,
+    "updated_at": "2026-11-12T08:31:53.576Z"
+  },
+  {
+    "id": "prod-1794306667552",
+    "category_id": "cat-reusable-laryngoscopes",
+    "category_name": "Reusable Laryngoscopes",
+    "title": "Integrated Macintosh Flexible Tip Fiber Optic Laryngoscope Blade ",
+    "slug": "integrated-macintosh-flexible-tip-fiber-optic-laryngoscope-blade-integrated-macintosh-flexible-tip-fiber-optic-laryngoscope-blade",
+    "sku": "TI-FRL-200 ",
+    "price": 125,
+    "stock_quantity": 100,
+    "badge": "REUSABLE SURGICAL GRADE",
+    "is_featured": true,
+    "is_published": true,
+    "short_description": null,
+    "full_description": null,
+    "specifications_markdown": "• Completely Sealed One Piece BLADE CONSTRUCTION\n• Distal Lip Of All Integrated Blades\n• Crafted From Finest Stainless Steel AISI 303 / 304\n• Fiber Optic Core With High Transmission Rate\n• Fully Autoclavable And Sterilization Compatible",
+    "product_type": "Macintosh Blades",
+    "material": "Stainless Steel",
+    "chart_rows": [
+      {
+        "reference": "TI-RL-100-0",
+        "blade": "Neonate",
+        "size": "Mac-0",
+        "weight": "85",
+        "length": "L90 X H36"
+      },
+      {
+        "reference": "TI-RL-100-1",
+        "blade": "Infant",
+        "size": "Mac-1",
+        "weight": "89",
+        "length": "L96 X H36"
+      },
+      {
+        "reference": "TI-RL-100-2",
+        "blade": "Child",
+        "size": "Mac-2",
+        "weight": "98",
+        "length": "L111 X H36"
+      },
+      {
+        "reference": "TI-RL-100-3",
+        "blade": "Medium",
+        "size": "Mac-3",
+        "weight": "119",
+        "length": "L135 X H38"
+      },
+      {
+        "reference": "TI-RL-100-4",
+        "blade": "Large Adult",
+        "size": "Mac-4",
+        "weight": "138",
+        "length": "L157 X H39"
+      },
+      {
+        "reference": "TI-RL-100-5",
+        "blade": "X-Large",
+        "size": "Mac-5",
+        "weight": "150",
+        "length": "L176 X H40"
+      }
+    ],
+    "built_to_perform": {
+      "heading": "BUILT TO PERFORM. MADE TO LAST.",
+      "cards": [
+        {
+          "title": "Product Catalogs",
+          "description": "Explore Our Comprehensive Range Of Surgical Instruments Designed For Precision And Professional Use.",
+          "link_text": "View Catalogs",
+          "link_url": "/catalogues"
+        },
+        {
+          "title": "Quality Standards",
+          "description": "Manufactured to DIN and ISO/ASTM Standards with strict quality control to ensure reliability and safety.",
+          "link_text": "View Standards",
+          "link_url": "/about#quality"
+        },
+        {
+          "title": "OEM / Private Label",
+          "description": "Custom Manufacturing, Private Label Branding And Sterile Kitting Solutions Tailored To Your Business Needs.",
+          "link_text": "View OEM Solutions",
+          "link_url": "/production"
+        },
+        {
+          "title": "Materials & Sterilization",
+          "description": "Premium German & Japanese Stainless Steel With Options For Reusable, Single-Use And EO Sterilized Configurations.",
+          "link_text": "View Materials",
+          "link_url": "/about"
+        }
+      ]
+    },
+    "custom_related_products": [],
+    "related_product_ids": [],
+    "featured_image": "/images/uploads/ti-frl-200-1794306676204.png",
+    "sort_order": 1,
+    "updated_at": "2026-11-12T06:58:14.032Z",
+    "created_at": "2026-11-12T06:21:22.701Z"
+  },
+  {
+    "id": "prod-pocket-led-otoscope",
+    "category_id": "cat-pocket-otoscopes",
+    "category_name": "Pocket Otoscopes",
+    "subcategory_id": "subcat-pocket-led-otoscopes",
+    "subcategory_name": "Pocket LED Otoscopes",
+    "title": "Mini LED Pocket Otoscope",
+    "slug": "mini-led-pocket-otoscope",
+    "sku": "TI-PO-400",
+    "price": 95,
+    "stock_quantity": 250,
+    "badge": "PORTABLE LED",
+    "is_featured": true,
+    "is_published": true,
+    "short_description": "Compact pocket otoscope with high-intensity LED light and swivel 3x magnifying lens.",
+    "full_description": "Lightweight, pocket-clip portable diagnostic otoscope ideal for ENT rounds and ambulatory clinics.",
+    "specifications_markdown": "• 3x Swiveling optical glass viewing window\n• Sealed pneumatic otoscopy port\n• Powered by 2x AA standard alkaline batteries\n• Integrated sturdy shirt pocket clip",
+    "product_type": "Plastic / Fiber Optic",
+    "material": "Fiber Optic",
+    "featured_image": "/Rectangle 839.svg",
+    "sort_order": 4,
+    "updated_at": "2026-10-25T13:25:47.321Z",
+    "created_at": "2026-10-25T12:00:00.000Z"
+  },
+  {
     "id": "prod-1794304398490",
     "category_id": "cat-reusable-laryngoscopes",
     "category_name": "Reusable Laryngoscopes",
     "subcategory_id": "subcat-macintosh-miller",
     "subcategory_name": "Macintosh & Miller Reusable Blades",
-    "title": "Interchangeable Macintosh Fiber Optic BladeReference",
-    "slug": "interchangeable-macintosh-fiber-optic-bladereference",
-    "sku": "TI-RL-107",
+    "title": "Integrated Macintosh Flexible Tip Fiber Optic Laryngoscope Blade",
+    "slug": "integrated-macintosh-flexible-tip-fiber-optic-laryngoscope-blade",
+    "sku": "TI-FRL-200",
     "price": 125,
-    "wholesale_price": "-0.01",
+    "wholesale_price": "RFQ",
+    "stock_quantity": 100,
+    "badge": "FEATURED",
+    "is_featured": true,
+    "is_published": true,
+    "short_description": "Flexible tip levering laryngoscope blade engineered for difficult airway intubation with integrated fiber-optic bundle.",
+    "full_description": "Manufactured from German surgical stainless steel AISI 303/304, featuring an adjustable distal tip controlled by a rear lever for elevation of the epiglottis during difficult laryngoscopy.",
+    "specifications_markdown": "• Integrated fiber-optic light bundle\n• Flexible articulating tip with thumb control lever\n• Autoclavable up to 134°C\n• Complies with ISO 7376 standards",
+    "product_type": "Macintosh Blades",
+    "material": "Stainless Steel",
+    "featured_image": "/images/transact/image2_3812_2.png",
+    "sort_order": 1,
+    "updated_at": "2026-11-12T12:00:00.000Z",
+    "created_at": "2026-11-12T12:00:00.000Z",
+    "chart_rows": [
+      {
+        "reference": "TI-FRL-200-0",
+        "blade": "Neonate",
+        "size": "Mac-0",
+        "weight": "128",
+        "length": "L 190 × H 34 "
+      },
+      {
+        "reference": "TI-FRL-200-1",
+        "blade": "Infant",
+        "size": "Mac-1",
+        "weight": "134",
+        "length": "L 195 × H 34 "
+      },
+      {
+        "reference": "TI-FRL-200-2",
+        "blade": "Child",
+        "size": "Mac-2",
+        "weight": "147",
+        "length": "L 215 × H 35 "
+      },
+      {
+        "reference": "TI-FRL-200-3",
+        "blade": "Medium",
+        "size": "Mac-3",
+        "weight": "168",
+        "length": "L 230 × H 39 "
+      },
+      {
+        "reference": "TI-FRL-200-4",
+        "blade": "Large Adult",
+        "size": "Mac-4",
+        "weight": "197",
+        "length": "L 240 × H 40 "
+      },
+      {
+        "reference": "TI-FRL-200-5",
+        "blade": "X-Large",
+        "size": "Mac-5",
+        "weight": "220",
+        "length": "L 250 × H 40 "
+      }
+    ],
+    "built_to_perform": {
+      "heading": "BUILT TO PERFORM. MADE TO LAST.",
+      "cards": [
+        {
+          "title": "Product Catalogs",
+          "description": "Explore Our Comprehensive Range Of Surgical Instruments Designed For Precision And Professional Use.",
+          "link_text": "View Catalogs",
+          "link_url": "/catalogues"
+        },
+        {
+          "title": "Quality Standards",
+          "description": "Manufactured to DIN and ISO/ASTM Standards with strict quality control to ensure reliability and safety.",
+          "link_text": "View Standards",
+          "link_url": "/about#quality"
+        },
+        {
+          "title": "OEM / Private Label",
+          "description": "Custom Manufacturing, Private Label Branding And Sterile Kitting Solutions Tailored To Your Business Needs.",
+          "link_text": "View OEM Solutions",
+          "link_url": "/production"
+        },
+        {
+          "title": "Materials & Sterilization",
+          "description": "Premium German & Japanese Stainless Steel With Options For Reusable, Single-Use And EO Sterilized Configurations.",
+          "link_text": "View Materials",
+          "link_url": "/about"
+        }
+      ]
+    },
+    "custom_related_products": [],
+    "related_product_ids": [],
+    "hero_banner": null
+  },
+  {
+    "id": "prod-reusable-macintosh",
+    "category_id": "cat-reusable-laryngoscopes",
+    "category_name": "Reusable Laryngoscopes",
+    "subcategory_id": "subcat-macintosh-miller",
+    "subcategory_name": "Macintosh & Miller Reusable Blades",
+    "title": "Integrated Macintosh Fiber Optic Blade",
+    "slug": "integrated-macintosh-fiber-optic-blade",
+    "sku": "TI-RL-100",
+    "price": 125,
     "stock_quantity": 100,
     "badge": "REUSABLE SURGICAL GRADE",
     "is_featured": true,
     "is_published": true,
-    "short_description": "Completely Sealed One Piece BLADE CONSTRUCTION with Distal Lip Of All Integrated Blades and Fiber Optic Core.",
-    "full_description": "Crafted From Finest Stainless Steel AISI 303 / 304 with Fiber Optic Core With High Transmission Rate. Fully Autoclavable And Sterilization Compatible.",
+    "short_description": "Precision engineered reusable stainless steel Macintosh blade with integrated fiber optic bundle.",
+    "full_description": "Crafted from German stainless steel AISI 303/304 with superior optical illumination and cryogenic treatment for maximum longevity.",
     "specifications_markdown": "• Completely Sealed One Piece BLADE CONSTRUCTION\n• Distal Lip Of All Integrated Blades\n• Crafted From Finest Stainless Steel AISI 303 / 304\n• Fiber Optic Core With High Transmission Rate\n• Fully Autoclavable And Sterilization Compatible",
     "product_type": "Macintosh Blades",
     "material": "Stainless Steel",
-    "featured_image": "/images/transact/image2_3812_2.png",
+    "featured_image": "/images/products/integrated-macintosh-fiber-optic-blade.png",
+    "sort_order": 1,
+    "updated_at": "2026-10-25T13:25:47.321Z",
+    "created_at": "2026-10-25T12:00:00.000Z"
+  },
+  {
+    "id": "prod-1794472943177",
+    "category_id": "cat-reusable-laryngoscopes",
+    "category_name": "Reusable Laryngoscopes",
+    "title": "Interchangeable Macintosh Fiber Optic BladeReference  ",
+    "slug": "interchangeable-macintosh-fiber-optic-bladereference",
+    "sku": "TI-RL-107",
+    "price": null,
+    "stock_quantity": 100,
+    "badge": "REUSABLE SURGICAL GRADE",
+    "is_featured": true,
+    "is_published": true,
+    "short_description": null,
+    "full_description": null,
+    "specifications_markdown": "• Completely Sealed One Piece BLADE CONSTRUCTION\n• Distal Lip Of All Integrated Blades\n• Crafted From Finest Stainless Steel AISI 303 / 304\n• Fiber Optic Core With High Transmission Rate\n• Fully Autoclavable And Sterilization Compatible",
+    "product_type": "Macintosh Blades",
+    "material": "Stainless Steel",
+    "chart_rows": [
+      {
+        "reference": "TI-RL-107",
+        "blade": "Paediatric ",
+        "size": "Mac-00",
+        "weight": "85",
+        "length": "L90 X H36"
+      },
+      {
+        "reference": "TI-RL-107",
+        "blade": "Neonate ",
+        "size": "Mac-0",
+        "weight": "89",
+        "length": "L96 X H36"
+      },
+      {
+        "reference": "TI-RL-107",
+        "blade": "Infant",
+        "size": "Mac-1",
+        "weight": "98",
+        "length": "L111 X H36"
+      },
+      {
+        "reference": "TI-RL-107",
+        "blade": "Child",
+        "size": "Mac-2",
+        "weight": "119",
+        "length": "L135 X H38"
+      },
+      {
+        "reference": "TI-RL-107",
+        "blade": "Medium",
+        "size": "Mac-3",
+        "weight": "138",
+        "length": "L157 X H39"
+      },
+      {
+        "reference": "TI-RL-107",
+        "blade": "Large Adult",
+        "size": "Mac-4",
+        "weight": "150",
+        "length": "L176 X H40"
+      },
+      {
+        "reference": "TI-RL-107",
+        "blade": "X-Large",
+        "size": "Mac-5",
+        "weight": "100",
+        "length": "L120 X H36"
+      }
+    ],
+    "built_to_perform": {
+      "heading": "BUILT TO PERFORM. MADE TO LAST.",
+      "cards": [
+        {
+          "title": "Product Catalogs",
+          "description": "Explore Our Comprehensive Range Of Surgical Instruments Designed For Precision And Professional Use.",
+          "link_text": "View Catalogs",
+          "link_url": "/catalogues"
+        },
+        {
+          "title": "Quality Standards",
+          "description": "Manufactured to DIN and ISO/ASTM Standards with strict quality control to ensure reliability and safety.",
+          "link_text": "View Standards",
+          "link_url": "/about#quality"
+        },
+        {
+          "title": "OEM / Private Label",
+          "description": "Custom Manufacturing, Private Label Branding And Sterile Kitting Solutions Tailored To Your Business Needs.",
+          "link_text": "View OEM Solutions",
+          "link_url": "/production"
+        },
+        {
+          "title": "Materials & Sterilization",
+          "description": "Premium German & Japanese Stainless Steel With Options For Reusable, Single-Use And EO Sterilized Configurations.",
+          "link_text": "View Materials",
+          "link_url": "/about"
+        }
+      ]
+    },
+    "custom_related_products": [],
+    "related_product_ids": [],
+    "featured_image": "/images/uploads/ti-rl-107-1794472956718.png",
+    "sort_order": 1,
+    "updated_at": "2026-11-12T08:48:23.648Z",
     "hero_banner": "/image 431.svg",
     "gallery_images": [
-      "/images/transact/image2_3812_2.png",
+      "/images/uploads/ti-rl-107-1794472956718.png",
       "/images/transact/image1_3812_2.png",
       "/images/transact/image4_3812_2.png",
       "/images/products/integrated-macintosh-fiber-optic-blade.png"
+    ]
+  },
+  {
+    "id": "prod-1794304781279",
+    "category_id": "cat-reusable-laryngoscopes",
+    "category_name": "Reusable Laryngoscopes",
+    "title": "Conventional Macintosh Blade ",
+    "slug": "conventional-macintosh-blade",
+    "sku": "TI-RL-105 ",
+    "price": null,
+    "stock_quantity": 100,
+    "badge": "REUSABLE SURGICAL GRADE",
+    "is_featured": true,
+    "is_published": true,
+    "short_description": null,
+    "full_description": null,
+    "specifications_markdown": "• Completely Sealed One Piece BLADE CONSTRUCTION\n• Distal Lip Of All Integrated Blades\n• Crafted From Finest Stainless Steel AISI 303 / 304\n• Fiber Optic Core With High Transmission Rate\n• Fully Autoclavable And Sterilization Compatible",
+    "product_type": "Macintosh Blades",
+    "material": "Stainless Steel",
+    "chart_rows": [
+      {
+        "reference": "TI-RL-105-00 ",
+        "blade": "Paediatric",
+        "size": "Mac-00",
+        "weight": "50",
+        "length": "L 78 × H 30 "
+      },
+      {
+        "reference": "TI-RL-105-0",
+        "blade": "Neonate ",
+        "size": "Mac-0",
+        "weight": "57",
+        "length": "L 83 × H 30 "
+      },
+      {
+        "reference": "TI-RL-105-1",
+        "blade": "Infant ",
+        "size": "Mac-1",
+        "weight": "73",
+        "length": "L 97 × H 35 "
+      },
+      {
+        "reference": "TI-RL-105-2",
+        "blade": "Child ",
+        "size": "Mac-2",
+        "weight": "80",
+        "length": "L 115 × H 36"
+      },
+      {
+        "reference": "TI-RL-105-3",
+        "blade": "Medium ",
+        "size": "Mac-3",
+        "weight": "96",
+        "length": "L157 X H39"
+      },
+      {
+        "reference": "TI-RL-105-4",
+        "blade": "Large Adult",
+        "size": "Mac-4",
+        "weight": "111",
+        "length": "L 157 × H 42 "
+      },
+      {
+        "reference": "TI-RL-105-5",
+        "blade": "X-Large",
+        "size": "Mac-5",
+        "weight": "125",
+        "length": "L 175 × H 42 "
+      }
     ],
+    "built_to_perform": {
+      "heading": "BUILT TO PERFORM. MADE TO LAST.",
+      "cards": [
+        {
+          "title": "Product Catalogs",
+          "description": "Explore Our Comprehensive Range Of Surgical Instruments Designed For Precision And Professional Use.",
+          "link_text": "View Catalogs",
+          "link_url": "/catalogues"
+        },
+        {
+          "title": "Quality Standards",
+          "description": "Manufactured to DIN and ISO/ASTM Standards with strict quality control to ensure reliability and safety.",
+          "link_text": "View Standards",
+          "link_url": "/about#quality"
+        },
+        {
+          "title": "OEM / Private Label",
+          "description": "Custom Manufacturing, Private Label Branding And Sterile Kitting Solutions Tailored To Your Business Needs.",
+          "link_text": "View OEM Solutions",
+          "link_url": "/production"
+        },
+        {
+          "title": "Materials & Sterilization",
+          "description": "Premium German & Japanese Stainless Steel With Options For Reusable, Single-Use And EO Sterilized Configurations.",
+          "link_text": "View Materials",
+          "link_url": "/about"
+        }
+      ]
+    },
+    "custom_related_products": [],
+    "related_product_ids": [],
+    "featured_image": "/images/uploads/ti-rl-105-1794304789772.png",
     "sort_order": 1,
-    "updated_at": "2026-11-14T07:00:00.000Z",
-    "created_at": "2026-11-12T12:00:00.000Z"
+    "updated_at": "2026-11-10T10:08:05.817Z",
+    "created_at": "2026-11-10T10:08:05.817Z"
+  },
+  {
+    "id": "prod-1794472325584",
+    "category_id": "cat-reusable-laryngoscopes",
+    "category_name": "Reusable Laryngoscopes",
+    "title": "Integrated Macintosh Fiber Optic Blade",
+    "slug": "integrated-macintosh-fiber-optic-blade",
+    "sku": "TI-RL-100 ",
+    "price": null,
+    "stock_quantity": 100,
+    "badge": "REUSABLE SURGICAL GRADE",
+    "is_featured": true,
+    "is_published": true,
+    "short_description": null,
+    "full_description": null,
+    "specifications_markdown": "• Completely Sealed One Piece BLADE CONSTRUCTION\n• Distal Lip Of All Integrated Blades\n• Crafted From Finest Stainless Steel AISI 303 / 304\n• Fiber Optic Core With High Transmission Rate\n• Fully Autoclavable And Sterilization Compatible",
+    "product_type": "Macintosh Blades",
+    "material": "Stainless Steel",
+    "chart_rows": [
+      {
+        "reference": "TI-RL-100-0 ",
+        "blade": "Neonate ",
+        "size": "MAC-0 ",
+        "weight": "85 ",
+        "length": "L 90 × H 36 "
+      }
+    ],
+    "built_to_perform": {
+      "heading": "BUILT TO PERFORM. MADE TO LAST.",
+      "cards": [
+        {
+          "title": "Product Catalogs",
+          "description": "Explore Our Comprehensive Range Of Surgical Instruments Designed For Precision And Professional Use.",
+          "link_text": "View Catalogs",
+          "link_url": "/catalogues"
+        },
+        {
+          "title": "Quality Standards",
+          "description": "Manufactured to DIN and ISO/ASTM Standards with strict quality control to ensure reliability and safety.",
+          "link_text": "View Standards",
+          "link_url": "/about#quality"
+        },
+        {
+          "title": "OEM / Private Label",
+          "description": "Custom Manufacturing, Private Label Branding And Sterile Kitting Solutions Tailored To Your Business Needs.",
+          "link_text": "View OEM Solutions",
+          "link_url": "/production"
+        },
+        {
+          "title": "Materials & Sterilization",
+          "description": "Premium German & Japanese Stainless Steel With Options For Reusable, Single-Use And EO Sterilized Configurations.",
+          "link_text": "View Materials",
+          "link_url": "/about"
+        }
+      ]
+    },
+    "custom_related_products": [],
+    "related_product_ids": [],
+    "featured_image": "/images/uploads/ti-rl-100-1794472340621.png",
+    "sort_order": 1,
+    "updated_at": "2026-11-12T08:34:00.309Z"
+  },
+  {
+    "id": "prod-single-use-blade",
+    "category_id": "cat-single-use-laryngoscopes",
+    "category_name": "Single Use Laryngoscopes",
+    "subcategory_id": "subcat-disposable-sterile",
+    "subcategory_name": "Sterile Disposable Airway Blades",
+    "title": "Disposable Sterile Fiber Optic Blade",
+    "slug": "disposable-sterile-fiber-optic-blade",
+    "sku": "TI-SL-200",
+    "price": 45,
+    "stock_quantity": 500,
+    "badge": "STERILE DISPOSABLE",
+    "is_featured": true,
+    "is_published": true,
+    "short_description": "Hygienic, single-patient use sterile laryngoscope blade preventing cross-contamination in critical airway management.",
+    "full_description": "Pre-sterilized, medical-grade drop-tested blade engineered for critical emergency intubation without reprocessing delays.",
+    "specifications_markdown": "• Individual Sterile Packaging\n• High-transmission acrylic optical light guide\n• Fits standard ISO 7376 green specification handles\n• 100% Recyclable medical grade polymer & steel",
+    "product_type": "Conventional Single Use",
+    "material": "Plastic / Fiber Optic",
+    "featured_image": "/image 352.svg",
+    "sort_order": 2,
+    "updated_at": "2026-10-25T13:25:47.321Z",
+    "created_at": "2026-10-25T12:00:00.000Z"
+  },
+  {
+    "id": "prod-diagnostic-set-pro",
+    "category_id": "cat-diagnostic-sets",
+    "category_name": "Diagnostic & Otoscopy Sets",
+    "subcategory_id": "subcat-clinical-diagnostics",
+    "subcategory_name": "Clinical Diagnostic Otoscopy Sets",
+    "title": "Clinical Diagnostic Otoscope & Ophthalmoscope Set",
+    "slug": "clinical-diagnostic-otoscope-set",
+    "sku": "TI-DS-300",
+    "price": 280,
+    "stock_quantity": 80,
+    "badge": "CLINICAL GRADE",
+    "is_featured": true,
+    "is_published": true,
+    "short_description": "Complete ENT clinical examination kit with coaxial optics and scratch-resistant lenses.",
+    "full_description": "Premium clinical diagnostics set offering shadow-free ear and retinal examinations with variable rheostat brightness control.",
+    "specifications_markdown": "• Coaxial optical alignment for shadow-free fundoscopy\n• Fiber-optic 3.5V LED daylight temperature illumination\n• Includes reusable specula and heavy-duty protective hard case",
+    "product_type": "Miller Blades",
+    "material": "Fiber Optic",
+    "featured_image": "/image 351 (1).svg",
+    "sort_order": 3,
+    "updated_at": "2026-10-25T13:25:47.321Z",
+    "created_at": "2026-10-25T12:00:00.000Z"
   }
 ]

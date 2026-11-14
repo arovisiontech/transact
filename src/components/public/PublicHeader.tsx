@@ -10,7 +10,8 @@ import {
   ArrowRight,
 } from 'lucide-react'
 import Image from 'next/image'
-import { getQuoteCart } from '@/src/lib/dataStore'
+import { getQuoteCart, getStoredCategories } from '@/src/lib/dataStore'
+import { CategoryItem } from '@/src/types'
 
 interface PublicHeaderProps {
   onOpenSearch?: () => void
@@ -31,6 +32,19 @@ export default function PublicHeader({ onOpenSearch, onOpenQuote }: PublicHeader
   const [mobileExpandedDropdown, setMobileExpandedDropdown] = useState<string | null>(null)
   const [quoteCount, setQuoteCount] = useState(0)
   const [isOverProductLine, setIsOverProductLine] = useState(false)
+  const [categories, setCategories] = useState<CategoryItem[]>([])
+
+  useEffect(() => {
+    const updateCategories = () => {
+      const all = getStoredCategories() || []
+      const active = all.filter((c) => c && c.is_published !== false)
+      setCategories(active)
+    }
+    updateCategories()
+
+    window.addEventListener('transact_data_updated', updateCategories)
+    return () => window.removeEventListener('transact_data_updated', updateCategories)
+  }, [])
 
   useEffect(() => {
     const updateQuote = () => {
@@ -75,10 +89,17 @@ export default function PublicHeader({ onOpenSearch, onOpenQuote }: PublicHeader
       hasDropdown: true,
       items: [
         { name: 'All Instruments Catalog', href: '/products' },
-        { name: 'Reusable Laryngoscopes', href: '/products?category=reusable-laryngoscopes' },
-        { name: 'Single Use Laryngoscopes', href: '/products?category=single-use-laryngoscopes' },
-        { name: 'Diagnostic & Otoscopy Sets', href: '/products?category=diagnostics' },
-        { name: 'Pocket Otoscopes', href: '/products?category=pocket-otoscopes' },
+        ...(categories.length > 0
+          ? categories.map((c) => ({
+              name: c.name,
+              href: `/products?category=${encodeURIComponent(c.slug || c.id)}`,
+            }))
+          : [
+              { name: 'Reusable Laryngoscopes', href: '/products?category=reusable-laryngoscopes' },
+              { name: 'Single Use Laryngoscopes', href: '/products?category=single-use-laryngoscopes' },
+              { name: 'Diagnostic & Otoscopy Sets', href: '/products?category=diagnostics' },
+              { name: 'Pocket Otoscopes', href: '/products?category=pocket-otoscopes' },
+            ]),
       ],
     },
     {
@@ -182,8 +203,8 @@ export default function PublicHeader({ onOpenSearch, onOpenQuote }: PublicHeader
 
                   {/* Dropdown Menu with Hover Bridge */}
                   {isOpen && link.items && (
-                    <div className="absolute top-full left-0 pt-2 z-50 w-64 animate-in fade-in slide-in-from-top-1 duration-150">
-                      <div className="bg-[#0A1328] rounded-2xl shadow-2xl border border-white/10 py-2 text-white overflow-hidden">
+                    <div className="absolute top-full left-0 pt-2 z-50 w-72 animate-in fade-in slide-in-from-top-1 duration-150">
+                      <div className="bg-[#0A1328] rounded-2xl shadow-2xl border border-white/10 py-2 text-white max-h-[460px] overflow-y-auto">
                         {link.items.map((sub) => (
                           <Link
                             key={sub.name}
