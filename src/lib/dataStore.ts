@@ -27,20 +27,20 @@ export const PERMANENT_PURGED_PRODUCT_IDS = new Set<string>()
 export const PERMANENT_PURGED_CATEGORY_IDS = new Set<string>()
 
 const STORAGE_KEYS = {
-  PRODUCTS: 'transact_products_v6',
-  CATEGORIES: 'transact_categories_v6',
-  DELETED_CATEGORIES: 'transact_deleted_categories_v1',
-  DELETED_PRODUCTS: 'transact_deleted_products_v1',
-  SUBCATEGORIES: 'transact_subcategories_v3',
+  PRODUCTS: 'transact_products_v7',
+  CATEGORIES: 'transact_categories_v7',
+  DELETED_CATEGORIES: 'transact_deleted_categories_v2',
+  DELETED_PRODUCTS: 'transact_deleted_products_v2',
+  SUBCATEGORIES: 'transact_subcategories_v4',
   CATALOGUES: 'transact_catalogues_v3',
   HERO_SLIDES: 'transact_hero_slides_v3',
   BANNERS: 'transact_banners_v3',
   INQUIRIES: 'transact_inquiries_v3',
   SETTINGS: 'transact_settings_v3',
   QUOTE_CART: 'transact_quote_cart_v3',
-  PRODUCT_LINE: 'transact_product_line_v3',
-  PORTFOLIO_CARDS: 'transact_portfolio_cards_v4',
-  OTOSCOPE_CARDS: 'transact_otoscope_cards_v4',
+  PRODUCT_LINE: 'transact_product_line_v4',
+  PORTFOLIO_CARDS: 'transact_portfolio_cards_v5',
+  OTOSCOPE_CARDS: 'transact_otoscope_cards_v5',
   FILTER_FACETS: 'transact_filter_facets_v3',
   PROJECT_DEV: 'transact_project_dev_v3',
   PRECISION_MFG: 'transact_precision_mfg_v3',
@@ -122,7 +122,10 @@ export async function syncServerData(force = false): Promise<void> {
       img === '/image 352.svg' ||
       img === '/Rectangle-819-1.svg' ||
       img === '/Rectangle 819 (1).svg' ||
-      img === '/image-351-1.svg'
+      img === '/image-351-1.svg' ||
+      img === '/image 351 (1).svg' ||
+      img.includes('/images/transact/') ||
+      img.includes('/building-jpg')
 
     // 1. Sync Categories across all devices
     if (serverCatsRes && serverCatsRes.ok) {
@@ -148,17 +151,20 @@ export async function syncServerData(force = false): Promise<void> {
           if (!lCat) {
             mergedMap.set(sCat.id, sCat)
           } else {
-            // Local exists: preserve client's uploaded image and customizations
-            const localHasCustom = !isPlaceholderImage(lCat.card_image) || !isPlaceholderImage(lCat.image_url)
+            // Server always wins if updated by admin, ignore legacy dummy /images/transact/
+            const localHasCustom = (!isPlaceholderImage(lCat.card_image) || !isPlaceholderImage(lCat.image_url)) &&
+              !lCat.card_image?.includes('/images/transact/')
             const localTime = new Date(lCat.updated_at || 0).getTime()
             const serverTime = new Date(sCat.updated_at || 0).getTime()
 
-            if (localHasCustom || localTime >= serverTime) {
+            if (serverTime > localTime) {
+              mergedMap.set(sCat.id, sCat)
+            } else if (localHasCustom && localTime > serverTime) {
               mergedMap.set(sCat.id, {
                 ...sCat,
                 ...lCat,
-                card_image: lCat.card_image && !isPlaceholderImage(lCat.card_image) ? lCat.card_image : lCat.image_url || sCat.card_image,
-                image_url: lCat.image_url && !isPlaceholderImage(lCat.image_url) ? lCat.image_url : lCat.card_image || sCat.image_url,
+                card_image: lCat.card_image && !isPlaceholderImage(lCat.card_image) ? lCat.card_image : sCat.card_image,
+                image_url: lCat.image_url && !isPlaceholderImage(lCat.image_url) ? lCat.image_url : sCat.image_url,
               })
             } else {
               mergedMap.set(sCat.id, sCat)
@@ -235,7 +241,9 @@ export async function syncServerData(force = false): Promise<void> {
               (lProd.custom_related_products && lProd.custom_related_products.length > 0)
             )
 
-            if (localHasCustom || localTime >= serverTime) {
+            if (serverTime > localTime) {
+              mergedMap.set(sProd.id, sProd)
+            } else if (localHasCustom && localTime > serverTime) {
               mergedMap.set(sProd.id, {
                 ...sProd,
                 ...lProd,
@@ -1238,7 +1246,7 @@ export const defaultPortfolioCards: PortfolioShowcaseCard[] = [
 
 export function getStoredProductLineCards(): PortfolioShowcaseCard[] {
   const cats = (getStoredCategories() || []).filter(
-    (c) => Boolean(c) && (c.section === 'airway' || !c.section || c.section === 'section_1') && c.is_published !== false
+    (c) => Boolean(c) && (c.section === 'airway' || c.section === 'section_1') && c.is_published !== false
   )
   if (cats.length > 0) {
     const total = cats.length

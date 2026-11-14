@@ -165,7 +165,7 @@ export default function ProductLineSection() {
 
     // Direct synchronization with Section 1 (Airway) categories if defined
     const cats = (getStoredCategories() || []).filter(
-      (c) => Boolean(c) && (c.section === 'airway' || !c.section || c.section === 'section_1') && c.is_published !== false
+      (c) => Boolean(c) && (c.section === 'airway' || c.section === 'section_1') && c.is_published !== false
     )
     if (cats.length > 0) {
       const mapped: PortfolioShowcaseCard[] = cats.map((cat, idx) => {
