@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import './globals.css'
+import GeoBlockGuard from '@/src/components/public/GeoBlockGuard'
 
 export const metadata: Metadata = {
   title: 'Transact International | Precision Surgical & Medical Instruments Manufacturing',
