@@ -177,20 +177,13 @@ export async function syncServerData(force = false): Promise<void> {
         const unifiedCats = Array.from(mergedMap.values())
         if (JSON.stringify(unifiedCats) !== JSON.stringify(localCats)) {
           memoryCategories = unifiedCats
-          saveToStorage(STORAGE_KEYS.CATEGORIES, unifiedCats)
+          saveToStorage(STORAGE_KEYS.CATEGORIES, unifiedCats, false)
           hasAnyChanges = true
         }
-
-        // Auto-save full list to server JSON so server is always synchronized with client uploads
-        fetch('/api/categories', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ action: 'setAll', categories: unifiedCats }),
-        }).catch(() => {})
       }
     }
 
-    // 2. Sync Subcategories across all devices + auto-upload local to server
+    // 2. Sync Subcategories across all devices
     if (serverSubcatsRes && serverSubcatsRes.ok) {
       const serverSubcats = await serverSubcatsRes.json()
       if (Array.isArray(serverSubcats) && serverSubcats.length > 0) {
@@ -198,20 +191,10 @@ export async function syncServerData(force = false): Promise<void> {
         const serverSubIds = new Set(serverSubcats.map((s) => s.id))
         const unsyncedLocal = localSubcats.filter((s) => !serverSubIds.has(s.id))
 
-        if (unsyncedLocal.length > 0) {
-          for (const sub of unsyncedLocal) {
-            fetch('/api/subcategories', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ action: 'save', subcategory: sub }),
-            }).catch(() => {})
-          }
-        }
-
         const unifiedSubcats = [...serverSubcats, ...unsyncedLocal]
         if (JSON.stringify(unifiedSubcats) !== JSON.stringify(localSubcats)) {
           memorySubcategories = unifiedSubcats
-          saveToStorage(STORAGE_KEYS.SUBCATEGORIES, unifiedSubcats)
+          saveToStorage(STORAGE_KEYS.SUBCATEGORIES, unifiedSubcats, false)
           hasAnyChanges = true
         }
       }
@@ -275,16 +258,9 @@ export async function syncServerData(force = false): Promise<void> {
         const unifiedProds = Array.from(mergedMap.values())
         if (JSON.stringify(unifiedProds) !== JSON.stringify(localProds)) {
           memoryProducts = unifiedProds
-          saveToStorage(STORAGE_KEYS.PRODUCTS, unifiedProds)
+          saveToStorage(STORAGE_KEYS.PRODUCTS, unifiedProds, false)
           hasAnyChanges = true
         }
-
-        // Sync unified list to server API so server gets updated as well
-        fetch('/api/products', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ action: 'setAll', products: unifiedProds }),
-        }).catch(() => {})
       }
     }
 
@@ -295,7 +271,7 @@ export async function syncServerData(force = false): Promise<void> {
         const localCatsLog = getFromStorage<CatalogueItem[]>(STORAGE_KEYS.CATALOGUES, [])
         if (JSON.stringify(catlog) !== JSON.stringify(localCatsLog)) {
           memoryCatalogues = catlog
-          saveToStorage(STORAGE_KEYS.CATALOGUES, catlog)
+          saveToStorage(STORAGE_KEYS.CATALOGUES, catlog, false)
           hasAnyChanges = true
         }
       }
@@ -308,7 +284,7 @@ export async function syncServerData(force = false): Promise<void> {
         const localFaqs = getFromStorage<FaqItem[]>(STORAGE_KEYS.FAQS, [])
         if (JSON.stringify(faqs) !== JSON.stringify(localFaqs)) {
           memoryFaqs = faqs
-          saveToStorage(STORAGE_KEYS.FAQS, faqs)
+          saveToStorage(STORAGE_KEYS.FAQS, faqs, false)
           hasAnyChanges = true
         }
       }
@@ -320,7 +296,7 @@ export async function syncServerData(force = false): Promise<void> {
       if (mfg && mfg.hero) {
         const localMfg = getFromStorage<any>(STORAGE_KEYS.MANUFACTURING_PROCESS, null)
         if (JSON.stringify(mfg) !== JSON.stringify(localMfg)) {
-          saveToStorage(STORAGE_KEYS.MANUFACTURING_PROCESS, mfg)
+          saveToStorage(STORAGE_KEYS.MANUFACTURING_PROCESS, mfg, false)
           hasAnyChanges = true
         }
       }

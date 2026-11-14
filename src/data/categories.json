@@ -149,7 +149,7 @@
     "id": "cat-ophthalmoscope-pocket",
     "parent_id": null,
     "name": "Ophthalmoscope Metal",
-    "slug": "ophthalmoscope Metal",
+    "slug": "ophthalmoscope-metal",
     "description": "Pocket ophthalmoscopes with precision aperture wheels and halogen illumination.",
     "card_image": "/images/uploads/ophthalmoscopes-metal-1794567243774.png",
     "image_url": "/images/uploads/ophthalmoscopes-metal-1794567243774.png",
@@ -166,7 +166,7 @@
   {
     "id": "cat-1794303989732",
     "name": "Diagnostics",
-    "slug": "Diagnostics Sets",
+    "slug": "diagnostics-sets",
     "description": null,
     "image_url": "/images/uploads/diagnostics-sets-1794567287450.png",
     "card_image": "/images/uploads/diagnostics-sets-1794567287450.png",

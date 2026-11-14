@@ -150,7 +150,7 @@ function ProductsCatalogContent() {
   }, [categoryParam, subcategoryParam])
 
   // Load live data from dataStore / server APIs
-  const reloadData = async () => {
+  const reloadData = () => {
     try {
       const storedCats = getStoredCategories().filter((c) => c.is_published !== false)
       if (storedCats.length > 0) setCategoriesList(storedCats)
@@ -162,15 +162,6 @@ function ProductsCatalogContent() {
       if (storedFacets) setFilterFacets(storedFacets)
     } catch (e) {
       console.warn('Error reading stored categories/facets:', e)
-    }
-
-    try {
-      const res = await fetch('/api/products', { cache: 'no-store' }).catch(() => null)
-      if (res && res.ok) {
-        await syncServerData(true)
-      }
-    } catch (err) {
-      console.warn('Live sync error, using dataStore:', err)
     }
 
     const localProds = getStoredProducts().filter((p) => p && p.title && p.title.trim() !== '')
@@ -189,7 +180,10 @@ function ProductsCatalogContent() {
 
   useEffect(() => {
     reloadData()
-    const handleDataUpdate = () => reloadData()
+    syncServerData() // run background sync once on mount
+    const handleDataUpdate = () => {
+      reloadData()
+    }
     window.addEventListener('transact_data_updated', handleDataUpdate)
     return () => window.removeEventListener('transact_data_updated', handleDataUpdate)
   }, [])

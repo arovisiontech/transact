@@ -200,7 +200,6 @@ export default function ProductLineSection() {
 
   useEffect(() => {
     reloadData()
-    syncServerData().then(reloadData)
     window.addEventListener('transact_data_updated', reloadData)
     return () => window.removeEventListener('transact_data_updated', reloadData)
   }, [])
