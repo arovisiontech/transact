@@ -282,9 +282,10 @@ function ProductsCatalogContent() {
   const categoryHeroBanner =
     (activeCategory && products.find((p) => p.category_id === activeCategory.id && p.hero_banner)?.hero_banner) ||
     activeCategory?.banner_url ||
-    products.find((p) => p.hero_banner)?.hero_banner ||
     activeCategory?.card_image ||
-    '/image 431.svg'
+    activeCategory?.image_url ||
+    products.find((p) => p.hero_banner)?.hero_banner ||
+    '/images/categories/reusable-laryngoscope.png'
 
   return (
     <PublicShell>

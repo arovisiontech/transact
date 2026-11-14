@@ -25,7 +25,14 @@ export default function OtoscopeShowcaseSection() {
             : 'Fiber-Optic & High-Resolution Optics',
           title: catName,
           subtitle: cat?.description || '',
-          image: cat?.card_image || cat?.image_url || '/image 351 (1).svg',
+          image:
+            cat?.card_image && !cat.card_image.startsWith('blob:')
+              ? cat.card_image
+              : cat?.banner_url && !cat.banner_url.startsWith('blob:')
+              ? cat.banner_url
+              : cat?.image_url && !cat.image_url.startsWith('blob:')
+              ? cat.image_url
+              : '/images/categories/otoscopes-pocket.png',
           badgeIcon: '/Diagnostics 2.svg',
           badgeBg: 'bg-[#F6851F]',
           buttonText: `Explore ${catName.replace(' Sets', '')} Line`,

@@ -313,7 +313,7 @@
   {
     "id": "prod-pocket-led-otoscope",
     "category_id": "cat-pocket-otoscopes",
-    "category_name": "Pocket Otoscopes",
+    "category_name": "Otoscopes Pocket",
     "subcategory_id": "subcat-pocket-led-otoscopes",
     "subcategory_name": "Pocket LED Otoscopes",
     "title": "Mini LED Pocket Otoscope",
@@ -736,8 +736,8 @@
   },
   {
     "id": "prod-single-use-blade",
-    "category_id": "cat-single-use-laryngoscopes",
-    "category_name": "Single Use Laryngoscopes",
+    "category_id": "cat-1794304694139",
+    "category_name": "Disposable Laryngoscope",
     "subcategory_id": "subcat-disposable-sterile",
     "subcategory_name": "Sterile Disposable Airway Blades",
     "title": "Disposable Sterile Fiber Optic Blade",
@@ -760,8 +760,8 @@
   },
   {
     "id": "prod-diagnostic-set-pro",
-    "category_id": "cat-diagnostic-sets",
-    "category_name": "Diagnostic & Otoscopy Sets",
+    "category_id": "cat-1794303989732",
+    "category_name": "Diagnostics",
     "subcategory_id": "subcat-clinical-diagnostics",
     "subcategory_name": "Clinical Diagnostic Otoscopy Sets",
     "title": "Clinical Diagnostic Otoscope & Ophthalmoscope Set",

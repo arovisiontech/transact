@@ -22,7 +22,7 @@ function ShowcaseCardItem({
   total: number
 }) {
   const sanitizeImg = (url: string | undefined) => {
-    if (!url || url.startsWith('blob:')) return '/images/catalogues/laryngoscope-cover.webp'
+    if (!url || url.startsWith('blob:')) return '/images/categories/reusable-laryngoscope.png'
     let clean = url.replace(/ /g, '%20')
     if (clean.includes('image10_3812_2.jpg')) clean = clean.replace('image10_3812_2.jpg', 'image10_3812_2.webp')
     if (clean.includes('image20_3812_2.jpg')) clean = clean.replace('image20_3812_2.jpg', 'image20_3812_2.webp')
@@ -73,8 +73,8 @@ function ShowcaseCardItem({
             unoptimized
             priority={index === 0}
             onError={() => {
-              if (imgSrc !== '/images/catalogues/laryngoscope-cover.webp') {
-                setImgSrc('/images/catalogues/laryngoscope-cover.webp')
+              if (imgSrc !== '/images/categories/reusable-laryngoscope.png') {
+                setImgSrc('/images/categories/reusable-laryngoscope.png')
               }
             }}
             className="object-cover object-right group-hover:scale-105 transition-transform duration-700"
@@ -180,9 +180,11 @@ export default function ProductLineSection() {
           image:
             cat?.card_image && !cat.card_image.startsWith('blob:')
               ? cat.card_image
+              : cat?.banner_url && !cat.banner_url.startsWith('blob:')
+              ? cat.banner_url
               : cat?.image_url && !cat.image_url.startsWith('blob:')
               ? cat.image_url
-              : '/images/catalogues/laryngoscope-cover.webp',
+              : '/images/categories/reusable-laryngoscope.png',
           badgeIcon: '/laryngoscope-2.svg',
           badgeBg: catName.toLowerCase().includes('single') ? 'bg-[#F6851F]' : 'bg-white/95',
           buttonText: `Explore ${catName.replace(' Laryngoscopes', '')} Line`,
