@@ -5,11 +5,24 @@ import { CategoryItem } from '@/src/types'
 
 const filePath = path.join(process.cwd(), 'src', 'data', 'categories.json')
 
+const PERMANENT_PURGED_CATEGORY_IDS = new Set([
+  'cat-mccoy-reusable-laryngoscope',
+  'cat-mccoy-disposable-laryngoscope',
+  'cat-disposable-laryngoscope',
+  'cat-laryngoscope-sets',
+  'cat-laryngoscope-handles',
+  'cat-otoscopes-pocket',
+  'cat-otoscopes-metal',
+  'cat-ophthalmoscope-pocket',
+  'cat-ophthalmoscopes-metal',
+])
+
 function readCategories(): CategoryItem[] {
   try {
     if (!fs.existsSync(filePath)) return []
     const content = fs.readFileSync(filePath, 'utf8')
-    return JSON.parse(content)
+    const raw: CategoryItem[] = JSON.parse(content)
+    return raw.filter((c) => !PERMANENT_PURGED_CATEGORY_IDS.has(c.id))
   } catch (e) {
     console.error('Error reading categories.json:', e)
     return []

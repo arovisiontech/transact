@@ -32,9 +32,21 @@ export const PERMANENT_PURGED_PRODUCT_IDS = new Set([
   'prod-1794382149391',
 ])
 
+export const PERMANENT_PURGED_CATEGORY_IDS = new Set([
+  'cat-mccoy-reusable-laryngoscope',
+  'cat-mccoy-disposable-laryngoscope',
+  'cat-disposable-laryngoscope',
+  'cat-laryngoscope-sets',
+  'cat-laryngoscope-handles',
+  'cat-otoscopes-pocket',
+  'cat-otoscopes-metal',
+  'cat-ophthalmoscope-pocket',
+  'cat-ophthalmoscopes-metal',
+])
+
 const STORAGE_KEYS = {
   PRODUCTS: 'transact_products_v5',
-  CATEGORIES: 'transact_categories_v4',
+  CATEGORIES: 'transact_categories_v5',
   DELETED_CATEGORIES: 'transact_deleted_categories_v1',
   DELETED_PRODUCTS: 'transact_deleted_products_v1',
   SUBCATEGORIES: 'transact_subcategories_v3',
@@ -148,7 +160,7 @@ export async function syncServerData(force = false): Promise<void> {
 
         // Process server categories
         for (const sCat of serverCats) {
-          if (deletedCatIds.has(sCat.id)) continue // Strictly exclude deleted categories
+          if (deletedCatIds.has(sCat.id) || PERMANENT_PURGED_CATEGORY_IDS.has(sCat.id)) continue // Strictly exclude deleted categories
 
           const lCat = localMap.get(sCat.id)
           if (!lCat) {
@@ -174,6 +186,7 @@ export async function syncServerData(force = false): Promise<void> {
 
         // Add any newly created local categories
         for (const [id, lCat] of localMap.entries()) {
+          if (PERMANENT_PURGED_CATEGORY_IDS.has(id)) continue
           if (!mergedMap.has(id)) {
             mergedMap.set(id, lCat)
           }
@@ -661,14 +674,14 @@ export function getStoredCategories(): CategoryItem[] {
     const deletedCatIds = new Set(getFromStorage<string[]>(STORAGE_KEYS.DELETED_CATEGORIES, []))
     const fromStorage = getFromStorage<CategoryItem[]>(STORAGE_KEYS.CATEGORIES, [])
     if (fromStorage.length > 0) {
-      const clean = fromStorage.filter((c) => !deletedCatIds.has(c.id))
+      const clean = fromStorage.filter((c) => !deletedCatIds.has(c.id) && !PERMANENT_PURGED_CATEGORY_IDS.has(c.id))
       return clean
     }
-    const cleanMemory = memoryCategories.filter((c) => !deletedCatIds.has(c.id))
+    const cleanMemory = memoryCategories.filter((c) => !deletedCatIds.has(c.id) && !PERMANENT_PURGED_CATEGORY_IDS.has(c.id))
     saveToStorage(STORAGE_KEYS.CATEGORIES, cleanMemory)
     return cleanMemory
   }
-  return memoryCategories
+  return memoryCategories.filter((c) => !PERMANENT_PURGED_CATEGORY_IDS.has(c.id))
 }
 
 export function getCategoryBySlug(slug: string): CategoryItem | undefined {
