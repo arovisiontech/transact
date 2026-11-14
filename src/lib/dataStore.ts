@@ -382,11 +382,17 @@ export async function initLiveSupabase(): Promise<void> {
 if (isBrowser()) {
   setTimeout(() => {
     try {
-      localStorage.removeItem('transact_products_v3')
-      localStorage.removeItem('transact_deleted_products_v3')
+      const legacyKeys = [
+        'transact_products_v1', 'transact_products_v2', 'transact_products_v3', 'transact_products_v4', 'transact_products_v5', 'transact_products_v6',
+        'transact_categories_v1', 'transact_categories_v2', 'transact_categories_v3', 'transact_categories_v4', 'transact_categories_v5', 'transact_categories_v6',
+        'transact_portfolio_cards_v1', 'transact_portfolio_cards_v2', 'transact_portfolio_cards_v3', 'transact_portfolio_cards_v4',
+        'transact_otoscope_cards_v1', 'transact_otoscope_cards_v2', 'transact_otoscope_cards_v3', 'transact_otoscope_cards_v4',
+        'transact_deleted_categories_v1', 'transact_deleted_products_v1'
+      ]
+      legacyKeys.forEach(k => localStorage.removeItem(k))
     } catch {}
     initLiveSupabase()
-  }, 50)
+  }, 10)
 }
 
 
